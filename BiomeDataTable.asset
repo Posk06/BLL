@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29b7c18f4c391a94a94db44129a058da, type: 3}
+  m_Name: BiomeDataTable
+  m_EditorClassIdentifier: 
+  biomes:
+  - name: Desert
+    id: 0
+    temperature: 2
+    moisture: 0
+    frequency: 0.005
+    amplitude: 0.5
+    lacunarity: 2.5
+    gain: 0.6
+    octaves: 4
+    groundTexture: {fileID: 2800000, guid: 2f2c02409265c144fb1e780fe00f19eb, type: 3}
+  - name: Forest
+    id: 1
+    temperature: 1
+    moisture: 1
+    frequency: 0.01
+    amplitude: 1
+    lacunarity: 2
+    gain: 0.5
+    octaves: 6
+    groundTexture: {fileID: 2800000, guid: e2520f7ba41731c4d84996520d249a52, type: 3}
+  - name: Mountains
+    id: 2
+    temperature: 0
+    moisture: 0
+    frequency: 0.02
+    amplitude: 2
+    lacunarity: 2
+    gain: 0.4
+    octaves: 4
+    groundTexture: {fileID: 2800000, guid: 889394077890a334f94311d68d816424, type: 3}
+  - name: Jungle
+    id: 3
+    temperature: 2
+    moisture: 2
+    frequency: 0.015
+    amplitude: 1.2
+    lacunarity: 2
+    gain: 0.45
+    octaves: 7
+    groundTexture: {fileID: 2800000, guid: 667e83cb6d2b35d419d63b608b489450, type: 3}
