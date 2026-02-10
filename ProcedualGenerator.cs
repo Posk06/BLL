@@ -262,7 +262,6 @@ public class ProcedualGenerator : MonoBehaviour
             lacunarities[i] = biomeData.biomes[i].lacunarity;
             gains[i] = biomeData.biomes[i].gain;
             octaves[i] = biomeData.biomes[i].octaves;
-            Debug.Log("Biome " + biomeData.biomes[i].name + " Temp: " + biometemps[i] + " Moist: " + biomemoist[i]);
         }
     }
 

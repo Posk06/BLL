@@ -125,7 +125,7 @@ float heightcalc(float2 pos, out float biomeWeights[20]) {
     for(int i = 0; i < biomeCount; i++) {
         biomeWeights[i] = weightcalc(temperature, moisture, biometemps[i], biomemoist[i]);
     }
-
+    
     for(int l = 0; l < biomeCount; l++) {
         biomeHeights[l] = fbmcustom(warpedPos, frequencys[l], amplitudes[l], lacunarities[l], gains[l], octaves[l]);
     }

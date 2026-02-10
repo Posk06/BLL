@@ -1,4 +1,4 @@
-Shader "Custom/TerrainBiomeBlend"
+/*Shader "Custom/TerrainBiomeBlend"
 {
     Properties
     {
@@ -62,4 +62,72 @@ Shader "Custom/TerrainBiomeBlend"
             ENDHLSL
         }
     }
+}*/
+
+Shader "Custom/TerrainBiomeHard"
+{
+    Properties
+    {
+        _TexArray ("Biome Texture Array", 2DArray) = "" {}
+    }
+
+    SubShader
+    {
+        Tags { "RenderType"="Opaque" }
+
+        Pass
+        {
+            HLSLPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+
+            TEXTURE2D_ARRAY(_TexArray);
+            SAMPLER(sampler_TexArray);
+
+            struct Attributes
+            {
+                float4 positionOS : POSITION;
+                float2 uv         : TEXCOORD0;
+
+                // biome index stored in uv2.x
+                float4 uv2        : TEXCOORD1;
+            };
+
+            struct Varyings
+            {
+                float4 positionHCS : SV_POSITION;
+                float2 uv          : TEXCOORD0;
+
+                // DO NOT interpolate biome index
+                nointerpolation float biomeIdx : TEXCOORD1;
+            };
+
+            Varyings vert (Attributes IN)
+            {
+                Varyings OUT;
+                OUT.positionHCS = TransformObjectToHClip(IN.positionOS.xyz);
+                OUT.uv = IN.uv;
+
+                OUT.biomeIdx = IN.uv2.x;
+
+                return OUT;
+            }
+
+            half4 frag (Varyings IN) : SV_Target
+            {
+                int biome = (int)IN.biomeIdx;
+
+                return SAMPLE_TEXTURE2D_ARRAY(
+                    _TexArray,
+                    sampler_TexArray,
+                    IN.uv,
+                    biome
+                );
+            }
+            ENDHLSL
+        }
+    }
 }
+
