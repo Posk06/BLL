@@ -31,3 +31,7 @@ public enum biomeMoistures
 {
     LOW, MID, HIGH
 }
+public enum continentaless
+{
+    LOW, MID, HIGH
+}
