@@ -34,7 +34,7 @@ public class ProcedualGenerator : MonoBehaviour
     ComputeBuffer moistBuffer;
 
     [Header("Collider")]
-    public PhysicMaterial pmat;
+    public PhysicsMaterial pmat;
 
 
     GraphicsBuffer vertexBuffer;
