@@ -73,11 +73,19 @@ public class BiomeDataEditor : Editor
 
             // Ground Texture
             EditorGUI.PropertyField(rect, texProp);
+            rect.y += lineHeight + 2;
+
+            // Per-element button (right-aligned)
+            Rect buttonRect = new Rect(rect.x + rect.width - 120, rect.y, 120, lineHeight);
+            if (GUI.Button(buttonRect, "Generate " + nameProp.stringValue))
+            {
+                Debug.Log("Generate " + nameProp.stringValue);
+            }
         };
 
         reorderableList.elementHeightCallback = (int index) =>
         {
-            return 10 * (EditorGUIUtility.singleLineHeight + 2) + 4;
+            return 11 * (EditorGUIUtility.singleLineHeight + 2) + 4;
         };
 
         reorderableList.onAddCallback = (ReorderableList list) =>

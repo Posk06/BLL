@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEditor.Rendering;
 using UnityEngine;
 
@@ -12,6 +13,7 @@ public class ChunkLoader : MonoBehaviour
 
     [Header("Chunk Settings")]
     // Must match terrain heightmap resolution
+    [Range(2, 128)]
     public int viewDistanceInChunks = 2;
     public int chunkSize = 64;
     [Range(0f,0.1f)]

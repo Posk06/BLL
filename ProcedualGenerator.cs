@@ -32,15 +32,11 @@ public class ProcedualGenerator : MonoBehaviour
     ComputeBuffer octBuffer;
     ComputeBuffer tempBuffer;
     ComputeBuffer moistBuffer;
-
-    [Header("Collider")]
-    public PhysicsMaterial pmat;
-
-
     GraphicsBuffer vertexBuffer;
     GraphicsBuffer normalBuffer;
     GraphicsBuffer uv2Buffer;
     GraphicsBuffer uv3Buffer;
+    int currentVertexCount = 0;
     Mesh mesh;
     Vector3[] verts;
     Vector3[] normals;
@@ -93,9 +89,6 @@ public class ProcedualGenerator : MonoBehaviour
     private void generateTerrain()
     {
         CreateShape();
-        UpdateMesh();
-
-        GetComponent<MeshFilter>().mesh = mesh;
 
         if (meshCS == null)
         {
@@ -104,14 +97,8 @@ public class ProcedualGenerator : MonoBehaviour
             return;
         }
 
+        // Set material now; mesh and collider will be assigned when GPU readback completes
         GetComponent<MeshRenderer>().material = terrainMaterial;
-
-        MeshCollider mc = GetComponent<MeshCollider>();
-        if (mc == null)
-            mc = gameObject.AddComponent<MeshCollider>();
-
-        mc.convex = false;                                       
-        mc.sharedMesh = mesh;
     }
 
 
@@ -120,10 +107,19 @@ public class ProcedualGenerator : MonoBehaviour
         int vertexCount = resolution * resolution;
         int indexCount = (resolution - 1) * (resolution - 1) * 6;
 
-        vertexBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, vertexCount, sizeof(float) * 3);
-        normalBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, vertexCount, sizeof(float) * 3);
-        uv2Buffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, vertexCount, sizeof(float) * 4);
-        uv3Buffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, vertexCount, sizeof(float) * 4);
+        // Reuse graphics buffers when possible to avoid repeated allocations
+        if (vertexBuffer == null || vertexBuffer.count != vertexCount)
+        {
+            if (vertexBuffer != null) vertexBuffer.Release();
+            if (normalBuffer != null) normalBuffer.Release();
+            if (uv2Buffer != null) uv2Buffer.Release();
+            if (uv3Buffer != null) uv3Buffer.Release();
+
+            vertexBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, vertexCount, sizeof(float) * 3);
+            normalBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, vertexCount, sizeof(float) * 3);
+            uv2Buffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, vertexCount, sizeof(float) * 4);
+            uv3Buffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, vertexCount, sizeof(float) * 4);
+        }
 
         int kernel = meshCS.FindKernel("CSMain");
         meshCS.SetBuffer(kernel, "vertices", vertexBuffer);
@@ -138,48 +134,145 @@ public class ProcedualGenerator : MonoBehaviour
         meshCS.SetFloat("tempFreq", tempFrequency);
         meshCS.SetInt("biomeCount", biomeData.biomes.Count);
 
-        // Create and set ComputeBuffers
-        freqBuffer = new ComputeBuffer(biomeData.biomes.Count, sizeof(float));
+        // Create or update and set ComputeBuffers (reuse when possible to avoid allocations)
+        int biomeCount = biomeData.biomes.Count;
+
+        if (freqBuffer == null || freqBuffer.count != biomeCount)
+        {
+            if (freqBuffer != null) freqBuffer.Release();
+            freqBuffer = new ComputeBuffer(biomeCount, sizeof(float));
+        }
         freqBuffer.SetData(frequencys);
         meshCS.SetBuffer(kernel, "frequencys", freqBuffer);
 
-        ampBuffer = new ComputeBuffer(biomeData.biomes.Count, sizeof(float));
+        if (ampBuffer == null || ampBuffer.count != biomeCount)
+        {
+            if (ampBuffer != null) ampBuffer.Release();
+            ampBuffer = new ComputeBuffer(biomeCount, sizeof(float));
+        }
         ampBuffer.SetData(amplitudes);
         meshCS.SetBuffer(kernel, "amplitudes", ampBuffer);
 
-        lacBuffer = new ComputeBuffer(biomeData.biomes.Count, sizeof(float));
+        if (lacBuffer == null || lacBuffer.count != biomeCount)
+        {
+            if (lacBuffer != null) lacBuffer.Release();
+            lacBuffer = new ComputeBuffer(biomeCount, sizeof(float));
+        }
         lacBuffer.SetData(lacunarities);
         meshCS.SetBuffer(kernel, "lacunarities", lacBuffer);
 
-        gainBuffer = new ComputeBuffer(biomeData.biomes.Count, sizeof(float));
+        if (gainBuffer == null || gainBuffer.count != biomeCount)
+        {
+            if (gainBuffer != null) gainBuffer.Release();
+            gainBuffer = new ComputeBuffer(biomeCount, sizeof(float));
+        }
         gainBuffer.SetData(gains);
         meshCS.SetBuffer(kernel, "gains", gainBuffer);
 
-        octBuffer = new ComputeBuffer(biomeData.biomes.Count, sizeof(int));
+        if (octBuffer == null || octBuffer.count != biomeCount)
+        {
+            if (octBuffer != null) octBuffer.Release();
+            octBuffer = new ComputeBuffer(biomeCount, sizeof(int));
+        }
         octBuffer.SetData(octaves);
         meshCS.SetBuffer(kernel, "octaves", octBuffer);
 
-        tempBuffer = new ComputeBuffer(biomeData.biomes.Count, sizeof(int));
+        if (tempBuffer == null || tempBuffer.count != biomeCount)
+        {
+            if (tempBuffer != null) tempBuffer.Release();
+            tempBuffer = new ComputeBuffer(biomeCount, sizeof(int));
+        }
         tempBuffer.SetData(biometemps);
         meshCS.SetBuffer(kernel, "biometemps", tempBuffer);
 
-        moistBuffer = new ComputeBuffer(biomeData.biomes.Count, sizeof(int));
+        if (moistBuffer == null || moistBuffer.count != biomeCount)
+        {
+            if (moistBuffer != null) moistBuffer.Release();
+            moistBuffer = new ComputeBuffer(biomeCount, sizeof(int));
+        }
         moistBuffer.SetData(biomemoist);
         meshCS.SetBuffer(kernel, "biomemoist", moistBuffer);
 
 
-        int groups = Mathf.CeilToInt(resolution);
-        meshCS.Dispatch(kernel, groups, groups, 1);
+        // Calculate dispatch size using kernel thread group size to avoid over/under dispatching
+        meshCS.GetKernelThreadGroupSizes(kernel, out uint tgx, out uint tgy, out uint tgz);
+        int groupsX = Mathf.CeilToInt((float)resolution / tgx);
+        int groupsY = Mathf.CeilToInt((float)resolution / tgy);
+        meshCS.Dispatch(kernel, groupsX, groupsY, 1);
 
         verts = new Vector3[vertexCount];
         normals = new Vector3[vertexCount];
         uv2s = new Vector4[vertexCount];
         uv3s = new Vector4[vertexCount];
 
-        vertexBuffer.GetData(verts);
-        normalBuffer.GetData(normals);
-        uv2Buffer.GetData(uv2s);
-        uv3Buffer.GetData(uv3s);
+        // Read back GPU buffers asynchronously to avoid GPU stalls
+        int pendingReadbacks = 4;
+
+        void ReadbackDone()
+        {
+            pendingReadbacks--;
+            if (pendingReadbacks == 0)
+            {
+                // All data received, finalize mesh on main thread
+                FinalizeMesh();
+            }
+        }
+
+        AsyncGPUReadback.Request(vertexBuffer, (AsyncGPUReadbackRequest req) =>
+        {
+            if (req.hasError)
+            {
+                Debug.LogError("AsyncGPUReadback error for vertices");
+            }
+            else
+            {
+                var data = req.GetData<Vector3>();
+                data.CopyTo(verts);
+            }
+            ReadbackDone();
+        });
+
+        AsyncGPUReadback.Request(normalBuffer, (AsyncGPUReadbackRequest req) =>
+        {
+            if (req.hasError)
+            {
+                Debug.LogError("AsyncGPUReadback error for normals");
+            }
+            else
+            {
+                var data = req.GetData<Vector3>();
+                data.CopyTo(normals);
+            }
+            ReadbackDone();
+        });
+
+        AsyncGPUReadback.Request(uv2Buffer, (AsyncGPUReadbackRequest req) =>
+        {
+            if (req.hasError)
+            {
+                Debug.LogError("AsyncGPUReadback error for uv2");
+            }
+            else
+            {
+                var data = req.GetData<Vector4>();
+                data.CopyTo(uv2s);
+            }
+            ReadbackDone();
+        });
+
+        AsyncGPUReadback.Request(uv3Buffer, (AsyncGPUReadbackRequest req) =>
+        {
+            if (req.hasError)
+            {
+                Debug.LogError("AsyncGPUReadback error for uv3");
+            }
+            else
+            {
+                var data = req.GetData<Vector4>();
+                data.CopyTo(uv3s);
+            }
+            ReadbackDone();
+        });
 
         indices = new int[indexCount];
         int ti = 0;
@@ -208,24 +301,33 @@ public class ProcedualGenerator : MonoBehaviour
 
         if (mesh == null) mesh = new Mesh();
         mesh.indexFormat = (vertexCount > 65000) ? IndexFormat.UInt32 : IndexFormat.UInt16;
+        currentVertexCount = vertexCount;
     }
-
-    private void UpdateMesh()
+    
+    private void FinalizeMesh()
     {
-
-        
+        if (mesh == null) mesh = new Mesh();
         mesh.Clear();
 
         mesh.vertices = verts;
         mesh.normals = normals;
         mesh.triangles = indices;
-        mesh.SetUVs(1, uv2s);
-        mesh.SetUVs(2, uv3s);
+
+        // Set UV2/UV3 from arrays
+        mesh.SetUVs(1, new System.Collections.Generic.List<Vector4>(uv2s));
+        mesh.SetUVs(2, new System.Collections.Generic.List<Vector4>(uv3s));
         mesh.uv = uv;
 
-        mesh.RecalculateNormals();
         mesh.RecalculateBounds();
-        mesh.Optimize();
+
+        GetComponent<MeshFilter>().mesh = mesh;
+
+        MeshCollider mc = GetComponent<MeshCollider>();
+        if (mc == null)
+            mc = gameObject.AddComponent<MeshCollider>();
+
+        mc.convex = false;
+        mc.sharedMesh = mesh;
     }
 
     void OnDestroy()
