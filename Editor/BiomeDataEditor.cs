@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
+using Unity.VisualScripting;
 
 [CustomEditor(typeof(BiomeData))]
 public class BiomeDataEditor : Editor
@@ -94,6 +95,7 @@ public class BiomeDataEditor : Editor
             element.FindPropertyRelative("lacunarity").floatValue = 2f;
             element.FindPropertyRelative("gain").floatValue = 0.5f;
             element.FindPropertyRelative("octaves").intValue = 4;
+            
         };
     }
 
