@@ -19,6 +19,7 @@ public class ProcedualGenerator : MonoBehaviour
     public BiomeData biomeData;
     int[] biometemps;
     int[] biomemoist;
+    int[] biomecont;
     float[] amplitudes;
     float[] frequencys;
     float[] lacunarities;
@@ -32,6 +33,7 @@ public class ProcedualGenerator : MonoBehaviour
     ComputeBuffer octBuffer;
     ComputeBuffer tempBuffer;
     ComputeBuffer moistBuffer;
+    ComputeBuffer contBuffer;
     GraphicsBuffer vertexBuffer;
     GraphicsBuffer normalBuffer;
     GraphicsBuffer uv2Buffer;
@@ -192,6 +194,14 @@ public class ProcedualGenerator : MonoBehaviour
         }
         moistBuffer.SetData(biomemoist);
         meshCS.SetBuffer(kernel, "biomemoist", moistBuffer);
+        
+        if (contBuffer == null || contBuffer.count != biomeCount)
+        {
+            if (contBuffer != null) contBuffer.Release();
+            contBuffer = new ComputeBuffer(biomeCount, sizeof(int));
+        }
+        contBuffer.SetData(biomecont);
+        meshCS.SetBuffer(kernel, "biomecont", contBuffer);
 
 
         // Calculate dispatch size using kernel thread group size to avoid over/under dispatching
@@ -349,6 +359,7 @@ public class ProcedualGenerator : MonoBehaviour
     {
         biometemps = new int[biomeData.biomes.Count];
         biomemoist = new int[biomeData.biomes.Count];
+        biomecont = new int[biomeData.biomes.Count];
         amplitudes = new float[biomeData.biomes.Count];
         frequencys = new float[biomeData.biomes.Count];
         lacunarities = new float[biomeData.biomes.Count];
@@ -359,6 +370,7 @@ public class ProcedualGenerator : MonoBehaviour
         {
             biometemps[i] = (int) biomeData.biomes[i].temperature;
             biomemoist[i] = (int) biomeData.biomes[i].moisture;
+            biomecont[i] = (int) biomeData.biomes[i].continentaless;
             amplitudes[i] = biomeData.biomes[i].amplitude;
             frequencys[i] = biomeData.biomes[i].frequency;
             lacunarities[i] = biomeData.biomes[i].lacunarity;

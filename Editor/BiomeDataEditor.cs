@@ -30,6 +30,7 @@ public class BiomeDataEditor : Editor
             SerializedProperty gainProp = element.FindPropertyRelative("gain");
             SerializedProperty octProp = element.FindPropertyRelative("octaves");
             SerializedProperty texProp = element.FindPropertyRelative("groundTexture");
+            SerializedProperty contProp = element.FindPropertyRelative("continentaless");
 
             rect.y += 2;
             float lineHeight = EditorGUIUtility.singleLineHeight;
@@ -49,6 +50,10 @@ public class BiomeDataEditor : Editor
 
             // Moisture
             EditorGUI.PropertyField(rect, moistProp);
+            rect.y += lineHeight + 2;
+
+            // Continentaless
+            EditorGUI.PropertyField(rect, contProp);
             rect.y += lineHeight + 2;
 
             // Frequency
@@ -85,7 +90,7 @@ public class BiomeDataEditor : Editor
 
         reorderableList.elementHeightCallback = (int index) =>
         {
-            return 11 * (EditorGUIUtility.singleLineHeight + 2) + 4;
+            return 12 * (EditorGUIUtility.singleLineHeight + 2) + 4;
         };
 
         reorderableList.onAddCallback = (ReorderableList list) =>
@@ -98,12 +103,12 @@ public class BiomeDataEditor : Editor
             element.FindPropertyRelative("id").intValue = index;
             element.FindPropertyRelative("temperature").enumValueIndex = 0;
             element.FindPropertyRelative("moisture").enumValueIndex = 0;
+            element.FindPropertyRelative("continentaless").enumValueIndex = 0;
             element.FindPropertyRelative("frequency").floatValue = 0.01f;
             element.FindPropertyRelative("amplitude").floatValue = 1f;
             element.FindPropertyRelative("lacunarity").floatValue = 2f;
             element.FindPropertyRelative("gain").floatValue = 0.5f;
             element.FindPropertyRelative("octaves").intValue = 4;
-            
         };
     }
 

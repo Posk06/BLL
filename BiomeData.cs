@@ -14,6 +14,7 @@ public class Biome
     public int id;
     public biomeTemps temperature;
     public biomeMoistures moisture;
+    public continentaless continentaless;
     public float frequency;
     public float amplitude;
     public float lacunarity;

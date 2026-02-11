@@ -18,12 +18,14 @@ StructuredBuffer<float> gains;
 StructuredBuffer<int> octaves;
 StructuredBuffer<int> biometemps;
 StructuredBuffer<int> biomemoist;
+StructuredBuffer<int> biomecont;
 
 int resolution;
 int xOffset;
 int yOffset;
 float tempFreq;
 float moistFreq;
+float contFreq;
 int biomeCount;
 
 
@@ -119,6 +121,10 @@ float heightcalc(float2 pos, out float biomeWeights[20]) {
 
     float temperature = fbmcustom(pos, tempFreq, 1, 2, 0.5, 5) * 0.5 + 0.5;
     float moisture    = fbmcustom(pos + 1000, moistFreq, 1, 2, 0.5, 5) * 0.5 + 0.5;
+    float continentaless = fbmcustom(pos + 2000, contFreq, 1, 2, 0.5, 5) * 0.5 + 0.5;
+
+    if(continentaless < 0.0) continentaless = 0.001;
+    
 
     float2 warpedPos = domainWarp(pos, 20.0, 0.0003);
 
@@ -148,7 +154,7 @@ float heightcalc(float2 pos, out float biomeWeights[20]) {
     float height = 0;
 
     for(int m = 0; m < biomeCount; m++) {
-        height += biomeHeights[m] * biomeWeights[m];
+        height += biomeHeights[m] * biomeWeights[m] * continentaless;
     }
 
     return height;

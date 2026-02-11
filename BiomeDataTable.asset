@@ -17,8 +17,9 @@ MonoBehaviour:
     id: 0
     temperature: 2
     moisture: 0
+    continentaless: 1
     frequency: 0.005
-    amplitude: 0.5
+    amplitude: 5
     lacunarity: 2.5
     gain: 0.6
     octaves: 4
@@ -27,8 +28,9 @@ MonoBehaviour:
     id: 1
     temperature: 1
     moisture: 1
+    continentaless: 1
     frequency: 0.01
-    amplitude: 1
+    amplitude: 10
     lacunarity: 2
     gain: 0.5
     octaves: 6
@@ -37,8 +39,9 @@ MonoBehaviour:
     id: 2
     temperature: 0
     moisture: 0
+    continentaless: 2
     frequency: 0.02
-    amplitude: 2
+    amplitude: 20
     lacunarity: 2
     gain: 0.4
     octaves: 4
@@ -47,8 +50,9 @@ MonoBehaviour:
     id: 3
     temperature: 2
     moisture: 2
+    continentaless: 1
     frequency: 0.015
-    amplitude: 1.2
+    amplitude: 12
     lacunarity: 2
     gain: 0.45
     octaves: 7
@@ -57,8 +61,9 @@ MonoBehaviour:
     id: 4
     temperature: 0
     moisture: 2
+    continentaless: 0
     frequency: 0.01
-    amplitude: 1
+    amplitude: 5
     lacunarity: 2
     gain: 0.5
     octaves: 4
@@ -67,8 +72,9 @@ MonoBehaviour:
     id: 5
     temperature: 0
     moisture: 1
+    continentaless: 0
     frequency: 0.01
-    amplitude: 1
+    amplitude: 15
     lacunarity: 2
     gain: 0.5
     octaves: 4
@@ -77,8 +83,9 @@ MonoBehaviour:
     id: 6
     temperature: 2
     moisture: 1
+    continentaless: 1
     frequency: 0.01
-    amplitude: 1
+    amplitude: 10
     lacunarity: 2
     gain: 0.5
     octaves: 4
@@ -87,8 +94,9 @@ MonoBehaviour:
     id: 7
     temperature: 1
     moisture: 2
+    continentaless: 0
     frequency: 0.01
-    amplitude: 1
+    amplitude: 5
     lacunarity: 2
     gain: 0.5
     octaves: 4
@@ -97,8 +105,9 @@ MonoBehaviour:
     id: 8
     temperature: 1
     moisture: 0
+    continentaless: 0
     frequency: 0.01
-    amplitude: 1
+    amplitude: 7
     lacunarity: 2
     gain: 0.5
     octaves: 4
