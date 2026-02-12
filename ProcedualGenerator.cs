@@ -17,6 +17,13 @@ public class ProcedualGenerator : MonoBehaviour
     public float moistFrequency = 0.0005f;
     public float tempFrequency = 0.0003f;
     public BiomeData biomeData;
+    public bool testMode = false;
+    public enum BiomeTemp { LOW, MID, HIGH}
+    public BiomeTemp temperature;
+    public enum BiomeMoist { LOW, MID, HIGH}
+    public BiomeMoist moisture;
+    public enum Continentaless { LOW, MID, HIGH}
+    public Continentaless continentaless;
     int[] biometemps;
     int[] biomemoist;
     int[] biomecont;
@@ -366,11 +373,27 @@ public class ProcedualGenerator : MonoBehaviour
         gains = new float[biomeData.biomes.Count];
         octaves = new int[biomeData.biomes.Count];
 
+        if (!testMode)
+        {
+            for (int i = 0; i < biomeData.biomes.Count; i++)
+            {
+                biometemps[i] = (int) biomeData.biomes[i].temperature;
+                biomemoist[i] = (int) biomeData.biomes[i].moisture;
+                biomecont[i] = (int) biomeData.biomes[i].continentaless;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < biomeData.biomes.Count; i++)
+            {
+                biometemps[i] = (int) temperature;
+                biomemoist[i] = (int) moisture;
+                biomecont[i] = (int) continentaless;
+            }
+        }
+
         for (int i = 0; i < biomeData.biomes.Count; i++)
         {
-            biometemps[i] = (int) biomeData.biomes[i].temperature;
-            biomemoist[i] = (int) biomeData.biomes[i].moisture;
-            biomecont[i] = (int) biomeData.biomes[i].continentaless;
             amplitudes[i] = biomeData.biomes[i].amplitude;
             frequencys[i] = biomeData.biomes[i].frequency;
             lacunarities[i] = biomeData.biomes[i].lacunarity;

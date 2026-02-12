@@ -30,7 +30,6 @@ int biomeCount;
 
 
 
-
 float2 noisePos(float2 pos, float freq) { return float2(pos.x * freq, pos.y * freq); }
 
 float fbmcustom(float2 pos, float freq, float amp, float lac, float ga, int oct) {
