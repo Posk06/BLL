@@ -10,6 +10,7 @@ public class ChunkLoader : MonoBehaviour
     Vector2Int playerPosition;
 
     public GameObject terrainPrefab;
+    public GameObject lowResTerrainPrefab;
 
     [Header("Chunk Settings")]
     // Must match terrain heightmap resolution
@@ -23,8 +24,11 @@ public class ChunkLoader : MonoBehaviour
 
     private Dictionary<Vector2Int, GameObject> loadedChunks = new Dictionary<Vector2Int, GameObject>();
     private Dictionary<Vector2Int, GameObject> allGeneratedChunks = new Dictionary<Vector2Int, GameObject>();
+    private Dictionary<Vector2Int, GameObject> loadedLowResChunks = new Dictionary<Vector2Int, GameObject>();
+    private Dictionary<Vector2Int, GameObject> allGeneratedLowResChunks = new Dictionary<Vector2Int, GameObject>();
 
     private List<Vector2Int> keystoremove = new List<Vector2Int>();
+    private List<Vector2Int> lowreskeystoremove = new List<Vector2Int>();
 
 
 
@@ -53,13 +57,27 @@ public class ChunkLoader : MonoBehaviour
                 
                     if(!loadedChunks.ContainsKey(t))
                     {
-                    generateChunk(t.x, t.y);
-                    //Debug.Log("generated Chunk at " + t.x + "|" + t.y);
+                        if(Math.Sqrt(x*x + z*z) < viewDistanceInChunks * 0.5f)
+                        {
+                            generateChunk(t);
+                            loadedLowResChunks[t].SetActive(false);
+                            loadedLowResChunks.Remove(t);
+                            //Debug.Log("generated Low Res Chunk at " + t.x + "|" + t.y);
+                        } else if(Math.Sqrt(x*x + z*z) < viewDistanceInChunks)
+                        {
+                            generateLowResChunk(t);
+                            //Debug.Log("generated Chunk at " + t.x + "|" + t.y);
+                        }
                     }    
                 }
             
             }
         }
+    }
+
+    private void regenerateLowResChunk(int x, int z)
+    {
+        
     }
     private void unloadChunks()
     {
@@ -70,11 +88,17 @@ public class ChunkLoader : MonoBehaviour
 
             
 
-            if(Math.Sqrt(tooFarX*tooFarX + tooFarZ*tooFarZ) > viewDistanceInChunks)
+            if(Math.Sqrt(tooFarX*tooFarX + tooFarZ*tooFarZ) > viewDistanceInChunks * 0.5f)
             {
                 chunk.Value.SetActive(false);
                 keystoremove.Add(chunk.Key);
-                // Debug.Log("Removed Chunk");
+                generateLowResChunk(chunk.Key);
+                // Debug.Log("Replaced Chunkwith LOD Chunk");
+            } else if(Math.Sqrt(tooFarX*tooFarX + tooFarZ*tooFarZ) > viewDistanceInChunks)
+            {
+                chunk.Value.SetActive(false);
+                lowreskeystoremove.Add(chunk.Key);
+                // Debug.Log("Unloaded Chunk");
             }
         }
         
@@ -83,27 +107,52 @@ public class ChunkLoader : MonoBehaviour
             loadedChunks.Remove(key);
         }
         keystoremove.Clear();
+
+        foreach(var key in lowreskeystoremove)
+        {
+            loadedLowResChunks.Remove(key);
+        }
+        lowreskeystoremove.Clear();
     }
 
-    private void generateChunk(int x, int z)
+    private void generateChunk(Vector2Int pos)
     {
 
-        if(!allGeneratedChunks.ContainsKey(new Vector2Int(x,z)))
+        if(!allGeneratedChunks.ContainsKey(pos))
         {
-            GameObject ter = Instantiate(terrainPrefab, new Vector3(x * chunkSize , 0, z * chunkSize), Quaternion.identity);
+            GameObject ter = Instantiate(terrainPrefab, new Vector3(pos.x * chunkSize , 0, pos.y * chunkSize), Quaternion.identity);
             ter.GetComponent<ProcedualGenerator>().Init(chunkSize);
-            loadedChunks.Add(new Vector2Int(x,z), ter);
-            allGeneratedChunks.Add(new Vector2Int(x,z), ter);
+            loadedChunks.Add(pos, ter);
+            allGeneratedChunks.Add(pos, ter);
             ter.transform.parent = parentFolder;
 
 
 
         } else
         {
-            allGeneratedChunks[new Vector2Int(x,z)].SetActive(true);
-            loadedChunks.Add(new Vector2Int(x,z), allGeneratedChunks[new Vector2Int(x,z)]);
+            allGeneratedChunks[pos].SetActive(true);
+            loadedChunks.Add(pos, allGeneratedChunks[pos]);
         }
 
-    } 
+    }
+
+    private void generateLowResChunk(Vector2Int pos)
+    {
+        if(!allGeneratedLowResChunks.ContainsKey(pos))
+        {
+            GameObject ter = Instantiate(lowResTerrainPrefab, new Vector3(pos.x * chunkSize , 0, pos.y * chunkSize), Quaternion.identity);
+            ter.GetComponent<ProcedualGenerator>().Init(chunkSize);
+            loadedChunks.Add(pos, ter);
+            allGeneratedLowResChunks.Add(pos, ter);
+            ter.transform.parent = parentFolder;
+
+
+
+        } else
+        {
+            allGeneratedLowResChunks[pos].SetActive(true);
+            loadedLowResChunks.Add(pos, allGeneratedLowResChunks[pos]);
+        }
+    }
 }
 
