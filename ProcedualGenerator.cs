@@ -17,13 +17,23 @@ public class ProcedualGenerator : MonoBehaviour
     public float moistFrequency = 0.0005f;
     public float tempFrequency = 0.0003f;
     public BiomeData biomeData;
+    public Texture2DArray textureArray;
+
+    [Header("Test Mode")]
     public bool testMode = false;
-    public enum BiomeTemp { LOW, MID, HIGH}
-    public BiomeTemp temperature;
-    public enum BiomeMoist { LOW, MID, HIGH}
-    public BiomeMoist moisture;
-    public enum Continentaless { LOW, MID, HIGH}
-    public Continentaless continentaless;
+    [Range(0.0001f, 0.01f)]
+    public float frequency = 0.0005f;
+    [Range(1f, 50f)]
+    public float amplitude = 1f;
+    [Range(0.5f, 5f)]
+    public float lacunarity = 2f;
+    [Range(0.1f, 2f)]
+    public float gain = 0.5f;
+    [Range(1, 8)]
+    public int octave = 4;
+    public Material testMaterial;
+    public Transform treePrefab;
+    public Transform treeFolder;
     int[] biometemps;
     int[] biomemoist;
     int[] biomecont;
@@ -41,10 +51,13 @@ public class ProcedualGenerator : MonoBehaviour
     ComputeBuffer tempBuffer;
     ComputeBuffer moistBuffer;
     ComputeBuffer contBuffer;
+    ComputeBuffer randomBuffer;
+    
     GraphicsBuffer vertexBuffer;
     GraphicsBuffer normalBuffer;
     GraphicsBuffer uv2Buffer;
     GraphicsBuffer uv3Buffer;
+    GraphicsBuffer treeBuffer;
     int currentVertexCount = 0;
     Mesh mesh;
     Vector3[] verts;
@@ -52,11 +65,8 @@ public class ProcedualGenerator : MonoBehaviour
     Vector4[] uv2s;
     Vector4[] uv3s;
     Vector2[] uv;
-    
-    
+    int[] hastree;
     int[] indices;
-
-    public Texture2DArray textureArray;
 
     
     public void Init(int size)
@@ -70,29 +80,42 @@ public class ProcedualGenerator : MonoBehaviour
 
         if (terrainMaterial == null)
         {
-            terrainMaterial = new Material(
-                Shader.Find("Custom/TerrainBiomeBlend")
-            );
+            if(!testMode)
+            {
+                terrainMaterial = new Material(Shader.Find("Custom/TerrainBiomeBlend"));
+                generateTextureArray();
+            }
+            else
+            {
+                terrainMaterial = testMaterial;
+            }
         }
 
         generateBiomeArrays();
-        generateTextureArray();
         generateTerrain();
     }
 
-    /*float time = 0;
+    float time = 0;
     void Update()
     {
-        if(time < 2.5)
+        if(testMode)
+        {
+            if(time < resolution * resolution * 0.00001f) // Arbitrary time threshold to prevent constant regeneration - adjust as needed
         {
             time += Time.deltaTime;
             
         } else
         {
+            generateBiomeArrays();
             generateTerrain();
+            foreach(Transform child in treeFolder)
+            {
+                Destroy(child.gameObject);
+            }
             time = 0;
         }
-    }*/
+        }
+    }
 
 
     private void generateTerrain()
@@ -105,9 +128,13 @@ public class ProcedualGenerator : MonoBehaviour
             enabled = false;
             return;
         }
-
-        // Set material now; mesh and collider will be assigned when GPU readback completes
-        GetComponent<MeshRenderer>().material = terrainMaterial;
+        if(!testMode) {
+            GetComponent<MeshRenderer>().material = terrainMaterial;
+        }
+        else
+        {
+            GetComponent<MeshRenderer>().material = testMaterial;
+        }
     }
 
 
@@ -128,6 +155,7 @@ public class ProcedualGenerator : MonoBehaviour
             normalBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, vertexCount, sizeof(float) * 3);
             uv2Buffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, vertexCount, sizeof(float) * 4);
             uv3Buffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, vertexCount, sizeof(float) * 4);
+            treeBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, vertexCount, sizeof(int));
         }
 
         int kernel = meshCS.FindKernel("CSMain");
@@ -135,6 +163,7 @@ public class ProcedualGenerator : MonoBehaviour
         meshCS.SetBuffer(kernel, "normals", normalBuffer);
         meshCS.SetBuffer(kernel, "uv2", uv2Buffer);
         meshCS.SetBuffer(kernel, "uv3", uv3Buffer);
+        meshCS.SetBuffer(kernel, "hastree", treeBuffer);
 
         meshCS.SetInt("resolution", resolution);
         meshCS.SetFloat("xOffset", transform.position.x);
@@ -210,6 +239,20 @@ public class ProcedualGenerator : MonoBehaviour
         contBuffer.SetData(biomecont);
         meshCS.SetBuffer(kernel, "biomecont", contBuffer);
 
+        if(randomBuffer == null || randomBuffer.count != vertexCount)
+        {
+            if (randomBuffer != null) randomBuffer.Release();
+            randomBuffer = new ComputeBuffer(vertexCount, sizeof(float));
+        }
+        float[] randomValues = new float[vertexCount];
+        System.Random rand = new System.Random();
+        for (int i = 0; i < vertexCount; i++)
+        {
+            randomValues[i] =  (float) rand.NextDouble();
+        }
+        randomBuffer.SetData(randomValues);
+        meshCS.SetBuffer(kernel, "randomValues", randomBuffer);
+
 
         // Calculate dispatch size using kernel thread group size to avoid over/under dispatching
         meshCS.GetKernelThreadGroupSizes(kernel, out uint tgx, out uint tgy, out uint tgz);
@@ -221,9 +264,10 @@ public class ProcedualGenerator : MonoBehaviour
         normals = new Vector3[vertexCount];
         uv2s = new Vector4[vertexCount];
         uv3s = new Vector4[vertexCount];
+        hastree = new int[vertexCount];
 
         // Read back GPU buffers asynchronously to avoid GPU stalls
-        int pendingReadbacks = 4;
+        int pendingReadbacks = 5;
 
         void ReadbackDone()
         {
@@ -291,8 +335,23 @@ public class ProcedualGenerator : MonoBehaviour
             ReadbackDone();
         });
 
+        AsyncGPUReadback.Request(treeBuffer, (AsyncGPUReadbackRequest req) =>
+        {
+            if (req.hasError)
+            {
+                Debug.LogError("AsyncGPUReadback error for tree data");
+            }
+            else
+            {
+                var data = req.GetData<int>();
+                data.CopyTo(hastree);
+            }
+            ReadbackDone();
+        });
+
         indices = new int[indexCount];
         int ti = 0;
+
         for (int y = 0; y < resolution - 1; y++)
         {
             for (int x = 0; x < resolution - 1; x++)
@@ -307,7 +366,7 @@ public class ProcedualGenerator : MonoBehaviour
                 indices[ti++] = i + resolution + 1;
             }
         }
-
+        
         uv = new Vector2[vertexCount];
         for (int y = 0; y < resolution; y++) {
             for (int x = 0; x < resolution; x++)
@@ -345,6 +404,18 @@ public class ProcedualGenerator : MonoBehaviour
 
         mc.convex = false;
         mc.sharedMesh = mesh;
+
+        // Instantiate trees after GPU readbacks have populated `verts` and `hastree`
+        if (treePrefab != null && hastree != null && verts != null)
+        {
+            for (int i = 0; i < hastree.Length; i++)
+            {
+                if (hastree[i] == 1)
+                {
+                    Instantiate(treePrefab, verts[i], Quaternion.identity, treeFolder);
+                }
+            }
+        }
     }
 
     void OnDestroy()
@@ -377,28 +448,31 @@ public class ProcedualGenerator : MonoBehaviour
         {
             for (int i = 0; i < biomeData.biomes.Count; i++)
             {
-                biometemps[i] = (int) biomeData.biomes[i].temperature;
-                biomemoist[i] = (int) biomeData.biomes[i].moisture;
-                biomecont[i] = (int) biomeData.biomes[i].continentaless;
+                amplitudes[i] = biomeData.biomes[i].amplitude;
+                frequencys[i] = biomeData.biomes[i].frequency;
+                lacunarities[i] = biomeData.biomes[i].lacunarity;
+                gains[i] = biomeData.biomes[i].gain;
+                octaves[i] = biomeData.biomes[i].octaves;
             }
         }
         else
         {
+            Debug.Log("Test mode enabled - using selected biome parameters for all biomes");
             for (int i = 0; i < biomeData.biomes.Count; i++)
             {
-                biometemps[i] = (int) temperature;
-                biomemoist[i] = (int) moisture;
-                biomecont[i] = (int) continentaless;
+                amplitudes[i] = amplitude;
+                frequencys[i] = frequency;
+                lacunarities[i] = lacunarity;
+                gains[i] = gain;
+                octaves[i] = octave;
             }
         }
 
         for (int i = 0; i < biomeData.biomes.Count; i++)
         {
-            amplitudes[i] = biomeData.biomes[i].amplitude;
-            frequencys[i] = biomeData.biomes[i].frequency;
-            lacunarities[i] = biomeData.biomes[i].lacunarity;
-            gains[i] = biomeData.biomes[i].gain;
-            octaves[i] = biomeData.biomes[i].octaves;
+            biometemps[i] = (int) biomeData.biomes[i].temperature;
+                biomemoist[i] = (int) biomeData.biomes[i].moisture;
+                biomecont[i] = (int) biomeData.biomes[i].continentaless;
         }
     }
 
@@ -417,5 +491,6 @@ public class ProcedualGenerator : MonoBehaviour
 
         textureArray.Apply();
         terrainMaterial.SetTexture("_TexArray", textureArray);
+        
     }
 }

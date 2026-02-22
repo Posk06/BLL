@@ -9,6 +9,7 @@ RWStructuredBuffer<float3> normals;
 RWStructuredBuffer<float4> uv2;
 RWStructuredBuffer<float4> uv3;
 RWStructuredBuffer<float4> colors;
+RWStructuredBuffer<int> hastree;
 
 
 StructuredBuffer<float> frequencys;
@@ -19,6 +20,7 @@ StructuredBuffer<int> octaves;
 StructuredBuffer<int> biometemps;
 StructuredBuffer<int> biomemoist;
 StructuredBuffer<int> biomecont;
+StructuredBuffer<float> randomValues;
 
 int resolution;
 int xOffset;
@@ -172,6 +174,13 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 
     float2 noisepos = float2(x,y) + float2(xOffset, yOffset);
     float height = heightcalc(noisepos, biomeWeights);
+
+
+    if(randomValues[idx] < 0.01) {
+        hastree[idx] = 1;
+    } else {
+        hastree[idx] = 0;
+    }
 
     vertices[idx] = float3(x, height, y);
     normals[idx] = float3(0,1,0);
