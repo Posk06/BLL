@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 1984099229295263604}
   - component: {fileID: 7410633871917072454}
   - component: {fileID: 1455142024230961307}
+  - component: {fileID: 4965668329403050914}
   - component: {fileID: 586321859337264984}
-  - component: {fileID: 798766916398224035}
   m_Layer: 0
-  m_Name: StandartTerrain
+  m_Name: StandartTerrain(BiomeBased)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -60,6 +60,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -81,10 +86,35 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &4965668329403050914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6504221233741031891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50a2d21e28033084682c1677f0086d36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  terrainMaterial: {fileID: 2100000, guid: 6723acf9938ea524f8ec02ede0ccf9f7, type: 2}
+  meshCS: {fileID: 7200000, guid: 15ba352272e2eae41aa1fc63fb50c533, type: 3}
+  resolution: 17
+  moistFrequency: 0.0005
+  tempFrequency: 0.0003
+  biomeData: {fileID: 11400000, guid: 7d2fe89dde9471c4bbade121138f7df3, type: 2}
+  testMode: 1
+  temperature: 0
+  moisture: 0
+  continentaless: 0
+  textureArray: {fileID: 0}
 --- !u!64 &586321859337264984
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -107,25 +137,3 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
---- !u!114 &798766916398224035
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6504221233741031891}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 102002ef64ed61745a38dab81ebbb8e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  terrainMaterial: {fileID: 2100000, guid: f928201208db25b418f058a94a2116dc, type: 2}
-  meshCS: {fileID: 7200000, guid: 05f693e5d2b46ff4d8f02cfd03162090, type: 3}
-  resolution: 0
-  amplitude: 1
-  maxAmplitude: 50
-  frequency: 0.01
-  lacunarity: 2
-  gain: 0.5
-  octave: 3
-  redistrobution: 1

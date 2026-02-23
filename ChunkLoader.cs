@@ -121,7 +121,7 @@ public class ChunkLoader : MonoBehaviour
         if(!allGeneratedChunks.ContainsKey(pos))
         {
             GameObject ter = Instantiate(terrainPrefab, new Vector3(pos.x * chunkSize , 0, pos.y * chunkSize), Quaternion.identity);
-            ter.GetComponent<ProcedualGenerator>().Init(chunkSize);
+            //ter.GetComponent<ProcedualGenerator>().Init(chunkSize);
             loadedChunks.Add(pos, ter);
             allGeneratedChunks.Add(pos, ter);
             ter.transform.parent = parentFolder;
@@ -141,7 +141,7 @@ public class ChunkLoader : MonoBehaviour
         if(!allGeneratedLowResChunks.ContainsKey(pos))
         {
             GameObject ter = Instantiate(lowResTerrainPrefab, new Vector3(pos.x * chunkSize , 0, pos.y * chunkSize), Quaternion.identity);
-            ter.GetComponent<ProcedualGenerator>().Init(chunkSize);
+            //ter.GetComponent<ProcedualGenerator>().Init(chunkSize);
             loadedChunks.Add(pos, ter);
             allGeneratedLowResChunks.Add(pos, ter);
             ter.transform.parent = parentFolder;

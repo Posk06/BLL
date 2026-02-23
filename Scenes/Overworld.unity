@@ -332,7 +332,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 416108634}
-  terrainPrefab: {fileID: 6504221233741031891, guid: 80bb2b06ef5a181429e948d58be8eef9,
+  terrainPrefab: {fileID: 6504221233741031891, guid: 51e1eeb7b50bb17478b2fc8c0edead70,
+    type: 3}
+  lowResTerrainPrefab: {fileID: 6504221233741031891, guid: 51e1eeb7b50bb17478b2fc8c0edead70,
     type: 3}
   viewDistanceInChunks: 24
   chunkSize: 16

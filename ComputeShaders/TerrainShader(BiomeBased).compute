@@ -1,0 +1,208 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+#include "Assets/ComputeShaders/noiseSimplex.cginc"
+
+
+RWStructuredBuffer<float3> vertices;
+RWStructuredBuffer<float3> normals;
+RWStructuredBuffer<float4> uv2;
+RWStructuredBuffer<float4> uv3;
+RWStructuredBuffer<float4> colors;
+RWStructuredBuffer<int> hastree;
+
+
+StructuredBuffer<float> frequencys;
+StructuredBuffer<float> amplitudes;
+StructuredBuffer<float> lacunarities;
+StructuredBuffer<float> gains;
+StructuredBuffer<int> octaves;
+StructuredBuffer<int> biometemps;
+StructuredBuffer<int> biomemoist;
+StructuredBuffer<int> biomecont;
+StructuredBuffer<float> randomValues;
+
+int resolution;
+int xOffset;
+int yOffset;
+float tempFreq;
+float moistFreq;
+float contFreq;
+int biomeCount;
+
+
+
+float2 noisePos(float2 pos, float freq) { return float2(pos.x * freq, pos.y * freq); }
+
+float fbmcustom(float2 pos, float freq, float amp, float lac, float ga, int oct) {
+
+    float v = 0;
+
+    for (int i = 0; i < oct; i++)
+        {
+
+            v += snoise(noisePos(pos, freq)) * amp;
+
+            freq *= lac;  // usually 2.0
+            amp *= ga;    // usually 0.5
+        }
+
+    return v;    
+}
+
+float ridgedNoise(float2 pos, float freq, float amp, float lac, float ga, int oct) {
+    float v = 0;
+    float maxAmp = 0;
+    
+    for (int i = 0; i < oct; i++) {
+        float n = snoise(noisePos(pos, freq));
+        n = abs(n);  // Make it ridged
+        n = 1.0 - n; // Invert for peaks
+        v += n * n * amp;  // Square for sharper ridges
+        maxAmp += amp;
+        
+        freq *= lac;
+        amp *= ga;
+    
+    }
+    
+    return v / maxAmp;
+}
+
+float2 domainWarp(float2 pos, float warpStrength, float warpFreq) {
+    float warp = snoise(noisePos(pos, warpFreq)) * warpStrength;
+    return pos + float2(warp, warp);
+}
+
+float low(float i) {
+    return 1.0 - smoothstep(0.4, 0.6, i);
+}
+
+float mid(float i) {
+    return smoothstep(0.1, 0.3, i) - smoothstep(0.7, 0.9, i);
+}
+
+float high(float i) {
+    return smoothstep(0.4, 0.6, i);
+}
+
+float weightcalc(float temp, float moist, int tempIndex, int moistIndex) {
+    float v = 1.0f;
+    
+    switch (tempIndex) {
+        case 0:
+            v *= low(temp);
+            break;
+        case 1:
+            v *= mid(temp);
+            break;
+        case 2:
+            v *= high(temp);
+            break;
+    }
+
+    switch (moistIndex) {
+        case 0:
+            v *= low(moist);
+            break;
+        case 1:
+            v *= mid(moist);
+            break;
+        case 2:
+            v *= high(moist);
+            break;
+    }
+
+    return v;
+}
+
+float heightcalc(float2 pos, out float biomeWeights[20]) {
+
+    float biomeHeights[20];
+
+    float temperature = fbmcustom(pos, tempFreq, 1, 2, 0.5, 5) * 0.5 + 0.5;
+    float moisture    = fbmcustom(pos + 1000, moistFreq, 1, 2, 0.5, 5) * 0.5 + 0.5;
+    float continentaless = fbmcustom(pos + 2000, contFreq, 1, 2, 0.5, 5) * 0.5 + 0.5;
+
+    if(continentaless < 0.0) continentaless = 0.001;
+    
+
+    float2 warpedPos = domainWarp(pos, 20.0, 0.0003);
+
+    for(int i = 0; i < biomeCount; i++) {
+        biomeWeights[i] = weightcalc(temperature, moisture, biometemps[i], biomemoist[i]);
+    }
+    
+    for(int l = 0; l < biomeCount; l++) {
+        biomeHeights[l] = fbmcustom(warpedPos, frequencys[l], amplitudes[l], lacunarities[l], gains[l], octaves[l]);
+    }
+
+    float total = 0;
+    for(int h = 0; h < biomeCount; h++) {
+        total += biomeWeights[h];
+    }
+
+    if (total > 0.0001f) {
+        for(int j = 0; j < biomeCount; j++) {
+            biomeWeights[j] /= total;
+        }
+    } else {
+        for(int k = 0; k < biomeCount; k++) {
+            biomeWeights[k] = 1.0f / biomeCount;
+        }
+    }
+
+    float height = 0;
+
+    for(int m = 0; m < biomeCount; m++) {
+        height += biomeHeights[m] * biomeWeights[m] * continentaless;
+    }
+
+    return height;
+}
+
+[numthreads(16,16,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+
+    uint x = id.x;
+    uint y = id.y;
+    if (x >= resolution || y >= resolution) return;
+
+    uint idx = x + y * resolution;
+    float biomeWeights[20];
+
+    float2 noisepos = float2(x,y) + float2(xOffset, yOffset);
+    float height = heightcalc(noisepos, biomeWeights);
+
+
+    if(randomValues[idx] < 0.01) {
+        hastree[idx] = 1;
+    } else {
+        hastree[idx] = 0;
+    }
+
+    vertices[idx] = float3(x, height, y);
+    normals[idx] = float3(0,1,0);
+
+    int idx0 = 0, idx1 = 1, idx2 = 2;
+    float w0 = biomeWeights[0];
+    float w1 = biomeWeights[1];
+    float w2 = biomeWeights[2];
+
+    for (int i = 3; i < biomeCount; i++)
+    {
+        float w = biomeWeights[i];
+        if (w > w0) { idx2=idx1; w2=w1; idx1=idx0; w1=w0; idx0=i; w0=w; }
+        else if (w > w1) { idx2=idx1; w2=w1; idx1=i; w1=w; }
+        else if (w > w2) { idx2=i; w2=w; }
+    }
+
+    float sum = w0 + w1 + w2;
+    w0 /= sum;
+    w1 /= sum;
+    w2 /= sum;
+
+    uv2[idx] = float4(idx0, idx1, idx2, 0);
+    uv3[idx] = float4(w0, w1, w2, 0);
+}    

@@ -14,7 +14,20 @@ public class TerraintestEditor : Editor
 
         if (GUILayout.Button("Generate Test Biome"))
         {
-            Debug.Log("TODO: Generate Test Biome");
+            {
+                var method = generator.GetType().GetMethod("generateTerrain", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                if (method != null)
+                {
+                    method.Invoke(generator, null);
+                    EditorUtility.SetDirty(generator);
+                    UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(generator.gameObject.scene);
+                    UnityEditor.SceneView.RepaintAll();
+                }
+                else
+                {
+                    Debug.LogError("Could not find generateTerrain method on ProcedualGenerator");
+                }
+            }
         }
     }
 }

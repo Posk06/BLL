@@ -380,11 +380,44 @@ PrefabInstance:
       propertyPath: m_Name
       value: StandartTerrain
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4965668329403050914, guid: 80bb2b06ef5a181429e948d58be8eef9, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6504221233741031891, guid: 80bb2b06ef5a181429e948d58be8eef9,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 546101967}
   m_SourcePrefab: {fileID: 100100000, guid: 80bb2b06ef5a181429e948d58be8eef9, type: 3}
+--- !u!1 &546101966 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6504221233741031891, guid: 80bb2b06ef5a181429e948d58be8eef9,
+    type: 3}
+  m_PrefabInstance: {fileID: 395214699}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &546101967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 546101966}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 102002ef64ed61745a38dab81ebbb8e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  terrainMaterial: {fileID: 2100000, guid: f928201208db25b418f058a94a2116dc, type: 2}
+  meshCS: {fileID: 7200000, guid: 05f693e5d2b46ff4d8f02cfd03162090, type: 3}
+  resolution: 2048
+  amplitude: 1
+  maxAmplitude: 100
+  frequency: 0.005
+  lacunarity: 2
+  gain: 0.5
+  octave: 6
+  redistrobution: 3
 --- !u!1 &689325868
 GameObject:
   m_ObjectHideFlags: 0
@@ -634,7 +667,7 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 112
