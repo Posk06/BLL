@@ -336,7 +336,7 @@ MonoBehaviour:
     type: 3}
   lowResTerrainPrefab: {fileID: 6504221233741031891, guid: 51e1eeb7b50bb17478b2fc8c0edead70,
     type: 3}
-  viewDistanceInChunks: 24
+  viewDistanceInChunks: 128
   chunkSize: 16
   biomeScale: 0.1
   parentFolder: {fileID: 1914441924}

@@ -121,11 +121,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   terrainMaterial: {fileID: 2100000, guid: f928201208db25b418f058a94a2116dc, type: 2}
   meshCS: {fileID: 7200000, guid: 05f693e5d2b46ff4d8f02cfd03162090, type: 3}
-  resolution: 0
+  resolution: 9
+  size: 32
   amplitude: 1
-  maxAmplitude: 50
-  frequency: 0.01
+  maxAmplitude: 600
+  frequency: 0.001
   lacunarity: 2
   gain: 0.5
-  octave: 3
-  redistrobution: 1
+  octave: 5
+  redistrobution: 3

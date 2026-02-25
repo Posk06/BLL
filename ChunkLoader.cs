@@ -57,27 +57,17 @@ public class ChunkLoader : MonoBehaviour
                 
                     if(!loadedChunks.ContainsKey(t))
                     {
-                        if(Math.Sqrt(x*x + z*z) < viewDistanceInChunks * 0.5f)
+                        if(!loadedLowResChunks.ContainsKey(t)) {
+                            generateLowResChunk(t);
+                        } else
                         {
                             generateChunk(t);
-                            loadedLowResChunks[t].SetActive(false);
-                            loadedLowResChunks.Remove(t);
-                            //Debug.Log("generated Low Res Chunk at " + t.x + "|" + t.y);
-                        } else if(Math.Sqrt(x*x + z*z) < viewDistanceInChunks)
-                        {
-                            generateLowResChunk(t);
-                            //Debug.Log("generated Chunk at " + t.x + "|" + t.y);
+                            loadedLowResChunks[t].SetActive(false);                        
                         }
                     }    
                 }
-            
             }
         }
-    }
-
-    private void regenerateLowResChunk(int x, int z)
-    {
-        
     }
     private void unloadChunks()
     {
@@ -92,14 +82,22 @@ public class ChunkLoader : MonoBehaviour
             {
                 chunk.Value.SetActive(false);
                 keystoremove.Add(chunk.Key);
-                generateLowResChunk(chunk.Key);
-                // Debug.Log("Replaced Chunkwith LOD Chunk");
-            } else if(Math.Sqrt(tooFarX*tooFarX + tooFarZ*tooFarZ) > viewDistanceInChunks)
+            }
+            
+        }
+
+        foreach(var chunk in loadedLowResChunks)
+        {
+            int tooFarX = Mathf.Abs(chunk.Key.x - playerPosition.x);
+            int tooFarZ = Mathf.Abs(chunk.Key.y - playerPosition.y);
+
+            if(Math.Sqrt(tooFarX*tooFarX + tooFarZ*tooFarZ) > viewDistanceInChunks)
             {
                 chunk.Value.SetActive(false);
                 lowreskeystoremove.Add(chunk.Key);
                 // Debug.Log("Unloaded Chunk");
             }
+        
         }
         
         foreach(var key in keystoremove)
@@ -140,14 +138,11 @@ public class ChunkLoader : MonoBehaviour
     {
         if(!allGeneratedLowResChunks.ContainsKey(pos))
         {
-            GameObject ter = Instantiate(lowResTerrainPrefab, new Vector3(pos.x * chunkSize , 0, pos.y * chunkSize), Quaternion.identity);
+            GameObject ter = Instantiate(terrainPrefab, new Vector3(pos.x * chunkSize , 0, pos.y * chunkSize), Quaternion.identity);
             //ter.GetComponent<ProcedualGenerator>().Init(chunkSize);
-            loadedChunks.Add(pos, ter);
+            loadedLowResChunks.Add(pos, ter);
             allGeneratedLowResChunks.Add(pos, ter);
             ter.transform.parent = parentFolder;
-
-
-
         } else
         {
             allGeneratedLowResChunks[pos].SetActive(true);

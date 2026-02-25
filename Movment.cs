@@ -51,12 +51,12 @@ public class Movment : MonoBehaviour
 
         if (grounded) { rb.drag = groundDrag; } else { rb.drag = 0f; }
         if (new Vector2(rb.velocity.x, rb.velocity.z).magnitude == 0) { standing = true; } else { standing = false; }
-        if (rb.velocity.y != 0) { falling = true; standing = false; } else { falling = false; }
+        if (!grounded) { falling = true; standing = false; } else { falling = false; }
         if (standing && sprinting) { resetSprint(); }
         if (!Input.GetKey(duckKey) && ducking) { resetDuck(); }
         if(standing) { rb.drag = 1000f; }
 
-        animator.SetBool("isWalking", !standing && !falling);
+        animator.SetBool("isWalking", !standing && grounded);
         animator.SetBool("isRunning", sprinting);
     }
 
@@ -144,13 +144,13 @@ public class Movment : MonoBehaviour
 
     private void sprint()
     {
-        moveSpeed *= 1.5f;
+        moveSpeed *= 3f;
     }
 
     private void resetSprint()
     {
         sprinting = false;
-        moveSpeed /= 1.5f;
+        moveSpeed /= 3f;
     }
 
     private void duck()

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.UI;
 
 public class ProcedualGenerator : MonoBehaviour
 {
@@ -9,10 +10,10 @@ public class ProcedualGenerator : MonoBehaviour
 
     public ComputeShader meshCS;
 
-    int pendingReadbacks = 2;
+    int pendingReadbacks = 3;
 
     public int resolution = 0;
-    int size = 0;
+    public int size = 16;
 
     [Header("Terrain Generation")]
     public float amplitude;
@@ -25,11 +26,15 @@ public class ProcedualGenerator : MonoBehaviour
     
     GraphicsBuffer vertexBuffer;
     GraphicsBuffer normalBuffer;
+    GraphicsBuffer colorBuffer;
     Mesh mesh;
     Vector3[] verts;
     Vector3[] normals;
     Vector2[] uv;
+    Vector3Int[] color;
     int[] indices;
+
+    private Texture2D biomeMap;
     
 
     
@@ -40,24 +45,27 @@ public class ProcedualGenerator : MonoBehaviour
 
     void Start()
     {
-        size = resolution - 1;
+        
+        biomeMap = new Texture2D(resolution, resolution, TextureFormat.RGBA32, false);
+        GetComponent<Renderer>().material.SetTexture("_BaseMap", biomeMap);
+        GetComponent<Renderer>().material.SetTexture("_MainMap", biomeMap);
 
         generateTerrain();
+
     }
 
     void Update(){}
 
     private void generateTerrain()
     {
-        CreateShape();
-
         if (meshCS == null)
         {
             Debug.LogError("Assign compute shader");
             enabled = false;
             return;
         }
-        GetComponent<MeshRenderer>().material = terrainMaterial;
+
+        CreateShape();
     }
 
 
@@ -72,6 +80,7 @@ public class ProcedualGenerator : MonoBehaviour
         
         verts = new Vector3[vertexCount];
         normals = new Vector3[vertexCount];
+        color = new Vector3Int[vertexCount];
 
         Debug.Log("Waiting for GPU readback...");
         doReadbacks();
@@ -134,12 +143,15 @@ public class ProcedualGenerator : MonoBehaviour
 
         mc.convex = false;
         mc.sharedMesh = mesh;
+
+        texture();
     }
 
     void OnDestroy()
     {
         if (vertexBuffer != null) vertexBuffer.Release();
         if (normalBuffer != null) normalBuffer.Release();
+        if (colorBuffer != null) colorBuffer.Release();
     }
 
     private void sendDatatoGPU()
@@ -152,16 +164,19 @@ public class ProcedualGenerator : MonoBehaviour
         {
             if (vertexBuffer != null) vertexBuffer.Release();
             if (normalBuffer != null) normalBuffer.Release();
+            if (colorBuffer != null) colorBuffer.Release();
            
 
             vertexBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, vertexCount, sizeof(float) * 3);
             normalBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, vertexCount, sizeof(float) * 3);
+            colorBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, vertexCount, sizeof(int) * 3);
            
         }
 
         int kernel = meshCS.FindKernel("TerrainCSMain");
         meshCS.SetBuffer(kernel, "vertices", vertexBuffer);
         meshCS.SetBuffer(kernel, "normals", normalBuffer);
+        meshCS.SetBuffer(kernel, "colors", colorBuffer);
 
         meshCS.SetInt("resolution", resolution);
         meshCS.SetFloat("xOffset", transform.position.x);
@@ -173,6 +188,7 @@ public class ProcedualGenerator : MonoBehaviour
         meshCS.SetInt("octaves", octave);
         meshCS.SetFloat("maxHeight", maxAmplitude);
         meshCS.SetFloat("redistrobution", redistrobution);
+        meshCS.SetInt("size", size);
 
 
         meshCS.GetKernelThreadGroupSizes(kernel, out uint tgx, out uint tgy, out uint tgz);
@@ -183,6 +199,8 @@ public class ProcedualGenerator : MonoBehaviour
 
     private void doReadbacks()
     {
+        // ensure pending readbacks is reset each generation
+        pendingReadbacks = 3;
         AsyncGPUReadback.Request(vertexBuffer, (AsyncGPUReadbackRequest req) =>
         {
             if (req.hasError)
@@ -212,6 +230,21 @@ public class ProcedualGenerator : MonoBehaviour
             ReadbackDone();
             Debug.Log("Normal readback completed");
         });
+
+        AsyncGPUReadback.Request(colorBuffer, (AsyncGPUReadbackRequest req) =>
+        {
+            if (req.hasError)
+            {
+                Debug.LogError("AsyncGPUReadback error for colors");
+            }
+            else
+            {
+                var data = req.GetData<Vector3Int>();
+                data.CopyTo(color);
+            }
+            ReadbackDone();
+            Debug.Log("Color readback completed");
+        });
     }
 
     private void ReadbackDone()
@@ -224,4 +257,18 @@ public class ProcedualGenerator : MonoBehaviour
         }
         Debug.Log("Readback completed, pending readbacks: " + pendingReadbacks);
     }
+
+    private void texture()
+    {
+        for (int y = 0; y < resolution; y++)
+        {
+            for (int x = 0; x < resolution; x++)
+            {
+                biomeMap.SetPixel(x, y, new Color32((byte)color[x + y * resolution].x, (byte)color[x + y * resolution].y, (byte)color[x + y * resolution].z, 255));
+            }
+        }
+        biomeMap.filterMode = FilterMode.Bilinear;
+        biomeMap.wrapMode = TextureWrapMode.Clamp;
+        biomeMap.Apply();
+    }        
 }
