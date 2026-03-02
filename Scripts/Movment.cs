@@ -44,17 +44,17 @@ public class Movment : MonoBehaviour
 
     private void Update()
     {
-        grounded = Physics.Raycast(transform.position + cap.center, Vector3.down, cap.height * 0.5f + 0.1f, whatisGround);
+        grounded = Physics.Raycast(new Vector3(transform.position.x, cap.transform.position.y, transform.position.z), Vector3.down, cap.height * 0.5f + 0.1f, whatisGround);
 
         myInput();
         speedControl();
 
         if (grounded) { rb.drag = groundDrag; } else { rb.drag = 0f; }
-        if (new Vector2(rb.velocity.x, rb.velocity.z).magnitude == 0) { standing = true; } else { standing = false; }
-        if (!grounded) { falling = true; standing = false; } else { falling = false; }
+        Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        if (Mathf.Abs(horizontalInput) > 0.01f || Mathf.Abs(verticalInput) > 0.01f || flatVel.magnitude > 0.1f) { standing = false; } else { standing = true;  }
+        if (!grounded) { falling = true; standing = false;} else { falling = false; }
         if (standing && sprinting) { resetSprint(); }
         if (!Input.GetKey(duckKey) && ducking) { resetDuck(); }
-        if(standing) { rb.drag = 1000f; }
 
         animator.SetBool("isWalking", !standing && grounded);
         animator.SetBool("isRunning", sprinting);

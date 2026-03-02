@@ -23,6 +23,7 @@ public class ProcedualGenerator : MonoBehaviour
     public float gain;
     public int octave;
     public float redistrobution;
+    public float biomeFrequency = 0.01f;
     
     GraphicsBuffer vertexBuffer;
     GraphicsBuffer normalBuffer;
@@ -38,10 +39,11 @@ public class ProcedualGenerator : MonoBehaviour
     
 
     
-    /*public void Init(int size)
+    public void Init(int size, int resolution)
     {
-        resolution = size + 1;
-    }*/
+        this.size = size;
+        this.resolution = resolution;
+    }
 
     void Start()
     {
@@ -178,9 +180,13 @@ public class ProcedualGenerator : MonoBehaviour
         meshCS.SetBuffer(kernel, "normals", normalBuffer);
         meshCS.SetBuffer(kernel, "colors", colorBuffer);
 
+
         meshCS.SetInt("resolution", resolution);
+        meshCS.SetInt("size", size);
+
         meshCS.SetFloat("xOffset", transform.position.x);
         meshCS.SetFloat("yOffset", transform.position.z);
+
         meshCS.SetFloat("amplitude", amplitude);
         meshCS.SetFloat("frequency", frequency);
         meshCS.SetFloat("lacunarity", lacunarity);
@@ -188,7 +194,8 @@ public class ProcedualGenerator : MonoBehaviour
         meshCS.SetInt("octaves", octave);
         meshCS.SetFloat("maxHeight", maxAmplitude);
         meshCS.SetFloat("redistrobution", redistrobution);
-        meshCS.SetInt("size", size);
+        
+        meshCS.SetFloat("biomeFrequency", biomeFrequency);
 
 
         meshCS.GetKernelThreadGroupSizes(kernel, out uint tgx, out uint tgy, out uint tgz);

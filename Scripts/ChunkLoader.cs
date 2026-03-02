@@ -17,9 +17,11 @@ public class ChunkLoader : MonoBehaviour
     [Range(2, 128)]
     public int viewDistanceInChunks = 2;
     public int chunkSize = 64;
+    public int chunkResolution = 64;
     [Range(0f,0.1f)]
     public float biomeScale;
     public Transform parentFolder;
+    public Transform lowResParentFolder;
 
 
     private Dictionary<Vector2Int, GameObject> loadedChunks = new Dictionary<Vector2Int, GameObject>();
@@ -50,35 +52,32 @@ public class ChunkLoader : MonoBehaviour
         {
             for(int z = -viewDistanceInChunks; z <= viewDistanceInChunks; z++)
             {
+                Vector2Int t = playerPosition + new Vector2Int(x,z);
+                double dist = Math.Sqrt(x*x + z*z);
 
-                if(Math.Sqrt(x*x + z*z) < viewDistanceInChunks)
+                if(dist < viewDistanceInChunks * 0.5f && !loadedChunks.ContainsKey(t))
                 {
-                    Vector2Int t = playerPosition + new Vector2Int(x,z);
-                
-                    if(!loadedChunks.ContainsKey(t))
-                    {
-                        if(!loadedLowResChunks.ContainsKey(t)) {
-                            generateLowResChunk(t);
-                        } else
-                        {
-                            generateChunk(t);
-                            loadedLowResChunks[t].SetActive(false);                        
-                        }
-                    }    
+                    generateChunk(t);
+                } else if(dist >= viewDistanceInChunks * 0.5f && dist <= viewDistanceInChunks && !loadedLowResChunks.ContainsKey(t))
+                {
+                    generateLowResChunk(t);
                 }
             }
         }
     }
+
     private void unloadChunks()
     {
         foreach(var chunk in loadedChunks)
         {
-            int tooFarX = Mathf.Abs(chunk.Key.x - playerPosition.x);
-            int tooFarZ = Mathf.Abs(chunk.Key.y - playerPosition.y);
+            int relx = Mathf.Abs(chunk.Key.x - playerPosition.x);
+            int relz = Mathf.Abs(chunk.Key.y - playerPosition.y);
+
+            double dist = Math.Sqrt(relx*relx + relz*relz);
 
             
 
-            if(Math.Sqrt(tooFarX*tooFarX + tooFarZ*tooFarZ) > viewDistanceInChunks * 0.5f)
+            if(dist >= viewDistanceInChunks * 0.5f)
             {
                 chunk.Value.SetActive(false);
                 keystoremove.Add(chunk.Key);
@@ -88,10 +87,12 @@ public class ChunkLoader : MonoBehaviour
 
         foreach(var chunk in loadedLowResChunks)
         {
-            int tooFarX = Mathf.Abs(chunk.Key.x - playerPosition.x);
-            int tooFarZ = Mathf.Abs(chunk.Key.y - playerPosition.y);
+            int relx = Mathf.Abs(chunk.Key.x - playerPosition.x);
+            int relz = Mathf.Abs(chunk.Key.y - playerPosition.y);
 
-            if(Math.Sqrt(tooFarX*tooFarX + tooFarZ*tooFarZ) > viewDistanceInChunks)
+            double dist = Math.Sqrt(relx*relx + relz*relz);
+
+            if(dist > viewDistanceInChunks || dist < viewDistanceInChunks * 0.5f)
             {
                 chunk.Value.SetActive(false);
                 lowreskeystoremove.Add(chunk.Key);
@@ -119,13 +120,11 @@ public class ChunkLoader : MonoBehaviour
         if(!allGeneratedChunks.ContainsKey(pos))
         {
             GameObject ter = Instantiate(terrainPrefab, new Vector3(pos.x * chunkSize , 0, pos.y * chunkSize), Quaternion.identity);
-            //ter.GetComponent<ProcedualGenerator>().Init(chunkSize);
+            ter.name = "Chunk_" + pos.x + "_" + pos.y;
+            ter.GetComponent<ProcedualGenerator>().Init(chunkSize, Mathf.FloorToInt(chunkResolution));
             loadedChunks.Add(pos, ter);
             allGeneratedChunks.Add(pos, ter);
             ter.transform.parent = parentFolder;
-
-
-
         } else
         {
             allGeneratedChunks[pos].SetActive(true);
@@ -139,15 +138,32 @@ public class ChunkLoader : MonoBehaviour
         if(!allGeneratedLowResChunks.ContainsKey(pos))
         {
             GameObject ter = Instantiate(terrainPrefab, new Vector3(pos.x * chunkSize , 0, pos.y * chunkSize), Quaternion.identity);
-            //ter.GetComponent<ProcedualGenerator>().Init(chunkSize);
+            ter.name = "LowResChunk_" + pos.x + "_" + pos.y;
+            ter.GetComponent<ProcedualGenerator>().Init(chunkSize, Mathf.FloorToInt(chunkResolution * 0.5f));
             loadedLowResChunks.Add(pos, ter);
             allGeneratedLowResChunks.Add(pos, ter);
-            ter.transform.parent = parentFolder;
+            ter.transform.parent = lowResParentFolder;
         } else
         {
             allGeneratedLowResChunks[pos].SetActive(true);
             loadedLowResChunks.Add(pos, allGeneratedLowResChunks[pos]);
         }
+    }
+
+    void regenerateTerrain()
+    {
+        loadedChunks.Clear();
+        foreach(var chunk in allGeneratedChunks)
+        {
+            Destroy(chunk.Value);
+        }
+        allGeneratedChunks.Clear();
+        loadedLowResChunks.Clear();
+        foreach(var chunk in allGeneratedLowResChunks)
+        {
+            Destroy(chunk.Value);
+        }
+        allGeneratedLowResChunks.Clear();
     }
 }
 

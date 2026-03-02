@@ -16,6 +16,8 @@ int octaves;
 float maxHeight;
 float redistrobution;
 
+float biomeFrequency;
+
 int resolution;
 float xOffset;
 float yOffset;
@@ -95,20 +97,21 @@ int3 colorassign(float height, float2 pos) {
 
     // Compute a secondary biome noise using a different seed/offset
     float2 biomeSeedOffset = float2(10000.0, 20000.0);
-    float biomeNoise = fbmcustom(pos + biomeSeedOffset, frequency, amplitude, lacunarity, gain, octaves);
+    float biomeNoise = fbmcustom(pos + biomeSeedOffset, biomeFrequency, amplitude, lacunarity, gain, 3);
 
     // Water handling
     if (e < 0.12)
     {
         if (e < 0.04) return biomeColors[0]; // deep ocean
         return biomeColors[1]; // shallow ocean
+    } else if(e < 0.14) {
+        return biomeColors[3]; // sandy shore
     }
 
-    // High elevations force snow
     if (e > 0.82) return biomeColors[15];
 
-    int biomeIndex = (int)floor(saturate(biomeNoise) * 20.0);
-    biomeIndex = clamp(biomeIndex, 0, 19);
+    int biomeIndex = (int)floor(saturate(biomeNoise) * 18.0);
+    biomeIndex = clamp(biomeIndex, 2, 19);
 
     return biomeColors[biomeIndex];
 }
