@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1455142024230961307}
   - component: {fileID: 586321859337264984}
   - component: {fileID: 798766916398224035}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: StandartTerrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60,11 +60,6 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -86,11 +81,9 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!64 &586321859337264984
 MeshCollider:
@@ -128,7 +121,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   terrainMaterial: {fileID: 2100000, guid: 6723acf9938ea524f8ec02ede0ccf9f7, type: 2}
   meshCS: {fileID: 7200000, guid: 05f693e5d2b46ff4d8f02cfd03162090, type: 3}
+  biomeCS: {fileID: 7200000, guid: e25e60a865f0b9d44bc6f0185587f77d, type: 3}
+  treePrefab: {fileID: 1721751087481009348, guid: 328022ac2fd620a4c9586d46d120008c,
+    type: 3}
   resolution: 9
+  textureres: 64
   size: 32
   amplitude: 1
   maxAmplitude: 600
@@ -138,4 +135,3 @@ MonoBehaviour:
   octave: 5
   redistrobution: 3
   biomeFrequency: 0.0001
-  seed: 1

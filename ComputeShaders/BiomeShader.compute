@@ -1,0 +1,107 @@
+#pragma kernel BiomeCSMain
+
+#include "Assets/ComputeShaders/noiseSimplex.cginc"
+
+RWStructuredBuffer<int3> colors;
+RWStructuredBuffer<float3> trees;
+
+StructuredBuffer<float> heights;
+
+float biomeFrequency;
+
+int textureresolution;
+int terrainresolution;
+float maxAmp;
+
+float xOffset;
+float yOffset;
+
+int seed;
+
+float sampling(float fx, float fy) {
+
+    // Bilinear sample from nearest 4 height texels to avoid blockiness
+    int ix = (int)floor(fx);
+    int iy = (int)floor(fy);
+    float tx = fx - ix;
+    float ty = fy - iy;
+
+    int ix0 = clamp(ix, 0, terrainresolution - 1);
+    int iy0 = clamp(iy, 0, terrainresolution - 1);
+    int ix1 = clamp(ix + 1, 0, terrainresolution - 1);
+    int iy1 = clamp(iy + 1, 0, terrainresolution - 1);
+
+    float h00 = heights[ix0 + iy0 * terrainresolution];
+    float h10 = heights[ix1 + iy0 * terrainresolution];
+    float h01 = heights[ix0 + iy1 * terrainresolution];
+    float h11 = heights[ix1 + iy1 * terrainresolution];
+
+    float hx0 = lerp(h00, h10, tx);
+    float hx1 = lerp(h01, h11, tx);
+
+    return lerp(hx0, hx1, ty) / maxAmp;
+}
+
+void treeassign(float2 pos, float height, int idx) {
+    if (height > 0.3 && height < 0.6)
+    {
+        trees[idx] = float3(pos.x, height * maxAmp, pos.y); // Tree present
+    }
+    else
+    {
+        trees[idx] = float3(0, 0, 0); // No tree
+    }
+
+}
+
+
+int3 colorassign(int x, int y, int idx) {
+
+    // Map texture pixel (x,y) into continuous terrain sample coords
+    float sizing = (float)(terrainresolution - 1) / (float)max(1, (textureresolution - 1));
+    float fx = x * sizing;
+    float fy = y * sizing;
+
+    float height = sampling(fx,fy);
+
+    // Use continuous terrain coords for noise so texture varies smoothly
+    float2 pos = float2(xOffset, yOffset) + float2(fx, fy) * biomeFrequency;
+
+    treeassign(pos, height, idx);
+    // Combine height + noise for biome decision
+    if (height < 0.2)
+    {
+        return int3(0, 128, 255); // Water
+    }
+    else if (height < 0.25)
+    {
+        return int3(194, 178, 128); // Beach
+    }
+    else if (height < 0.5)
+    {
+        return int3(34, 139, 34); // Dense vegetation
+    }
+    else if (height < 0.6)
+    {
+        return int3(107, 142, 35); // Grass
+    }
+    else
+    {
+        return int3(139, 137, 137); // Rock/snow
+    }
+}
+
+
+
+
+[numthreads(16,16,1)]
+void BiomeCSMain (uint3 id : SV_DispatchThreadID)
+{
+    uint x = id.x;
+    uint y = id.y;
+    if (x >= textureresolution || y >= textureresolution) return;
+
+    uint idx = x + y * textureresolution;
+
+    colors[idx] = colorassign(id.x, id.y, idx);
+}    

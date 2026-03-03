@@ -10,6 +10,6 @@ public class ModelRotation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.rotation = Rotation.rotation;
+        transform.rotation = Quaternion.Euler(0, Rotation.rotation.eulerAngles.y, 0);
     }
 }

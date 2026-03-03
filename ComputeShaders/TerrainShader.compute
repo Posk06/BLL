@@ -7,6 +7,7 @@
 RWStructuredBuffer<float3> vertices;
 RWStructuredBuffer<float3> normals;
 RWStructuredBuffer<int3> colors;
+RWTexture2D<float> heightsTex;
 
 float frequency;
 float amplitude;
@@ -54,8 +55,7 @@ float fbmcustom(float2 pos, float freq, float amp, float lac, float ga, int oct)
             freq *= lac;  // usually 2.0
             amp *= ga;    // usually 0.5
         }
-
-    return pow(v / ampsum, redistrobution);
+    return pow(abs(v / ampsum), redistrobution);
 }
 
 float ridgedNoise(float2 pos, float freq, float amp, float lac, float ga, int oct) {
@@ -147,7 +147,6 @@ void TerrainCSMain (uint3 id : SV_DispatchThreadID)
     float height = fbmcustom(noisepos, frequency, amplitude, lacunarity, gain, octaves) * maxHeight;
     //float height = (fbmcustom(noisepos, frequency, amplitude, lacunarity, gain, octaves) + ridgedNoise(noisepos, frequency, amplitude, lacunarity, gain, octaves)) * maxHeight;
 
-    colors[idx] = colorassign(height, noisepos);
     vertices[idx] = float3(x * sizingFactor, height, y * sizingFactor);
     normals[idx] = float3(0,1,0);
 }    
