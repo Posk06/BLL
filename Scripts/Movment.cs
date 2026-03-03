@@ -49,8 +49,8 @@ public class Movment : MonoBehaviour
         myInput();
         speedControl();
 
-        if (grounded) { rb.drag = groundDrag; } else { rb.drag = 0f; }
-        Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        if (grounded) { rb.linearDamping = groundDrag; } else { rb.linearDamping = 0f; }
+        Vector3 flatVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         if (Mathf.Abs(horizontalInput) > 0.01f || Mathf.Abs(verticalInput) > 0.01f || flatVel.magnitude > 0.1f) { standing = false; } else { standing = true;  }
         if (!grounded) { falling = true; standing = false;} else { falling = false; }
         if (standing && sprinting) { resetSprint(); }
@@ -106,7 +106,7 @@ public class Movment : MonoBehaviour
 
     private void movePlayer()
     {
-        rb.drag = groundDrag;
+        rb.linearDamping = groundDrag;
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
         if (grounded)
@@ -121,18 +121,18 @@ public class Movment : MonoBehaviour
 
     private void speedControl()
     {
-        Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        Vector3 flatVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
 
         if (flatVel.magnitude > moveSpeed)
         {
             Vector3 limitedVel = flatVel.normalized * moveSpeed;
-            rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
+            rb.linearVelocity = new Vector3(limitedVel.x, rb.linearVelocity.y, limitedVel.z);
         }
     }
 
     private void jump()
     {
-        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
 
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }

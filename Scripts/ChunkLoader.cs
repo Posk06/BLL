@@ -23,6 +23,7 @@ public class ChunkLoader : MonoBehaviour
     public Transform parentFolder;
     public Transform lowResParentFolder;
 
+    public int seed = 0;
 
     private Dictionary<Vector2Int, GameObject> loadedChunks = new Dictionary<Vector2Int, GameObject>();
     private Dictionary<Vector2Int, GameObject> allGeneratedChunks = new Dictionary<Vector2Int, GameObject>();
@@ -38,6 +39,9 @@ public class ChunkLoader : MonoBehaviour
     void Start()
     {
         playerPosition = new Vector2Int(Mathf.FloorToInt(player.position.x / chunkSize), Mathf.FloorToInt(player.position.z / chunkSize));
+
+        System.Random rand = new System.Random(seed);
+        seed = rand.Next();
     }
     void Update()
     {
@@ -121,7 +125,7 @@ public class ChunkLoader : MonoBehaviour
         {
             GameObject ter = Instantiate(terrainPrefab, new Vector3(pos.x * chunkSize , 0, pos.y * chunkSize), Quaternion.identity);
             ter.name = "Chunk_" + pos.x + "_" + pos.y;
-            ter.GetComponent<ProcedualGenerator>().Init(chunkSize, Mathf.FloorToInt(chunkResolution));
+            ter.GetComponent<ProcedualGenerator>().Init(chunkSize, Mathf.FloorToInt(chunkResolution), seed);
             loadedChunks.Add(pos, ter);
             allGeneratedChunks.Add(pos, ter);
             ter.transform.parent = parentFolder;
@@ -139,7 +143,7 @@ public class ChunkLoader : MonoBehaviour
         {
             GameObject ter = Instantiate(terrainPrefab, new Vector3(pos.x * chunkSize , 0, pos.y * chunkSize), Quaternion.identity);
             ter.name = "LowResChunk_" + pos.x + "_" + pos.y;
-            ter.GetComponent<ProcedualGenerator>().Init(chunkSize, Mathf.FloorToInt(chunkResolution * 0.5f));
+            ter.GetComponent<ProcedualGenerator>().Init(chunkSize, Mathf.FloorToInt(chunkResolution * 0.5f), seed);
             loadedLowResChunks.Add(pos, ter);
             allGeneratedLowResChunks.Add(pos, ter);
             ter.transform.parent = lowResParentFolder;

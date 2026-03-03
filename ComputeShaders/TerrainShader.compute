@@ -23,8 +23,22 @@ float xOffset;
 float yOffset;
 int size;
 
+int seed;
 
-float2 noisePos(float2 pos, float freq) { return float2(pos.x * freq, pos.y * freq); }
+
+// Generate a pseudo-random 2D offset from an integer seed.
+float2 getSeedOffset()
+{
+    // Convert seed to a deterministic but varied 2D offset.
+    // Uses sin/hash trick to produce repeatable pseudo-random values in [0,1).
+    float s = (float)seed;
+    float2 v = sin(float2(s * 12.9898, s * 78.233)) * 43758.5453;
+    float2 r = frac(v);
+    // Scale up so offsets meaningfully move noise sample positions.
+    return r * 10000.0;
+}
+
+float2 noisePos(float2 pos, float freq) { float2 off = getSeedOffset(); return float2(pos.x * freq + off.x, pos.y * freq + off.y); }
 
 float fbmcustom(float2 pos, float freq, float amp, float lac, float ga, int oct) {
 
@@ -96,7 +110,8 @@ int3 colorassign(float height, float2 pos) {
     float e = saturate(height / maxHeight);
 
     // Compute a secondary biome noise using a different seed/offset
-    float2 biomeSeedOffset = float2(10000.0, 20000.0);
+    // Add seeded offset to biome noise so different seeds produce different biomes
+    float2 biomeSeedOffset = float2(10000.0,20000.0) + getSeedOffset();
     float biomeNoise = fbmcustom(pos + biomeSeedOffset, biomeFrequency, amplitude, lacunarity, gain, 3);
 
     // Water handling
@@ -128,7 +143,7 @@ void TerrainCSMain (uint3 id : SV_DispatchThreadID)
 
     float sizingFactor = (float)size / ((float)resolution - 1.0f);
 
-    float2 noisepos = float2(x * sizingFactor, y * sizingFactor) + float2(xOffset, yOffset);
+    float2 noisepos = float2(x * sizingFactor, y * sizingFactor) + float2(xOffset, yOffset)+ getSeedOffset();
     float height = fbmcustom(noisepos, frequency, amplitude, lacunarity, gain, octaves) * maxHeight;
     //float height = (fbmcustom(noisepos, frequency, amplitude, lacunarity, gain, octaves) + ridgedNoise(noisepos, frequency, amplitude, lacunarity, gain, octaves)) * maxHeight;
 

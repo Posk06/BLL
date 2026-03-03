@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
@@ -13,6 +14,7 @@ public class ProcedualGenerator : MonoBehaviour
     int pendingReadbacks = 3;
 
     public int resolution = 0;
+    public int textureres = 0;
     public int size = 16;
 
     [Header("Terrain Generation")]
@@ -24,6 +26,7 @@ public class ProcedualGenerator : MonoBehaviour
     public int octave;
     public float redistrobution;
     public float biomeFrequency = 0.01f;
+    int seed = 0;
     
     GraphicsBuffer vertexBuffer;
     GraphicsBuffer normalBuffer;
@@ -36,21 +39,22 @@ public class ProcedualGenerator : MonoBehaviour
     int[] indices;
 
     private Texture2D biomeMap;
-    
+
+
 
     
-    public void Init(int size, int resolution)
+    public void Init(int size, int resolution,int seed)
     {
         this.size = size;
         this.resolution = resolution;
+        this.seed = seed;
     }
 
     void Start()
-    {
-        
+    {   
         biomeMap = new Texture2D(resolution, resolution, TextureFormat.RGBA32, false);
         GetComponent<Renderer>().material.SetTexture("_BaseMap", biomeMap);
-        GetComponent<Renderer>().material.SetTexture("_MainMap", biomeMap);
+        GetComponent<Renderer>().material.SetTexture("_MainTex", biomeMap);
 
         generateTerrain();
 
@@ -180,6 +184,7 @@ public class ProcedualGenerator : MonoBehaviour
         meshCS.SetBuffer(kernel, "normals", normalBuffer);
         meshCS.SetBuffer(kernel, "colors", colorBuffer);
 
+        meshCS.SetInt("seed", seed);
 
         meshCS.SetInt("resolution", resolution);
         meshCS.SetInt("size", size);
