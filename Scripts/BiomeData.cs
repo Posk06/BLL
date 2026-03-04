@@ -12,27 +12,21 @@ public class Biome
 {
     public string name;
     public int id;
-    public biomeTemps temperature;
+    public biomeElevations elevation;
     public biomeMoistures moisture;
     public continentaless continentaless;
-    public float frequency;
-    public float amplitude;
-    public float lacunarity;
-    public float gain;
-    public int octaves;
-    public Texture2D groundTexture;
-    //
+    public Color color;
 }
 
-public enum biomeTemps
+public enum biomeElevations
 {
-    LOW, MID, HIGH
+    NONE, LOW, MID, HIGH
 }
 public enum biomeMoistures
 {
-    LOW, MID, HIGH
+    NONE, LOW, MID, HIGH
 }
 public enum continentaless
 {
-    LOW, MID, HIGH
+    NONE, LOW, MID, HIGH
 }

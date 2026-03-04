@@ -22,15 +22,10 @@ public class BiomeDataEditor : Editor
             SerializedProperty element = reorderableList.serializedProperty.GetArrayElementAtIndex(index);
             SerializedProperty nameProp = element.FindPropertyRelative("name");
             SerializedProperty idProp = element.FindPropertyRelative("id");
-            SerializedProperty tempProp = element.FindPropertyRelative("temperature");
+            SerializedProperty elProp = element.FindPropertyRelative("elevation");
             SerializedProperty moistProp = element.FindPropertyRelative("moisture");
-            SerializedProperty freqProp = element.FindPropertyRelative("frequency");
-            SerializedProperty ampProp = element.FindPropertyRelative("amplitude");
-            SerializedProperty lacProp = element.FindPropertyRelative("lacunarity");
-            SerializedProperty gainProp = element.FindPropertyRelative("gain");
-            SerializedProperty octProp = element.FindPropertyRelative("octaves");
-            SerializedProperty texProp = element.FindPropertyRelative("groundTexture");
             SerializedProperty contProp = element.FindPropertyRelative("continentaless");
+            SerializedProperty colorProp = element.FindPropertyRelative("color");
 
             rect.y += 2;
             float lineHeight = EditorGUIUtility.singleLineHeight;
@@ -44,8 +39,8 @@ public class BiomeDataEditor : Editor
             EditorGUI.PropertyField(rect, idProp);
             rect.y += lineHeight + 2;
 
-            // Temperature
-            EditorGUI.PropertyField(rect, tempProp);
+            // Elevation
+            EditorGUI.PropertyField(rect, elProp);
             rect.y += lineHeight + 2;
 
             // Moisture
@@ -56,41 +51,13 @@ public class BiomeDataEditor : Editor
             EditorGUI.PropertyField(rect, contProp);
             rect.y += lineHeight + 2;
 
-            // Frequency
-            EditorGUI.PropertyField(rect, freqProp);
+            EditorGUI.PropertyField(rect, colorProp);
             rect.y += lineHeight + 2;
-
-            // Amplitude
-            EditorGUI.PropertyField(rect, ampProp);
-            rect.y += lineHeight + 2;
-
-            // Lacunarity
-            EditorGUI.PropertyField(rect, lacProp);
-            rect.y += lineHeight + 2;
-
-            // Gain
-            EditorGUI.PropertyField(rect, gainProp);
-            rect.y += lineHeight + 2;
-
-            // Octaves
-            EditorGUI.PropertyField(rect, octProp);
-            rect.y += lineHeight + 2;
-
-            // Ground Texture
-            EditorGUI.PropertyField(rect, texProp);
-            rect.y += lineHeight + 2;
-
-            // Per-element button (right-aligned)
-            Rect buttonRect = new Rect(rect.x + rect.width - 120, rect.y, 120, lineHeight);
-            if (GUI.Button(buttonRect, "Generate " + nameProp.stringValue))
-            {
-                Debug.Log("Generate " + nameProp.stringValue);
-            }
         };
 
         reorderableList.elementHeightCallback = (int index) =>
         {
-            return 12 * (EditorGUIUtility.singleLineHeight + 2) + 4;
+            return 6 * (EditorGUIUtility.singleLineHeight + 2) + 4;
         };
 
         reorderableList.onAddCallback = (ReorderableList list) =>
@@ -101,14 +68,10 @@ public class BiomeDataEditor : Editor
             SerializedProperty element = list.serializedProperty.GetArrayElementAtIndex(index);
             element.FindPropertyRelative("name").stringValue = "New Biome";
             element.FindPropertyRelative("id").intValue = index;
-            element.FindPropertyRelative("temperature").enumValueIndex = 0;
+            element.FindPropertyRelative("elevation").enumValueIndex = 0;
             element.FindPropertyRelative("moisture").enumValueIndex = 0;
             element.FindPropertyRelative("continentaless").enumValueIndex = 0;
-            element.FindPropertyRelative("frequency").floatValue = 0.01f;
-            element.FindPropertyRelative("amplitude").floatValue = 1f;
-            element.FindPropertyRelative("lacunarity").floatValue = 2f;
-            element.FindPropertyRelative("gain").floatValue = 0.5f;
-            element.FindPropertyRelative("octaves").intValue = 4;
+            element.FindPropertyRelative("color").colorValue = new Color(0,0,0);
         };
     }
 

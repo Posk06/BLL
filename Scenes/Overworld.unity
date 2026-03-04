@@ -508,7 +508,8 @@ MonoBehaviour:
     type: 3}
   viewDistanceInChunks: 48
   chunkSize: 16
-  chunkResolution: 16
+  chunkResolution: 32
+  textureResolution: 64
   biomeScale: 0.1
   parentFolder: {fileID: 1914441924}
   lowResParentFolder: {fileID: 1740191806}

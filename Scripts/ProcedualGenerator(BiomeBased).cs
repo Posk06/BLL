@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using System.Data;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -493,4 +493,4 @@ public class ProcedualGenerator_BiomeBased : MonoBehaviour
         terrainMaterial.SetTexture("_TexArray", textureArray);
         
     }
-}
+}*/

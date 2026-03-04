@@ -7,7 +7,13 @@ RWStructuredBuffer<float3> trees;
 
 StructuredBuffer<float> heights;
 
+StructuredBuffer<int> elevations;
+StructuredBuffer<int> moistures;
+StructuredBuffer<int> continentalnesses;
+StructuredBuffer<int3> biomecolors;
+
 float biomeFrequency;
+int biomeCount;
 
 int textureresolution;
 int terrainresolution;
@@ -45,7 +51,7 @@ float sampling(float fx, float fy) {
 void treeassign(float2 pos, float height, int idx) {
     if (height > 0.3 && height < 0.6)
     {
-        trees[idx] = float3(pos.x, height * maxAmp, pos.y); // Tree present
+        trees[idx] = float3(0, 0, 0); // Tree present
     }
     else
     {
@@ -57,40 +63,89 @@ void treeassign(float2 pos, float height, int idx) {
 
 int3 colorassign(int x, int y, int idx) {
 
+    int tempelev;
+    int tempmoist;
+    int tempcont;
+
+
     // Map texture pixel (x,y) into continuous terrain sample coords
     float sizing = (float)(terrainresolution - 1) / (float)max(1, (textureresolution - 1));
     float fx = x * sizing;
     float fy = y * sizing;
 
     float height = sampling(fx,fy);
+    float moist = snoise(float2(fx * biomeFrequency, fy * biomeFrequency));
+    float cont = 0;
 
     // Use continuous terrain coords for noise so texture varies smoothly
     float2 pos = float2(xOffset, yOffset) + float2(fx, fy) * biomeFrequency;
 
     treeassign(pos, height, idx);
     // Combine height + noise for biome decision
-    if (height < 0.2)
-    {
-        return int3(0, 128, 255); // Water
+    
+    if(height == 0) {
+        tempelev = 0; // NONE
+    } else if(height < 0.2) {
+        tempelev = 1; // LOW
+    } else if(height < 0.5) {
+        tempelev = 2; // MID
+    } else {
+        tempelev = 3; // HIGH
     }
-    else if (height < 0.25)
-    {
-        return int3(194, 178, 128); // Beach
-    }
-    else if (height < 0.5)
-    {
-        return int3(34, 139, 34); // Dense vegetation
-    }
-    else if (height < 0.6)
-    {
-        return int3(107, 142, 35); // Grass
-    }
-    else
-    {
-        return int3(139, 137, 137); // Rock/snow
-    }
-}
 
+    if(moist == 0) {
+        tempmoist = 0; // NONE
+    } else if(moist < 0.2) {
+        tempmoist = 1; // LOW
+    } else if(moist < 0.5) {
+        tempmoist = 2; // MID
+    } else {
+        tempmoist = 3;  // HIGH
+    }
+
+    if(cont == 0) {
+        tempcont = 0; // NONE
+    } else if(cont < 0.2) {
+        tempcont = 1; // LOW
+    } else if(cont < 0.5) {
+        tempcont = 2; // MID
+    } else {
+        tempcont = 3; // HIGH
+    }
+
+    trees[idx] = float3(0,0,0);
+    
+    
+    int biomeIndex = -1;
+
+    for(int i = 0; i < biomeCount; i++) {
+        if(tempelev == elevations[i] && tempmoist == moistures[i] && tempcont == continentalnesses[i]) {
+            biomeIndex = i;
+        }    
+    }
+
+    if(biomeIndex == -1) {
+        for(int i = 0; i < biomeCount; i++) {
+            if(tempelev == elevations[i] && tempmoist == moistures[i]) {
+                biomeIndex = i;
+            }    
+        }    
+    }
+
+    if(biomeIndex == -1) {
+        for(int i = 0; i < biomeCount; i++) {
+            if(tempelev == elevations[i]) {
+                biomeIndex = i;
+            }
+        }  
+    }
+
+    if(biomeIndex == -1) {
+        return int3(0,255,0);
+    }
+
+    return biomecolors[biomeIndex];
+}
 
 
 

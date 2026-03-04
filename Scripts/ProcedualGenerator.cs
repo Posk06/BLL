@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -9,6 +12,7 @@ using UnityEngine.UI;
 public class ProcedualGenerator : MonoBehaviour
 {
     public Material terrainMaterial;
+    public BiomeData biomeData;
 
     public ComputeShader meshCS;
     public ComputeShader biomeCS;
@@ -35,7 +39,16 @@ public class ProcedualGenerator : MonoBehaviour
     GraphicsBuffer normalBuffer;
     GraphicsBuffer colorBuffer;
     GraphicsBuffer treeBuffer;
+
     ComputeBuffer heightBuffer;
+    ComputeBuffer elevationBuffer;
+    int[] elev;
+    int[] moist;
+    int[] cont;
+    Vector3Int[] col;
+    ComputeBuffer moistBuffer;
+    ComputeBuffer contBuffer;
+    ComputeBuffer biomecolorBuffer;
     Mesh mesh;
     Vector3[] verts;
     Vector3[] normals;
@@ -49,11 +62,12 @@ public class ProcedualGenerator : MonoBehaviour
 
 
     
-    public void Init(int size, int resolution,int seed)
+    public void Init(int size, int resolution,int seed, int textureres)
     {
         this.size = size;
         this.resolution = resolution;
         this.seed = seed;
+        this.textureres = textureres;
     }
 
     void Start()
@@ -61,6 +75,8 @@ public class ProcedualGenerator : MonoBehaviour
         biomeMap = new Texture2D(textureres, textureres, TextureFormat.RGBA32, false);
         GetComponent<Renderer>().material.SetTexture("_BaseMap", biomeMap);
         GetComponent<Renderer>().material.SetTexture("_MainTex", biomeMap);
+
+        populateArrays();
 
         generateTerrain();
 
@@ -294,6 +310,7 @@ public class ProcedualGenerator : MonoBehaviour
         biomeCS.SetFloat("maxAmp", maxAmplitude);
 
         biomeCS.SetFloat("biomeFrequency", biomeFrequency);
+        biomeCS.SetInt("biomeCount", biomeData.biomes.Count);
 
         biomeCS.SetInt("seed", seed);
 
@@ -305,6 +322,11 @@ public class ProcedualGenerator : MonoBehaviour
         }
         heightBuffer.SetData(heights);
         biomeCS.SetBuffer(kernel, "heights", heightBuffer);
+
+        computeBuffer(sizeof(int), elev, biomeData.biomes.Count, biomeCS, kernel, "elevations");
+        computeBuffer(sizeof(int), moist, biomeData.biomes.Count, biomeCS, kernel, "moistures");
+        computeBuffer(sizeof(int), cont, biomeData.biomes.Count, biomeCS, kernel, "continentalnesses");
+        computeBuffer(sizeof(int) * 3, col, biomeData.biomes.Count, biomeCS, kernel, "biomecolors");
 
         biomeCS.GetKernelThreadGroupSizes(kernel, out uint tgx, out uint tgy, out uint tgz);
         int groupsX = Mathf.CeilToInt((float)textureres / tgx);
@@ -359,4 +381,27 @@ public class ProcedualGenerator : MonoBehaviour
             }
         }
     }
-}
+    private void computeBuffer(int typesize, Array a, int size, ComputeShader CS, int kernel, string name)
+    {
+        ComputeBuffer buffer = new ComputeBuffer(size, typesize);
+        buffer.SetData(a);
+        CS.SetBuffer(kernel, name, buffer);
+    }
+    private void populateArrays()
+    {   
+        int length = biomeData.biomes.Count;
+
+        elev = new int[length];
+        moist = new int[length];
+        cont = new int[length];
+        col = new Vector3Int[length];
+
+        for(int i = 0; i < length; i++)
+        {
+            elev[i] = (int) biomeData.biomes[i].elevation;
+            moist[i] = (int) biomeData.biomes[i].moisture;
+            cont[i] = (int) biomeData.biomes[i].continentaless;
+            col[i] = new Vector3Int(Mathf.FloorToInt(biomeData.biomes[i].color.r * 255), Mathf.FloorToInt(biomeData.biomes[i].color.g * 255),Mathf.FloorToInt(biomeData.biomes[i].color.b * 255));
+        }
+    }
+}    

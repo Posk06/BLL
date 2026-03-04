@@ -18,6 +18,7 @@ public class ChunkLoader : MonoBehaviour
     public int viewDistanceInChunks = 2;
     public int chunkSize = 64;
     public int chunkResolution = 64;
+    public int textureResolution = 64;
     [Range(0f,0.1f)]
     public float biomeScale;
     public Transform parentFolder;
@@ -125,7 +126,7 @@ public class ChunkLoader : MonoBehaviour
         {
             GameObject ter = Instantiate(terrainPrefab, new Vector3(pos.x * chunkSize , 0, pos.y * chunkSize), Quaternion.identity);
             ter.name = "Chunk_" + pos.x + "_" + pos.y;
-            ter.GetComponent<ProcedualGenerator>().Init(chunkSize, Mathf.FloorToInt(chunkResolution), seed);
+            ter.GetComponent<ProcedualGenerator>().Init(chunkSize, Mathf.FloorToInt(chunkResolution), seed, textureResolution);
             loadedChunks.Add(pos, ter);
             allGeneratedChunks.Add(pos, ter);
             ter.transform.parent = parentFolder;
@@ -143,7 +144,7 @@ public class ChunkLoader : MonoBehaviour
         {
             GameObject ter = Instantiate(terrainPrefab, new Vector3(pos.x * chunkSize , 0, pos.y * chunkSize), Quaternion.identity);
             ter.name = "LowResChunk_" + pos.x + "_" + pos.y;
-            ter.GetComponent<ProcedualGenerator>().Init(chunkSize, Mathf.FloorToInt(chunkResolution * 0.5f), seed);
+            ter.GetComponent<ProcedualGenerator>().Init(chunkSize, Mathf.FloorToInt(chunkResolution * 0.5f), seed, Mathf.FloorToInt(textureResolution * 0.5f));
             loadedLowResChunks.Add(pos, ter);
             allGeneratedLowResChunks.Add(pos, ter);
             ter.transform.parent = lowResParentFolder;
