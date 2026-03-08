@@ -1,13 +1,8 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using Unity.Mathematics;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
-using UnityEngine.UI;
+
 
 public class ProcedualGenerator : MonoBehaviour
 {
@@ -23,6 +18,7 @@ public class ProcedualGenerator : MonoBehaviour
     public int resolution = 0;
     public int textureres = 0;
     public int size = 16;
+    public bool bakeCollider = false;
 
     [Header("Terrain Generation")]
     public float amplitude;
@@ -41,14 +37,10 @@ public class ProcedualGenerator : MonoBehaviour
     GraphicsBuffer treeBuffer;
 
     ComputeBuffer heightBuffer;
-    ComputeBuffer elevationBuffer;
     int[] elev;
     int[] moist;
     int[] cont;
     Vector3Int[] col;
-    ComputeBuffer moistBuffer;
-    ComputeBuffer contBuffer;
-    ComputeBuffer biomecolorBuffer;
     Mesh mesh;
     Vector3[] verts;
     Vector3[] normals;
@@ -68,6 +60,42 @@ public class ProcedualGenerator : MonoBehaviour
         this.resolution = resolution;
         this.seed = seed;
         this.textureres = textureres;
+        // Instantiate compute shader instances per generator to avoid global parameter races
+        if (meshCS != null)
+        {
+            meshCS = Instantiate(meshCS);
+        }
+        if (biomeCS != null)
+        {
+            biomeCS = Instantiate(biomeCS);
+        }
+    }
+    private void populateTrees()
+    {
+        // Spawn trees over multiple frames to avoid frame hitching
+        if (gameObject != null && gameObject.activeInHierarchy)
+        {
+            StartCoroutine(SpawnTrees());
+        }
+    }
+
+    private IEnumerator SpawnTrees()
+    {
+        if (trees == null || treePrefab == null) yield break;
+        int batchSize = 20; // number of trees to instantiate per frame (reduced)
+        int count = trees.Length;
+        for (int i = 0; i < count; i++)
+        {
+            Vector3 tree = trees[i];
+            if (tree.y > 0)
+            {
+                Instantiate(treePrefab, new Vector3(tree.x, tree.y, tree.z), Quaternion.identity);
+            }
+            if (i % batchSize == 0) // yield occasionally to spread workload
+            {
+                yield return null;
+            }
+        }
     }
 
     void Start()
@@ -95,8 +123,6 @@ public class ProcedualGenerator : MonoBehaviour
 
         CreateShape();
     }
-
-
     private void CreateShape()
     {
         Debug.Log("Creating shape with resolution: " + resolution);
@@ -138,39 +164,6 @@ public class ProcedualGenerator : MonoBehaviour
                 uv[x + y * resolution] = new Vector2((float)x / (resolution - 1), (float)y / (resolution - 1));
             }
         }
-    }
-    
-    private void FinalizeMesh()
-    {
-        Debug.Log("Finalizing mesh on main thread");
-        if (mesh == null) mesh = new Mesh();
-        mesh.indexFormat = (verts.Length > 65000) ? IndexFormat.UInt32 : IndexFormat.UInt16;
-        mesh.Clear();
-
-        mesh.vertices = verts;
-        mesh.normals = normals;
-        mesh.triangles = indices;
-
-        uv = new Vector2[verts.Length];
-        for (int y = 0; y < resolution; y++) {
-            for (int x = 0; x < resolution; x++)
-            {
-                uv[x + y * resolution] = new Vector2((float)x / (resolution - 1), (float)y / (resolution - 1));
-            }
-        }
-
-        mesh.uv = uv;
-
-        mesh.RecalculateBounds();
-
-        GetComponent<MeshFilter>().mesh = mesh;
-
-        MeshCollider mc = GetComponent<MeshCollider>();
-        if (mc == null)
-            mc = gameObject.AddComponent<MeshCollider>();
-
-        mc.convex = false;
-        mc.sharedMesh = mesh;
     }
 
     void OnDestroy()
@@ -228,8 +221,8 @@ public class ProcedualGenerator : MonoBehaviour
 
     private void doReadbacks()
     {
-        // ensure pending readbacks is reset each generation (vertex + normal)
-        pendingReadbacks = 2;
+        // Chain readbacks to avoid launching both at once (reduces stalls)
+        pendingReadbacks = 1; // we'll call ReadbackDone() once after normals are received
         AsyncGPUReadback.Request(vertexBuffer, (AsyncGPUReadbackRequest req) =>
         {
             if (req.hasError)
@@ -241,23 +234,22 @@ public class ProcedualGenerator : MonoBehaviour
                 var data = req.GetData<Vector3>();
                 data.CopyTo(verts);
             }
-            ReadbackDone();
             Debug.Log("Vertex readback completed");
-        });
-
-        AsyncGPUReadback.Request(normalBuffer, (AsyncGPUReadbackRequest req) =>
-        {
-            if (req.hasError)
+            // Now request normals — do this on the callback thread to stagger GPU/CPU work
+            AsyncGPUReadback.Request(normalBuffer, (AsyncGPUReadbackRequest req2) =>
             {
-                Debug.LogError("AsyncGPUReadback error for normals");
-            }
-            else
-            {
-                var data = req.GetData<Vector3>();
-                data.CopyTo(normals);
-            }
-            ReadbackDone();
-            Debug.Log("Normal readback completed");
+                if (req2.hasError)
+                {
+                    Debug.LogError("AsyncGPUReadback error for normals");
+                }
+                else
+                {
+                    var data2 = req2.GetData<Vector3>();
+                    data2.CopyTo(normals);
+                }
+                Debug.Log("Normal readback completed");
+                ReadbackDone();
+            });
         });
     }
 
@@ -266,27 +258,42 @@ public class ProcedualGenerator : MonoBehaviour
         pendingReadbacks--;
         if (pendingReadbacks == 0)
         {
-            // All data received, finalize mesh on main thread
-            FinalizeMesh();
+            // All data received, finalize mesh on main thread spread over multiple frames
+            StartCoroutine(FinalizeMeshCoroutine());
             // Now that verts are populated, generate the biome texture
-            generateTexture();
+            StartCoroutine(GenerateTextureCoroutine());
         }
         Debug.Log("Readback completed, pending readbacks: " + pendingReadbacks);
     }
 
     private void texture()
     { 
+        if (biomeMap == null) return;
+        // Use a single SetPixels32 call with a preallocated array to reduce overhead
+        Color32[] pixels = new Color32[textureres * textureres];
         for (int y = 0; y < textureres; y++)
         {
             for (int x = 0; x < textureres; x++)
             {
-                biomeMap.SetPixel(x, y, new Color32((byte)color[x + y * textureres].x, (byte)color[x + y * textureres].y, (byte)color[x + y * textureres].z, 255));
+                var c = color[x + y * textureres];
+                pixels[x + y * textureres] = new Color32((byte)c.x, (byte)c.y, (byte)c.z, 255);
             }
         }
+        biomeMap.SetPixels32(pixels);
         biomeMap.filterMode = FilterMode.Bilinear;
         biomeMap.wrapMode = TextureWrapMode.Clamp;
-        biomeMap.Apply();
+        biomeMap.Apply(false);
     }
+
+    private IEnumerator GenerateTextureCoroutine()
+    {
+        // Fill texture data on a background of frames (SetPixels32 + Apply already scheduled)
+        generateTexture();
+        texture();
+        // yield one frame to allow Apply to complete without blocking other tasks
+        yield return null;
+    }
+    
     private void generateTexture()
     {
         int size = textureres * textureres;
@@ -333,6 +340,7 @@ public class ProcedualGenerator : MonoBehaviour
         int groupsY = Mathf.CeilToInt((float)textureres / tgy);
         biomeCS.Dispatch(kernel, groupsX, groupsY, 1);
 
+        // Request color first, then request trees after colors are applied — chains readbacks
         AsyncGPUReadback.Request(colorBuffer, (AsyncGPUReadbackRequest req) =>
         {
             if (req.hasError)
@@ -343,50 +351,84 @@ public class ProcedualGenerator : MonoBehaviour
             {
                 var data = req.GetData<Vector3Int>();
                 data.CopyTo(color);
-                // we no longer need the CPU-side height buffer
-                if (heightBuffer != null) { heightBuffer.Release(); heightBuffer = null; }
                 // Apply the texture now that colors are available
                 texture();
             }
             Debug.Log("Biome color readback completed");
-        });
 
-        AsyncGPUReadback.Request(treeBuffer, (AsyncGPUReadbackRequest req) =>
-        {
-            if (req.hasError)
+            // Chain tree readback after color is applied to avoid simultaneous readbacks
+            AsyncGPUReadback.Request(treeBuffer, (AsyncGPUReadbackRequest req2) =>
             {
-                Debug.LogError("AsyncGPUReadback error for biome trees");
-            }
-            else
-            {
-                var data = req.GetData<Vector3>();
-                data.CopyTo(trees);
-                // we no longer need the CPU-side height buffer
-                if (heightBuffer != null) { heightBuffer.Release(); heightBuffer = null; }
-                // Apply the texture now that colors are available
-                populateTrees();
-            }
-            Debug.Log("Biome tree readback completed");
+                if (req2.hasError)
+                {
+                    Debug.LogError("AsyncGPUReadback error for biome trees");
+                }   
+                else
+                {
+                    var data2 = req2.GetData<Vector3>();
+                    data2.CopyTo(trees);
+                    // Release height buffer now that both computations are done
+                    if (heightBuffer != null) { heightBuffer.Release(); heightBuffer = null; }
+                    // Spawn trees over multiple frames to avoid hitching
+                }
+                Debug.Log("Biome tree readback completed");
+            });
         });
-
-
     }        
-    private void populateTrees()
+    
+    private IEnumerator FinalizeMeshCoroutine()
     {
-        foreach (Vector3 tree in trees)
+        Debug.Log("Finalizing mesh over multiple frames");
+        if (mesh == null) mesh = new Mesh();
+        mesh.indexFormat = (verts.Length > 65000) ? IndexFormat.UInt32 : IndexFormat.UInt16;
+        mesh.Clear();
+
+        // Assign vertices first
+        mesh.vertices = verts;
+        yield return null;
+
+        // Then triangles
+        mesh.triangles = indices;
+        yield return null;
+
+        // Then normals and UVs
+        mesh.normals = normals;
+        mesh.uv = uv;
+        yield return null;
+
+        // Recalculate bounds (may be relatively expensive)
+        // mesh.RecalculateBounds();
+        // yield return null;
+
+        if (gameObject != null)
         {
-            if (tree.y > 0) // Assuming y > 0 indicates a tree should be placed
+            var mf = GetComponent<MeshFilter>();
+            if (mf != null) mf.mesh = mesh;
+        }
+
+        if(bakeCollider)
+        {
+            // Delay collider creation one more frame to avoid concurrent spikes
+            yield return null;
+
+
+            MeshCollider mc = GetComponent<MeshCollider>();
+            if (mc == null)
             {
-                Instantiate(treePrefab, new Vector3(tree.x, tree.y, tree.z), Quaternion.identity);
+                mc = gameObject.AddComponent<MeshCollider>();
             }
+            mc.convex = false;
+            mc.sharedMesh = mesh;
         }
     }
+
     private void computeBuffer(int typesize, Array a, int size, ComputeShader CS, int kernel, string name)
     {
         ComputeBuffer buffer = new ComputeBuffer(size, typesize);
         buffer.SetData(a);
         CS.SetBuffer(kernel, name, buffer);
     }
+
     private void populateArrays()
     {   
         int length = biomeData.biomes.Count;

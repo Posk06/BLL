@@ -74,7 +74,7 @@ int3 colorassign(int x, int y, int idx) {
     float fy = y * sizing;
 
     float height = sampling(fx,fy);
-    float moist = snoise(float2(fx * biomeFrequency, fy * biomeFrequency));
+    float moist = (snoise(float2(fx * biomeFrequency, fy * biomeFrequency)) + 1) * 0.5;
     float cont = 0;
 
     // Use continuous terrain coords for noise so texture varies smoothly
@@ -154,7 +154,7 @@ void BiomeCSMain (uint3 id : SV_DispatchThreadID)
 {
     uint x = id.x;
     uint y = id.y;
-    if (x >= textureresolution || y >= textureresolution) return;
+    if (x >= (uint) textureresolution || y >= (uint) textureresolution) return;
 
     uint idx = x + y * textureresolution;
 

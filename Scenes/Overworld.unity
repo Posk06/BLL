@@ -133,17 +133,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 0228b865621335642ae8fa852bbb5317,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0228b865621335642ae8fa852bbb5317,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 16.95
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0228b865621335642ae8fa852bbb5317,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0228b865621335642ae8fa852bbb5317,
         type: 3}
@@ -502,18 +502,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1790358447}
-  terrainPrefab: {fileID: 6504221233741031891, guid: 51e1eeb7b50bb17478b2fc8c0edead70,
+  chunkPrefab: {fileID: 7339898683557988914, guid: 6af0b67d961a99847a77515fe81a5155,
     type: 3}
-  lowResTerrainPrefab: {fileID: 6504221233741031891, guid: 51e1eeb7b50bb17478b2fc8c0edead70,
-    type: 3}
-  viewDistanceInChunks: 48
+  viewDistanceInChunks: 32
   chunkSize: 16
   chunkResolution: 32
   textureResolution: 64
-  biomeScale: 0.1
   parentFolder: {fileID: 1914441924}
-  lowResParentFolder: {fileID: 1740191806}
-  seed: 3
+  overlap: 0
+  amplitude: 1
+  maxAmplitude: 600
+  frequency: 0.0005
+  lacunarity: 2
+  gain: 0.5
+  octave: 5
+  redistrobution: 3
+  seed: 2
+  chunksPerTick: 1
+  lowResChunksPerTick: 2
 --- !u!4 &1174995412
 Transform:
   m_ObjectHideFlags: 0
@@ -681,7 +687,7 @@ Camera:
   m_ShutterSpeed: 0.005
   m_Aperture: 16
   m_FocusDistance: 10
-  m_FocalLength: 50
+  m_FocalLength: 17.137774
   m_BladeCount: 5
   m_Curvature: {x: 2, y: 11}
   m_BarrelClipping: 0.25
@@ -696,7 +702,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 72.14845
+  field of view: 70.00001
   orthographic: 0
   orthographic size: 5
   m_Depth: -1

@@ -81,55 +81,6 @@ float2 domainWarp(float2 pos, float warpStrength, float warpFreq) {
     float warp = snoise(noisePos(pos, warpFreq)) * warpStrength;
     return pos + float2(warp, warp);
 }
-// colorassign now uses a separate biome noise seed and a 20-entry palette
-int3 colorassign(float height, float2 pos) {
-    // 20-biome palette (R,G,B)
-    static const int3 biomeColors[20] = {
-        int3(34, 32, 178),   // 0 - deep ocean
-        int3(0, 105, 148),   // 1 - shallow ocean
-        int3(240, 240, 64),  // 2 - sandy shore
-        int3(194, 178, 128), // 3 - beach/sand
-        int3(34, 139, 34),   // 4 - grassland
-        int3(50, 205, 50),   // 5 - meadow
-        int3(34, 85, 34),    // 6 - forest
-        int3(0, 100, 0),     // 7 - dense forest
-        int3(107, 142, 35),  // 8 - shrubland
-        int3(189, 183, 107), // 9 - dry grass
-        int3(210, 180, 140), //10 - savanna
-        int3(218, 165, 32),  //11 - dry/high plains
-        int3(205, 133, 63),  //12 - badlands/rock
-        int3(128, 128, 128), //13 - rocky
-        int3(160, 160, 160), //14 - scree
-        int3(255, 250, 250), //15 - snow
-        int3(255, 255, 255), //16 - glacier/ice
-        int3(85, 107, 47),   //17 - marsh
-        int3(34, 139, 87),   //18 - swamp
-        int3(199, 97, 20)    //19 - desert/mesa
-    };
-
-    float e = saturate(height / maxHeight);
-
-    // Compute a secondary biome noise using a different seed/offset
-    // Add seeded offset to biome noise so different seeds produce different biomes
-    float2 biomeSeedOffset = float2(10000.0,20000.0) + getSeedOffset();
-    float biomeNoise = fbmcustom(pos + biomeSeedOffset, biomeFrequency, amplitude, lacunarity, gain, 3);
-
-    // Water handling
-    if (e < 0.12)
-    {
-        if (e < 0.04) return biomeColors[0]; // deep ocean
-        return biomeColors[1]; // shallow ocean
-    } else if(e < 0.14) {
-        return biomeColors[3]; // sandy shore
-    }
-
-    if (e > 0.82) return biomeColors[15];
-
-    int biomeIndex = (int)floor(saturate(biomeNoise) * 18.0);
-    biomeIndex = clamp(biomeIndex, 2, 19);
-
-    return biomeColors[biomeIndex];
-}
 
 [numthreads(16,16,1)]
 void TerrainCSMain (uint3 id : SV_DispatchThreadID)
@@ -137,13 +88,13 @@ void TerrainCSMain (uint3 id : SV_DispatchThreadID)
 
     uint x = id.x;
     uint y = id.y;
-    if (x >= resolution || y >= resolution) return;
+    if (x >= (uint) resolution || y >= (uint) resolution) return;
 
     uint idx = x + y * resolution;
 
     float sizingFactor = (float)size / ((float)resolution - 1.0f);
 
-    float2 noisepos = float2(x * sizingFactor, y * sizingFactor) + float2(xOffset, yOffset)+ getSeedOffset();
+    float2 noisepos = float2(x * sizingFactor, y * sizingFactor) + float2(xOffset, yOffset) + getSeedOffset();
     float height = fbmcustom(noisepos, frequency, amplitude, lacunarity, gain, octaves) * maxHeight;
     //float height = (fbmcustom(noisepos, frequency, amplitude, lacunarity, gain, octaves) + ridgedNoise(noisepos, frequency, amplitude, lacunarity, gain, octaves)) * maxHeight;
 
