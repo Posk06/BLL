@@ -9,6 +9,9 @@ using UnityEngine.Rendering;
 public struct TerrainJob : IJobParallelFor
 {
     public int chunkSize;
+    // number of vertices along each edge (resolution of the heightmap)
+    public int resolution;
+
     public float amplitude;
     public float maxAmplitude;
     public float frequency;
@@ -23,33 +26,46 @@ public struct TerrainJob : IJobParallelFor
 
     public void Execute(int index)
     {
-        int x = index % chunkSize;
-        int z = index / chunkSize;
+        int x = index % resolution;
+        int z = index / resolution;
 
         float2 worldPos = new float2(
-        x + chunkPosition.x * chunkSize,
-        z + chunkPosition.y * chunkSize
+            x + chunkPosition.x * chunkSize,
+            z + chunkPosition.y * chunkSize
         );
 
-        float height = FractalNoise(worldPos);
+        float height = FractalNoise(worldPos) * maxAmplitude;
 
         vertices[index] = new float3(x, height, z);
     }
 
     float FractalNoise(float2 pos)
     {
+        if (octaves <= 0)
+        {
+            // fall back to single‐layer noise
+            return noise.snoise(pos * frequency) * amplitude;
+        }
+
         float v = 0;
         float ampsum = 0;
 
+        // work on copies so fields stay constant per vertex
+        float f = frequency;
+        float a = amplitude;
+
         for (int i = 0; i < octaves; i++)
         {
-            v += noise.snoise(pos * frequency) * amplitude;
-            ampsum += amplitude;
+            v += noise.snoise(pos * f) * a;
+            ampsum += a;
 
-            frequency *= lacunarity;  // usually 2.0
-            amplitude *= gain;    // usually 0.5
+            f *= lacunarity;  // usually 2.0
+            a *= gain;    // usually 0.5
         }
 
-    return (float) Math.Pow(Math.Abs(v / ampsum), redistrobution);
-}
+        if (ampsum == 0)
+            return 0;
+
+        return (float) Math.Pow(Math.Abs(v / ampsum), redistrobution);
+    }
 }

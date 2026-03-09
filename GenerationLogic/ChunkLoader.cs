@@ -25,13 +25,13 @@ public class ChunkLoader : MonoBehaviour
     [Range(0f,0.5f)]
     public float overlap;
     [Header("Terrain Generation")]
-    public float amplitude;
-    public float maxAmplitude;
-    public float frequency;
-    public float lacunarity;
-    public float gain;
-    public int octave;
-    public float redistrobution;
+    public float amplitude = 1f;
+    public float maxAmplitude = 10f;
+    public float frequency = 1f;
+    public float lacunarity = 2f;
+    public float gain = 0.5f;
+    public int octave = 4;
+    public float redistrobution = 1f;
 
     public int seed = 0;
     
@@ -168,11 +168,14 @@ public class ChunkLoader : MonoBehaviour
             TerrainJob job = new TerrainJob
             {
                 chunkSize = chunkSize,
+                resolution = chunkResolution,
                 frequency = frequency,
                 amplitude = amplitude,
+                maxAmplitude = maxAmplitude,
                 gain = gain,
                 lacunarity = lacunarity,
                 octaves = octave,
+                redistrobution = redistrobution,
                 chunkPosition = new float2(pos.x,pos.y),
                 vertices = vertices
             };
