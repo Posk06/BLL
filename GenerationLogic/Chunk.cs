@@ -1,27 +1,82 @@
+using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class Chunk : MonoBehaviour
 {
     MeshFilter meshFilter;
+    Renderer render;
 
     void Awake()
     {
         meshFilter = GetComponent<MeshFilter>();
+        render = GetComponent<Renderer>();
+
     }
 
-    public void ApplyMesh(Vector3[] vertices, int[] triangles, Texture2D texture)
+    public void ApplyMesh(NativeArray<float3> vertices, NativeArray<int> triangles)
     {
+        Mesh.MeshDataArray meshDataArray = Mesh.AllocateWritableMeshData(1);
+        Mesh.MeshData meshData = meshDataArray[0];
+
+        meshData.SetVertexBufferParams(
+            vertices.Length,
+            new VertexAttributeDescriptor(
+                VertexAttribute.Position,
+                VertexAttributeFormat.Float32,
+                3
+            ) 
+        );
+        NativeArray<float3> vertexBuffer = meshData.GetVertexData<float3>();
+        vertexBuffer.CopyFrom(vertices);
+
+        meshData.SetIndexBufferParams(
+            triangles.Length,
+            IndexFormat.UInt32
+        );
+        NativeArray<int> indexBuffer = meshData.GetIndexData<int>();
+        indexBuffer.CopyFrom(triangles);  
+
+        meshData.subMeshCount = 1;
+
+        meshData.SetSubMesh(
+            0,
+            new SubMeshDescriptor(0, triangles.Length)
+        );
+
         Mesh mesh = new Mesh();
-        mesh.indexFormat = (vertices.Length > 65000) ? UnityEngine.Rendering.IndexFormat.UInt32 : UnityEngine.Rendering.IndexFormat.UInt16;
 
-        GetComponent<Renderer>().material.SetTexture("_BaseMap", texture);
-        GetComponent<Renderer>().material.SetTexture("_MainTex", texture);
+        mesh.indexFormat = (vertices.Length > 65000) ? IndexFormat.UInt32 : IndexFormat.UInt16;
 
-        mesh.vertices = vertices;
-        mesh.triangles = triangles;
+        Mesh.ApplyAndDisposeWritableMeshData(
+            meshDataArray,
+            mesh
+        );     
+
+        int resolution = Mathf.FloorToInt(Mathf.Sqrt(vertices.Length));
+        Vector2[] uv = new Vector2[vertices.Length];
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            int x = i % resolution;
+            int y = i / resolution;
+
+            uv[i] = new Vector2(
+                (float)x / (resolution - 1),
+                (float)y / (resolution - 1)
+            );
+        }
+        
+
+        mesh.uv = uv;
         mesh.RecalculateNormals();
 
         meshFilter.mesh = mesh;
+    }
+
+    public void ApplyTexture(Texture2D texture) {
+        render.material.SetTexture("_BaseMap", texture);
+        render.material.SetTexture("_MainTex", texture);
     }
 }
