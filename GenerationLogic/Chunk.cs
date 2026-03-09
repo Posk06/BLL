@@ -10,11 +10,13 @@ public class Chunk : MonoBehaviour
         meshFilter = GetComponent<MeshFilter>();
     }
 
-    public void ApplyMesh(Vector3[] vertices, int[] triangles)
+    public void ApplyMesh(Vector3[] vertices, int[] triangles, Texture2D texture)
     {
         Mesh mesh = new Mesh();
+        mesh.indexFormat = (vertices.Length > 65000) ? UnityEngine.Rendering.IndexFormat.UInt32 : UnityEngine.Rendering.IndexFormat.UInt16;
 
-        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        GetComponent<Renderer>().material.SetTexture("_BaseMap", texture);
+        GetComponent<Renderer>().material.SetTexture("_MainTex", texture);
 
         mesh.vertices = vertices;
         mesh.triangles = triangles;

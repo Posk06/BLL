@@ -235,7 +235,7 @@ public class ChunkLoader_old : MonoBehaviour
 
             TriangleJob trijob = new TriangleJob
             {
-                chunkSize = chunkSize,
+                chunkResolution = chunkSize,
                 triangles = triangles
             };
 

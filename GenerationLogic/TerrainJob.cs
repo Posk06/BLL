@@ -3,8 +3,6 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
-using UnityEngine.Rendering;
-
 [BurstCompile]
 public struct TerrainJob : IJobParallelFor
 {
@@ -26,8 +24,9 @@ public struct TerrainJob : IJobParallelFor
 
     public void Execute(int index)
     {
-        int x = index % resolution;
-        int z = index / resolution;
+        float resolutionSizing = (float) chunkSize / (float) ( resolution - 1);
+        float x = index % resolution * resolutionSizing;
+        float z = index / resolution * resolutionSizing;
 
         float2 worldPos = new float2(
             x + chunkPosition.x * chunkSize,

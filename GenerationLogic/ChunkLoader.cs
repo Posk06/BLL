@@ -4,8 +4,11 @@ using System.ComponentModel;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
+using UnityEditor.ShaderGraph;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class ChunkLoader : MonoBehaviour
 {
@@ -36,9 +39,12 @@ public class ChunkLoader : MonoBehaviour
     public int seed = 0;
     
     int[] tris; 
+    Texture2D texture;
 
     NativeArray<float3> vertices;
     NativeArray<int> triangles;
+    NativeArray<Color32> colors;
+    NativeArray<float> heights;
     List<ChunkJob> activeJobs = new List<ChunkJob>();
 
     private Dictionary<Vector2Int, GameObject> loadedChunks = new Dictionary<Vector2Int, GameObject>();
@@ -82,7 +88,8 @@ public class ChunkLoader : MonoBehaviour
             if (job.handle.IsCompleted)
             {
                 job.handle.Complete();
-
+                
+                GenerateTexture(job);
                 ApplyMesh(job);
 
                 job.vertices.Dispose();
@@ -159,41 +166,73 @@ public class ChunkLoader : MonoBehaviour
 
     private void GenerateChunk(Vector2Int pos, Chunk chunk)
     {
-        if(!allGeneratedChunks.ContainsKey(pos))
+        int vertCount = chunkResolution * chunkResolution;
+
+        vertices = new NativeArray<float3>(vertCount, Allocator.TempJob);
+
+        TerrainJob job = new TerrainJob
         {
-            int vertCount = chunkResolution * chunkResolution;
+            chunkSize = chunkSize,
+            resolution = chunkResolution,
+            frequency = frequency,
+            amplitude = amplitude,
+            maxAmplitude = maxAmplitude,
+            gain = gain,
+            lacunarity = lacunarity,
+            octaves = octave,
+            redistrobution = redistrobution,
+            chunkPosition = new float2(pos.x,pos.y),
+            vertices = vertices
+        };
 
-            vertices = new NativeArray<float3>(vertCount, Allocator.TempJob);
+        JobHandle handle = job.Schedule(vertCount, 64);
 
-            TerrainJob job = new TerrainJob
-            {
-                chunkSize = chunkSize,
-                resolution = chunkResolution,
-                frequency = frequency,
-                amplitude = amplitude,
-                maxAmplitude = maxAmplitude,
-                gain = gain,
-                lacunarity = lacunarity,
-                octaves = octave,
-                redistrobution = redistrobution,
-                chunkPosition = new float2(pos.x,pos.y),
-                vertices = vertices
-            };
-
-            JobHandle handle = job.Schedule(vertCount, 64);
-
-            activeJobs.Add(new ChunkJob
-            {
-                handle = handle,
-                vertices = vertices,
-                chunk = chunk
-            });
-        }
-        else   
+        activeJobs.Add(new ChunkJob
         {
-            allGeneratedChunks[pos].SetActive(true);
-            loadedChunks.Add(pos, allGeneratedChunks[pos]);
-        }
+            handle = handle,
+            vertices = vertices,
+            chunk = chunk,
+            position = new float2(pos.x,pos.y)
+        });
+    }
+
+    private void GenerateTexture(ChunkJob job)
+    {
+        heights = new NativeArray<float>(job.vertices.Length, Allocator.TempJob);
+        
+        for(int i = 0; i < heights.Length; i++)
+            heights[i] = job.vertices[i].y;
+
+        int pixelCount = textureResolution * textureResolution;
+        colors = new NativeArray<Color32>(pixelCount, Allocator.TempJob);
+
+        TextureJob texJob = new TextureJob
+        {
+            chunkPos = job.position,
+            terrainResolution = chunkResolution,
+            textureResolution = textureResolution,
+            maxAmplitude = maxAmplitude,
+            colors = colors,
+            heights = heights
+        };
+
+        JobHandle handle = texJob.Schedule(pixelCount, 64);
+        handle.Complete();
+        
+        texture = new Texture2D(textureResolution, textureResolution, TextureFormat.RGBA32, false);
+
+        Color32[] col = new Color32[colors.Length];
+
+        for(int i = 0; i < colors.Length; i++)
+            col[i] = colors[i];
+
+        texture.SetPixels32(col);
+        texture.filterMode = FilterMode.Bilinear;
+        texture.wrapMode = TextureWrapMode.Clamp;
+        texture.Apply(false);
+
+        colors.Dispose();
+        heights.Dispose();
     }
 
 
@@ -204,22 +243,30 @@ public class ChunkLoader : MonoBehaviour
         for (int i = 0; i < verts.Length; i++)
             verts[i] = job.vertices[i];
 
-        job.chunk.ApplyMesh(verts, tris);
+        job.chunk.ApplyMesh(verts, tris, texture);
     }
 
     private void SpawnChunk(Vector2Int coord)
     {
-        Vector3 pos = new Vector3(coord.x * chunkSize, 0, coord.y * chunkSize);
+        if(!allGeneratedChunks.ContainsKey(coord))
+        {
+            Vector3 pos = new Vector3(coord.x * chunkSize, 0, coord.y * chunkSize);
 
-        GameObject obj = Instantiate(chunkPrefab, pos, Quaternion.identity);
-        obj.transform.parent = parentFolder;
+            GameObject obj = Instantiate(chunkPrefab, pos, Quaternion.identity);
+            obj.transform.parent = parentFolder;
 
-        Chunk chunk = obj.GetComponent<Chunk>();
+            Chunk chunk = obj.GetComponent<Chunk>();
 
-        GenerateChunk(coord, chunk);
+            GenerateChunk(coord, chunk);
 
-        loadedChunks.Add(coord, obj);
-        allGeneratedChunks.Add(coord, obj);
+            loadedChunks.Add(coord, obj);
+            allGeneratedChunks.Add(coord, obj);
+        } else
+        {
+            loadedChunks.Add(coord, allGeneratedChunks[coord]);
+            allGeneratedChunks[coord].SetActive(true);
+
+        }
     }
 
     private void generateTriangleArray()
@@ -229,7 +276,7 @@ public class ChunkLoader : MonoBehaviour
 
         TriangleJob trijob = new TriangleJob
         {
-            chunkSize = chunkResolution,
+            chunkResolution = chunkResolution,
             triangles = triangles
         };
 
