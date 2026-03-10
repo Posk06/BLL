@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -28,6 +29,7 @@ public class ChunkLoader : MonoBehaviour
     public Transform parentFolder;
     [Range(0f,0.5f)]
     public float overlap;
+    
     [Header("Terrain Generation")]
     public float amplitude = 1f;
     public float maxAmplitude = 10f;
@@ -36,10 +38,24 @@ public class ChunkLoader : MonoBehaviour
     public float gain = 0.5f;
     public int octave = 4;
     public float redistrobution = 1f;
-
     public int seed = 0;
+
+    [Header("Thresholds")]
+    public int threshold_near_mid = 500;
+    public float factorA = 0.5f;
+    public int threshold_mid_far = 1000;
+    public float factorB = 0.25f;
+    public int threshold_far_veryfar = 2000;
+    public float factorC = 0.125f;
+
+    private int threshold_near_midSq;
+    private int threshold_mid_farSq;
+    private int threshold_far_veryfarSq;
+    private int viewDistanceinChunksSq;
+
     
     Texture2D texture;
+    Vector2Int lastPlayerChunk = new Vector2Int(100, 100);
 
     NativeArray<float3> vertices;
     NativeArray<int> trianglesA, trianglesB, trianglesC, trianglesD;
@@ -47,8 +63,8 @@ public class ChunkLoader : MonoBehaviour
     List<ChunkJob> activeJobs = new List<ChunkJob>();
     List<TexJob> activeTexJobs = new List<TexJob>();
 
-    private Dictionary<Vector2Int, GameObject> loadedChunks = new Dictionary<Vector2Int, GameObject>();
-    private Dictionary<Vector2Int, GameObject>[] allGeneratedChunks = new Dictionary<Vector2Int, GameObject>[4];
+    private Dictionary<Vector2Int, ChunkData> loadedChunks = new Dictionary<Vector2Int, ChunkData>();
+    private Dictionary<Vector2Int, ChunkData>[] allGeneratedChunks = new Dictionary<Vector2Int, ChunkData>[4];
 
     private List<Vector2Int> keystoremove = new List<Vector2Int>();
 
@@ -68,10 +84,16 @@ public class ChunkLoader : MonoBehaviour
 
     void Start()
     {
-        allGeneratedChunks[(int) LOD.NEAR] = new Dictionary<Vector2Int, GameObject>();
-        allGeneratedChunks[(int) LOD.MIDDLE] = new Dictionary<Vector2Int, GameObject>();
-        allGeneratedChunks[(int) LOD.FAR] = new Dictionary<Vector2Int, GameObject>();
-        allGeneratedChunks[(int) LOD.VERY_FAR] = new Dictionary<Vector2Int, GameObject>();
+        allGeneratedChunks[(int) LOD.NEAR] = new Dictionary<Vector2Int, ChunkData>();
+        allGeneratedChunks[(int) LOD.MIDDLE] = new Dictionary<Vector2Int, ChunkData>();
+        allGeneratedChunks[(int) LOD.FAR] = new Dictionary<Vector2Int, ChunkData>();
+        allGeneratedChunks[(int) LOD.VERY_FAR] = new Dictionary<Vector2Int, ChunkData>();
+
+        threshold_near_midSq = Mathf.FloorToInt(Mathf.Pow(threshold_near_mid / chunkSize, 2f));
+        threshold_mid_farSq = Mathf.FloorToInt(Mathf.Pow(threshold_mid_far / chunkSize, 2f));
+        threshold_far_veryfarSq = Mathf.FloorToInt(Mathf.Pow(threshold_far_veryfar / chunkSize, 2f));
+        viewDistanceinChunksSq = Mathf.FloorToInt(Mathf.Pow(viewDistanceInChunks, 2f));
+
 
         generateTriangleArrays();
         playerPosition = new Vector2Int(Mathf.FloorToInt(player.position.x / chunkSize), Mathf.FloorToInt(player.position.z / chunkSize));
@@ -83,9 +105,20 @@ public class ChunkLoader : MonoBehaviour
     void Update()
     { 
         playerPosition = new Vector2Int(Mathf.FloorToInt(player.position.x / chunkSize), Mathf.FloorToInt(player.position.z / chunkSize));
-        loadChunks();
+
+        Vector2Int currentChunk = new Vector2Int(
+        Mathf.FloorToInt(player.position.x / chunkSize),
+        Mathf.FloorToInt(player.position.z / chunkSize)
+        );
+
+        if(currentChunk != lastPlayerChunk)
+        {
+            loadChunks();
+            unloadChunks();
+            lastPlayerChunk = currentChunk;
+        }
+
         ProcessGenerationQueues();
-        unloadChunks();
 
         for (int i = activeJobs.Count - 1; i >= 0; i--)
         {
@@ -126,28 +159,34 @@ public class ChunkLoader : MonoBehaviour
 
     private void loadChunks()
     {
-        for(int x = -viewDistanceInChunks; x <= viewDistanceInChunks; x++)
+        for (int r = 0; r <= viewDistanceInChunks; r++) 
         {
-            for(int z = -viewDistanceInChunks; z <= viewDistanceInChunks; z++)
+            for (int x = -r; x <= r; x++)
             {
-                Vector2Int t = playerPosition + new Vector2Int(x,z);
-                float dist = Mathf.Sqrt(x*x + z*z);
-
-                if(dist < viewDistanceInChunks && !loadedChunks.ContainsKey(t))
+                for (int z = -r; z <= r; z++)
                 {
-                    if(viewDistanceInChunks > 2000 / chunkSize)
+                    if (Mathf.Abs(x) != r && Mathf.Abs(z) != r)
+                        continue;
+
+                    Vector2Int t = playerPosition + new Vector2Int(x,z);
+                    float dist = x*x + z*z;
+
+                    if(dist < viewDistanceinChunksSq && !loadedChunks.ContainsKey(t))
                     {
-                        EnqueueChunk(t, LOD.VERY_FAR);
-                    } else if(viewDistanceInChunks > 1000 / chunkSize)
-                    {
-                        EnqueueChunk(t, LOD.FAR);
-                    } else if(viewDistanceInChunks > 500 / chunkSize)
-                    {
-                        EnqueueChunk(t, LOD.MIDDLE);
-                    } else
-                    {
-                        EnqueueChunk(t, LOD.NEAR);
-                    }
+                        if(dist > threshold_far_veryfarSq)
+                        {
+                            EnqueueChunk(t, LOD.VERY_FAR);
+                        } else if(dist > threshold_mid_farSq)
+                        {
+                            EnqueueChunk(t, LOD.FAR);
+                        } else if(dist > threshold_near_midSq)
+                        {
+                            EnqueueChunk(t, LOD.MIDDLE);
+                        } else
+                        {
+                            EnqueueChunk(t, LOD.NEAR);
+                        }
+                    }    
                 }
             }
         }
@@ -163,7 +202,7 @@ public class ChunkLoader : MonoBehaviour
     private void ProcessGenerationQueues()
     {
         // Process a limited number of high-res chunks first
-        int processed = 0;
+        float processed = 0;
         while (processed < chunksPerTick && chunkGenerationQueue.Count > 0)
         {
             var pos = chunkGenerationQueue.Dequeue();
@@ -173,7 +212,8 @@ public class ChunkLoader : MonoBehaviour
             {
                 SpawnChunk(pos.coord, pos.lod);
             }
-            processed++;
+
+            processed += Mathf.Pow(0.5f, (int) pos.lod);
         }
     }
 
@@ -185,31 +225,42 @@ public class ChunkLoader : MonoBehaviour
             int relx = Mathf.Abs(chunk.Key.x - playerPosition.x);
             int relz = Mathf.Abs(chunk.Key.y - playerPosition.y);
 
-            double dist = Math.Sqrt(relx*relx + relz*relz);
-            int count = chunk.Value.gameObject.GetComponent<MeshFilter>().mesh.vertexCount;
+            double dist = relx*relx + relz*relz;
+            int count = chunk.Value.resolution;
 
-            if(dist >= viewDistanceInChunks)
+            if(dist >= viewDistanceinChunksSq)
             {
-                chunk.Value.SetActive(false);
+                chunk.Value.obj.SetActive(false);
                 keystoremove.Add(chunk.Key);
-            } else if(dist >= 2000f / (float) chunkSize && count == countCompare(0.25f))
+            } else if(dist >= threshold_far_veryfarSq)
             {
-                chunk.Value.SetActive(false);
-                keystoremove.Add(chunk.Key);
-                EnqueueChunk(chunk.Key, LOD.VERY_FAR);
-            } else if( dist >= 1000f / (float) chunkSize && (count == countCompare(0.125f) || count == countCompare(0.5f)))
+                if(count != countCompare(factorC))
+                {
+                    chunk.Value.obj.SetActive(false);
+                    keystoremove.Add(chunk.Key);
+                    EnqueueChunk(chunk.Key, LOD.VERY_FAR);
+                }
+
+            } else if( dist >= threshold_mid_farSq)
             {
-                chunk.Value.SetActive(false);
-                keystoremove.Add(chunk.Key);
-                EnqueueChunk(chunk.Key, LOD.FAR);
-            } else if(dist >= 500f / (float) chunkSize && (count == countCompare(0.25f) || count == countCompare(1f)))
+                if(count != countCompare(factorB)) {
+                    chunk.Value.obj.SetActive(false);
+                    keystoremove.Add(chunk.Key);
+                    EnqueueChunk(chunk.Key, LOD.FAR);
+                }
+
+            } else if(dist >= threshold_near_midSq) 
             {
-                chunk.Value.SetActive(false);
-                keystoremove.Add(chunk.Key);
-                EnqueueChunk(chunk.Key, LOD.MIDDLE);
-            } else if(count == countCompare(0.5f))
+                if(count != countCompare(factorA))
+                {
+                    chunk.Value.obj.SetActive(false);
+                    keystoremove.Add(chunk.Key);
+                    EnqueueChunk(chunk.Key, LOD.MIDDLE);
+                }
+
+            } else if(count == countCompare(factorA))
             {
-                chunk.Value.SetActive(false);
+                chunk.Value.obj.SetActive(false);
                 keystoremove.Add(chunk.Key);
                 EnqueueChunk(chunk.Key, LOD.NEAR);
             } else {}
@@ -223,27 +274,15 @@ public class ChunkLoader : MonoBehaviour
 
         float countCompare(float factor)
         {
-            return chunkResolution * chunkResolution * factor * factor;
+            return chunkResolution * factor;
         }
     }
 
-    private void GenerateChunk(Vector2Int pos, Chunk chunk, LOD distance)
+    private void GenerateChunk(Vector2Int pos, Chunk chunk, LOD distance, GameObject obj)
     {
 
-        int resolution = chunkResolution;
+        int resolution = Mathf.FloorToInt(chunkResolution * Mathf.Pow(0.5f, (int) distance));
 
-        if((int) distance == 0)
-        {} 
-        else if((int) distance == 1)
-        {
-            resolution = Mathf.FloorToInt(chunkResolution * 0.5f);
-        } else if((int) distance == 2)
-        {
-            resolution = Mathf.FloorToInt(chunkResolution * 0.25f);
-        } else
-        {
-            resolution = Mathf.FloorToInt(chunkResolution * 0.125f);
-        }
 
         int vertCount = resolution * resolution;
 
@@ -273,6 +312,10 @@ public class ChunkLoader : MonoBehaviour
             chunk = chunk,
             position = new float2(pos.x,pos.y)
         });
+
+        ChunkData chunkData = new ChunkData(obj, resolution);
+        loadedChunks.Add(pos, chunkData);
+        allGeneratedChunks[(int) distance].Add(pos, chunkData);
     }
 
     private void GenerateTexture(ChunkJob job)
@@ -351,19 +394,26 @@ public class ChunkLoader : MonoBehaviour
             Vector3 pos = new Vector3(coord.x * chunkSize, 0, coord.y * chunkSize);
 
             GameObject obj = Instantiate(chunkPrefab, pos, Quaternion.identity);
-            obj.transform.parent = parentFolder;
+
+            // Find or create a child folder for this LOD (avoid Instantiate(new GameObject(...)) which spawns clones)
+            Transform lodFolder = parentFolder.Find(dist.ToString());
+            if (lodFolder == null)
+            {
+                var folderObj = new GameObject(dist.ToString());
+                folderObj.transform.SetParent(parentFolder, false);
+                lodFolder = folderObj.transform;
+            }
+
+            obj.transform.SetParent(lodFolder, false);
+            obj.name = dist + "_Chunk_" + coord.x + "_" + coord.y;
 
             Chunk chunk = obj.GetComponent<Chunk>();
 
-            GenerateChunk(coord, chunk, dist);
-
-            loadedChunks.Add(coord, obj);
-            allGeneratedChunks[(int) dist].Add(coord, obj);
+            GenerateChunk(coord, chunk, dist, obj);
         } else
         {
             loadedChunks.Add(coord, allGeneratedChunks[(int) dist][coord]);
-            allGeneratedChunks[(int) dist][coord].SetActive(true);
-
+            allGeneratedChunks[(int) dist][coord].obj.SetActive(true);
         }
     }
 
@@ -439,15 +489,68 @@ public class ChunkLoader : MonoBehaviour
         }
     }
 }
-public class CoordDistRelation
+public class CoordDistRelation : IEquatable<CoordDistRelation>
 {
     public Vector2Int coord;
     public LOD lod;
 
-     public CoordDistRelation(Vector2Int coord, LOD lod)
+    public CoordDistRelation(Vector2Int coord, LOD lod)
     {
         this.coord = coord;
         this.lod = lod;
+    }
+
+    public bool Equals(CoordDistRelation other)
+    {
+        if (ReferenceEquals(other, null)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return coord.Equals(other.coord) && lod == other.lod;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return Equals(obj as CoordDistRelation);
+    }
+
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            int hash = 17;
+            hash = hash * 31 + coord.x;
+            hash = hash * 31 + coord.y;
+            hash = hash * 31 + (int)lod;
+            return hash;
+        }
+    }
+
+    public static bool operator ==(CoordDistRelation left, CoordDistRelation right)
+    {
+        if (ReferenceEquals(left, right)) return true;
+        if (ReferenceEquals(left, null) || ReferenceEquals(right, null)) return false;
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(CoordDistRelation left, CoordDistRelation right)
+    {
+        return !(left == right);
+    }
+
+    public override string ToString()
+    {
+        return $"Coord({coord.x},{coord.y}) LOD:{lod}";
+    }
+}
+
+public class ChunkData
+{
+    public GameObject obj;
+    public int resolution;
+
+    public ChunkData(GameObject obj, int resolution)
+    {
+        this.obj = obj;
+        this.resolution = resolution;
     }
 }
 

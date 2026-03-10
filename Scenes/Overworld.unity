@@ -504,22 +504,22 @@ MonoBehaviour:
   player: {fileID: 1790358447}
   chunkPrefab: {fileID: 7339898683557988914, guid: 6af0b67d961a99847a77515fe81a5155,
     type: 3}
-  viewDistanceInChunks: 32
+  viewDistanceInChunks: 64
   chunkSize: 16
   chunkResolution: 32
   textureResolution: 64
   parentFolder: {fileID: 1914441924}
   overlap: 0
-  amplitude: 1
+  amplitude: 3
   maxAmplitude: 600
-  frequency: 0.0005
+  frequency: 0.00025
   lacunarity: 2
   gain: 0.5
   octave: 5
-  redistrobution: 3
+  redistrobution: 1.5
   seed: 2
-  chunksPerTick: 1
-  lowResChunksPerTick: 2
+  chunksPerTick: 16
+  lowResChunksPerTick: 16
 --- !u!4 &1174995412
 Transform:
   m_ObjectHideFlags: 0
