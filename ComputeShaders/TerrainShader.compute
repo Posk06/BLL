@@ -6,7 +6,6 @@
 
 RWStructuredBuffer<float3> vertices;
 RWStructuredBuffer<float3> normals;
-RWStructuredBuffer<int3> colors;
 RWTexture2D<float> heightsTex;
 
 float frequency;

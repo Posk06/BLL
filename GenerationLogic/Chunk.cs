@@ -8,13 +8,13 @@ public class Chunk : MonoBehaviour
 {
     MeshFilter meshFilter;
     Renderer render;
+    MeshCollider meshCollider;
 
     void Awake()
     {
         meshFilter = GetComponent<MeshFilter>();
         render = GetComponent<Renderer>();
-
-    }
+        meshCollider = GetComponent<MeshCollider>();}
 
     public void ApplyMesh(NativeArray<float3> vertices, NativeArray<int> triangles)
     {
@@ -71,12 +71,15 @@ public class Chunk : MonoBehaviour
 
         mesh.uv = uv;
         mesh.RecalculateNormals();
+        
 
         meshFilter.mesh = mesh;
+        meshCollider.sharedMesh = mesh;
     }
 
     public void ApplyTexture(Texture2D texture) {
-        render.material.SetTexture("_BaseMap", texture);
-        render.material.SetTexture("_MainTex", texture);
+        render.material.mainTexture = texture;
+        render.material.SetFloat("_Smoothness", 0f);
+    
     }
 }

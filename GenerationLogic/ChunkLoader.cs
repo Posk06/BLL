@@ -1,23 +1,19 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
+using System.Linq;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
-using UnityEditor.ShaderGraph;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
-using UnityEngine.XR;
 
 public class ChunkLoader : MonoBehaviour
 {
     public Transform player;
-    Vector2Int playerPosition;
 
     public GameObject chunkPrefab;
+    public GameObject treePrefab;
+    public BiomeData biomeData;
 
     [Header("Chunk Settings")]
     // Must match terrain heightmap resolution
@@ -38,6 +34,7 @@ public class ChunkLoader : MonoBehaviour
     public float gain = 0.5f;
     public int octave = 4;
     public float redistrobution = 1f;
+    public float biomeFrequency = 0.0001f;
     public int seed = 0;
 
     [Header("Thresholds")]
@@ -59,7 +56,14 @@ public class ChunkLoader : MonoBehaviour
 
     NativeArray<float3> vertices;
     NativeArray<int> trianglesA, trianglesB, trianglesC, trianglesD;
-    NativeArray<Color32> colors;
+    NativeArray<Color32> colorsOut;
+    NativeArray<float> moisturesOut;
+    NativeArray<float> heightsOut;
+
+    NativeArray<int> elevations;
+    NativeArray<int> moistures;
+    NativeArray<Color32> colorsIn;
+
     List<ChunkJob> activeJobs = new List<ChunkJob>();
     List<TexJob> activeTexJobs = new List<TexJob>();
 
@@ -78,6 +82,7 @@ public class ChunkLoader : MonoBehaviour
     public int chunksPerTick = 1;
     [Tooltip("Maximum number of low-res chunks to generate per tick.")]
     public int lowResChunksPerTick = 2;
+    Vector2Int currentChunk;
 
 
 
@@ -94,19 +99,20 @@ public class ChunkLoader : MonoBehaviour
         threshold_far_veryfarSq = Mathf.FloorToInt(Mathf.Pow(threshold_far_veryfar / chunkSize, 2f));
         viewDistanceinChunksSq = Mathf.FloorToInt(Mathf.Pow(viewDistanceInChunks, 2f));
 
+        populateArrays();
+
 
         generateTriangleArrays();
-        playerPosition = new Vector2Int(Mathf.FloorToInt(player.position.x / chunkSize), Mathf.FloorToInt(player.position.z / chunkSize));
-
-        System.Random rand = new System.Random(seed);
-        seed = rand.Next();
+        currentChunk = new Vector2Int(
+        Mathf.FloorToInt(player.position.x / chunkSize),
+        Mathf.FloorToInt(player.position.z / chunkSize)
+        );
     }
-
-    void Update()
+    void Update()    
     { 
-        playerPosition = new Vector2Int(Mathf.FloorToInt(player.position.x / chunkSize), Mathf.FloorToInt(player.position.z / chunkSize));
+        
 
-        Vector2Int currentChunk = new Vector2Int(
+        currentChunk = new Vector2Int(
         Mathf.FloorToInt(player.position.x / chunkSize),
         Mathf.FloorToInt(player.position.z / chunkSize)
         );
@@ -148,6 +154,7 @@ public class ChunkLoader : MonoBehaviour
                 
                 MakeTexture(job);
                 ApplyTexture(job);
+                SpawnTrees(job);
 
                 job.colors.Dispose();
                 job.heights.Dispose();
@@ -168,7 +175,7 @@ public class ChunkLoader : MonoBehaviour
                     if (Mathf.Abs(x) != r && Mathf.Abs(z) != r)
                         continue;
 
-                    Vector2Int t = playerPosition + new Vector2Int(x,z);
+                    Vector2Int t = currentChunk + new Vector2Int(x,z);
                     float dist = x*x + z*z;
 
                     if(dist < viewDistanceinChunksSq && !loadedChunks.ContainsKey(t))
@@ -222,8 +229,8 @@ public class ChunkLoader : MonoBehaviour
 
         foreach(var chunk in loadedChunks)
         {
-            int relx = Mathf.Abs(chunk.Key.x - playerPosition.x);
-            int relz = Mathf.Abs(chunk.Key.y - playerPosition.y);
+            int relx = Mathf.Abs(chunk.Key.x - currentChunk.x);
+            int relz = Mathf.Abs(chunk.Key.y - currentChunk.y);
 
             double dist = relx*relx + relz*relz;
             int count = chunk.Value.resolution;
@@ -278,6 +285,13 @@ public class ChunkLoader : MonoBehaviour
         }
     }
 
+    IEnumerator Unload(GameObject chunk, Vector2Int key)
+    {   
+        yield return new WaitForSeconds(1f);
+        chunk.SetActive(false);
+        loadedChunks.Remove(key);
+    }
+
     private void GenerateChunk(Vector2Int pos, Chunk chunk, LOD distance, GameObject obj)
     {
 
@@ -325,38 +339,50 @@ public class ChunkLoader : MonoBehaviour
         for (int i = 0; i < heights.Length; i++)
             heights[i] = job.vertices[i].y;
 
-
-        int pixelCount = textureResolution * textureResolution;
-        colors = new NativeArray<Color32>(pixelCount, Allocator.TempJob);
+        int resolution = Mathf.FloorToInt(Mathf.Sqrt(heights.Length));
+        int temptextureResolution = Mathf.FloorToInt(textureResolution * (float) resolution / (float) chunkResolution);
+        int pixelCount = temptextureResolution * temptextureResolution;
+        colorsOut = new NativeArray<Color32>(pixelCount, Allocator.TempJob);
+        moisturesOut = new NativeArray<float>(pixelCount, Allocator.TempJob);
+        heightsOut = new NativeArray<float>(pixelCount, Allocator.TempJob);
 
         TextureJob texJob = new TextureJob
         {
             chunkPos = job.position,
-            terrainResolution = Mathf.FloorToInt(Mathf.Sqrt(heights.Length)),
-            textureResolution = textureResolution,
+            terrainResolution = resolution,
+            textureResolution = temptextureResolution,
             maxAmplitude = maxAmplitude,
-            colors = colors,
-            heights = heights
+            colorsOut = colorsOut,
+            heightsIn = heights,
+            heightsOut = heightsOut,
+            moisturesOut = moisturesOut,
+            moistures = moistures,
+            colorsIn = colorsIn,
+            elevations = elevations,
+            biomeFrequency = biomeFrequency,
+            chunkSize = chunkSize
         };
 
         JobHandle handle = texJob.Schedule(pixelCount, 64);
 
         activeTexJobs.Add(new TexJob{
             handle = handle,
-            colors = colors,
+            colors = colorsOut,
             chunk = job.chunk,
             position = job.position,
-            heights = heights
+            heights = heightsOut,
+            moistures = moisturesOut
         });
     }
 
     private void MakeTexture(TexJob job)
     {
-        texture = new Texture2D(textureResolution, textureResolution, TextureFormat.RGBA32, false);
+        int res = Mathf.FloorToInt(Mathf.Sqrt(job.colors.Length));
+        texture = new Texture2D(res, res, TextureFormat.RGBA32, false);
 
         Color32[] col = new Color32[job.colors.Length];
 
-        for(int i = 0; i < job.colors.Length; i++)
+        for (int i = 0; i < job.colors.Length; i++)
             col[i] = job.colors[i];
 
         texture.SetPixels32(col);
@@ -415,6 +441,45 @@ public class ChunkLoader : MonoBehaviour
             loadedChunks.Add(coord, allGeneratedChunks[(int) dist][coord]);
             allGeneratedChunks[(int) dist][coord].obj.SetActive(true);
         }
+    }
+
+    private void SpawnTrees(TexJob job)
+    {   
+        int sides = Mathf.FloorToInt(Mathf.Sqrt(job.heights.Length));
+        float minRadius = job.moistures.Average() * chunkSize;
+        PoissonDiscSampler sampler = new PoissonDiscSampler(chunkSize, chunkSize, minRadius);
+        foreach (Vector2 sample in sampler.Samples()) {
+            Ray ray = new Ray(new Vector3(sample.x + job.position.x * chunkSize, maxAmplitude, sample.y + job.position.y * chunkSize), Vector3.down);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, maxAmplitude * 2f))
+            {
+                Texture2D tex = (Texture2D) hit.collider.gameObject.GetComponent<Renderer>().material.mainTexture;
+                Vector2 pixelUV = hit.textureCoord;
+                Color sampled = tex.GetPixelBilinear(pixelUV.x, pixelUV.y);
+                foreach (var biome in biomeData.biomes)
+                {
+                    Color biomeColor = biome.color;
+                    if (ColorsSimilar(biomeColor, sampled, 0.05f))
+                    {
+                        if (biome.tree != null)
+                        {
+                            Instantiate(biome.tree, hit.point, Quaternion.Euler(hit.normal * 20f));
+                            break;
+                        }
+                    }
+                }
+            } else
+            {
+                Debug.LogWarning("Raycast did not hit terrain for tree at: " + new Vector3(sample.x + job.position.x * chunkSize, maxAmplitude, sample.y + job.position.y * chunkSize));
+            }
+        }
+    }
+
+    private bool ColorsSimilar(Color a, Color b, float tolerance)
+    {
+        return Mathf.Abs(a.r - b.r) <= tolerance &&
+               Mathf.Abs(a.g - b.g) <= tolerance &&
+               Mathf.Abs(a.b - b.b) <= tolerance;
     }
 
     private void generateTriangleArrays()
@@ -488,8 +553,24 @@ public class ChunkLoader : MonoBehaviour
             trihandle.Complete();
         }
     }
+
+    private void populateArrays()
+    {   
+        int length = biomeData.biomes.Count;
+
+        elevations = new NativeArray<int>(length, Allocator.Persistent);
+        moistures = new NativeArray<int>(length, Allocator.Persistent);
+        colorsIn = new NativeArray<Color32>(length, Allocator.Persistent);
+
+        for(int i = 0; i < length; i++)
+        {
+            elevations[i] = (int) biomeData.biomes[i].elevation;
+            moistures[i] = (int) biomeData.biomes[i].moisture;
+            colorsIn[i] = biomeData.biomes[i].color;
+        }
+    }
 }
-public class CoordDistRelation : IEquatable<CoordDistRelation>
+public class CoordDistRelation
 {
     public Vector2Int coord;
     public LOD lod;
@@ -498,47 +579,6 @@ public class CoordDistRelation : IEquatable<CoordDistRelation>
     {
         this.coord = coord;
         this.lod = lod;
-    }
-
-    public bool Equals(CoordDistRelation other)
-    {
-        if (ReferenceEquals(other, null)) return false;
-        if (ReferenceEquals(this, other)) return true;
-        return coord.Equals(other.coord) && lod == other.lod;
-    }
-
-    public override bool Equals(object obj)
-    {
-        return Equals(obj as CoordDistRelation);
-    }
-
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            int hash = 17;
-            hash = hash * 31 + coord.x;
-            hash = hash * 31 + coord.y;
-            hash = hash * 31 + (int)lod;
-            return hash;
-        }
-    }
-
-    public static bool operator ==(CoordDistRelation left, CoordDistRelation right)
-    {
-        if (ReferenceEquals(left, right)) return true;
-        if (ReferenceEquals(left, null) || ReferenceEquals(right, null)) return false;
-        return left.Equals(right);
-    }
-
-    public static bool operator !=(CoordDistRelation left, CoordDistRelation right)
-    {
-        return !(left == right);
-    }
-
-    public override string ToString()
-    {
-        return $"Coord({coord.x},{coord.y}) LOD:{lod}";
     }
 }
 

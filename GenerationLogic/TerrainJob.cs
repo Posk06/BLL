@@ -3,6 +3,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
+
 [BurstCompile]
 public struct TerrainJob : IJobParallelFor
 {
@@ -43,7 +44,7 @@ public struct TerrainJob : IJobParallelFor
         if (octaves <= 0)
         {
             // fall back to single‐layer noise
-            return noise.snoise(pos * frequency) * amplitude;
+            return (noise.snoise(pos * frequency) + 1) * 0.5f * amplitude;
         }
 
         float v = 0;

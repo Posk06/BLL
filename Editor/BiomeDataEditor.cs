@@ -26,6 +26,7 @@ public class BiomeDataEditor : Editor
             SerializedProperty moistProp = element.FindPropertyRelative("moisture");
             SerializedProperty contProp = element.FindPropertyRelative("continentaless");
             SerializedProperty colorProp = element.FindPropertyRelative("color");
+            SerializedProperty treeProp = element.FindPropertyRelative("tree");
 
             rect.y += 2;
             float lineHeight = EditorGUIUtility.singleLineHeight;
@@ -53,11 +54,15 @@ public class BiomeDataEditor : Editor
 
             EditorGUI.PropertyField(rect, colorProp);
             rect.y += lineHeight + 2;
+
+            // Tree
+            EditorGUI.PropertyField(rect, treeProp);
+            rect.y += lineHeight + 2;
         };
 
         reorderableList.elementHeightCallback = (int index) =>
         {
-            return 6 * (EditorGUIUtility.singleLineHeight + 2) + 4;
+            return 7 * (EditorGUIUtility.singleLineHeight + 2) + 6;
         };
 
         reorderableList.onAddCallback = (ReorderableList list) =>
@@ -72,6 +77,7 @@ public class BiomeDataEditor : Editor
             element.FindPropertyRelative("moisture").enumValueIndex = 0;
             element.FindPropertyRelative("continentaless").enumValueIndex = 0;
             element.FindPropertyRelative("color").colorValue = new Color(0,0,0);
+            element.FindPropertyRelative("tree").objectReferenceValue = null;
         };
     }
 
