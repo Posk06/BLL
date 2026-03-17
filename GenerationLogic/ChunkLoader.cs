@@ -54,15 +54,19 @@ public class ChunkLoader : MonoBehaviour
     Texture2D texture;
     Vector2Int lastPlayerChunk = new Vector2Int(100, 100);
 
+    Texture2D[] biomeTextures;
+
     NativeArray<float3> vertices;
     NativeArray<int> trianglesA, trianglesB, trianglesC, trianglesD;
     NativeArray<Color32> colorsOut;
     NativeArray<float> moisturesOut;
     NativeArray<float> heightsOut;
+    NativeArray<int> colorIndices;
 
     NativeArray<int> elevations;
     NativeArray<int> moistures;
     NativeArray<Color32> colorsIn;
+    
 
     List<ChunkJob> activeJobs = new List<ChunkJob>();
     List<TexJob> activeTexJobs = new List<TexJob>();
@@ -285,12 +289,6 @@ public class ChunkLoader : MonoBehaviour
         }
     }
 
-    IEnumerator Unload(GameObject chunk, Vector2Int key)
-    {   
-        yield return new WaitForSeconds(1f);
-        chunk.SetActive(false);
-        loadedChunks.Remove(key);
-    }
 
     private void GenerateChunk(Vector2Int pos, Chunk chunk, LOD distance, GameObject obj)
     {
@@ -345,6 +343,7 @@ public class ChunkLoader : MonoBehaviour
         colorsOut = new NativeArray<Color32>(pixelCount, Allocator.TempJob);
         moisturesOut = new NativeArray<float>(pixelCount, Allocator.TempJob);
         heightsOut = new NativeArray<float>(pixelCount, Allocator.TempJob);
+        colorIndices = new NativeArray<int>(pixelCount, Allocator.TempJob);
 
         TextureJob texJob = new TextureJob
         {
@@ -360,7 +359,8 @@ public class ChunkLoader : MonoBehaviour
             colorsIn = colorsIn,
             elevations = elevations,
             biomeFrequency = biomeFrequency,
-            chunkSize = chunkSize
+            chunkSize = chunkSize,
+            colorIndices = colorIndices
         };
 
         JobHandle handle = texJob.Schedule(pixelCount, 64);
@@ -371,19 +371,29 @@ public class ChunkLoader : MonoBehaviour
             chunk = job.chunk,
             position = job.position,
             heights = heightsOut,
-            moistures = moisturesOut
+            moistures = moisturesOut,
+            colorIndices = colorIndices
         });
     }
 
     private void MakeTexture(TexJob job)
     {
-        int res = Mathf.FloorToInt(Mathf.Sqrt(job.colors.Length));
+        int res = Mathf.FloorToInt(Mathf.Sqrt(job.colorIndices.Length));
         texture = new Texture2D(res, res, TextureFormat.RGBA32, false);
+        float sizing = (float) (chunkResolution - 1) / Mathf.Max(1, res - 1);
+        int texture_factor = 4;
 
-        Color32[] col = new Color32[job.colors.Length];
 
-        for (int i = 0; i < job.colors.Length; i++)
-            col[i] = job.colors[i];
+        Color32[] col = new Color32[job.colorIndices.Length];
+
+        int x = 0;
+        int y = 0;
+        for (int i = 0; i < job.colorIndices.Length; i++)
+        {
+            x = Mathf.FloorToInt(i % res * sizing) * texture_factor;
+            y = Mathf.FloorToInt(i / res * sizing) * texture_factor;
+            col[i] = biomeTextures[job.colorIndices[i]].GetPixel(x, y);
+        }    
 
         texture.SetPixels32(col);
         texture.filterMode = FilterMode.Bilinear;
@@ -561,12 +571,31 @@ public class ChunkLoader : MonoBehaviour
         elevations = new NativeArray<int>(length, Allocator.Persistent);
         moistures = new NativeArray<int>(length, Allocator.Persistent);
         colorsIn = new NativeArray<Color32>(length, Allocator.Persistent);
+        biomeTextures = new Texture2D[length];
 
         for(int i = 0; i < length; i++)
         {
             elevations[i] = (int) biomeData.biomes[i].elevation;
             moistures[i] = (int) biomeData.biomes[i].moisture;
             colorsIn[i] = biomeData.biomes[i].color;
+            biomeTextures[i] = biomeData.biomes[i].texture;
+        }
+    }
+
+    private LOD getLODfromRes(int res)
+    {
+        if(res > chunkResolution * 0.5f)
+        {
+            return LOD.NEAR;
+        } else if(res > chunkResolution * 0.25f)
+        {
+            return LOD.MIDDLE;
+        } else if(res > chunkResolution * 0.125f)
+        {
+            return LOD.FAR;
+        } else
+        {
+            return LOD.VERY_FAR;
         }
     }
 }

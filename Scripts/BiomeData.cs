@@ -17,6 +17,7 @@ public class Biome
     public continentaless continentaless;
     public Color color;
     public GameObject tree;
+    public Texture2D texture;
 }
 
 public enum biomeElevations

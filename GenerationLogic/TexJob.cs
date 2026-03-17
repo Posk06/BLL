@@ -7,6 +7,7 @@ struct TexJob
 {
     public JobHandle handle;
     public NativeArray<Color32> colors;
+    public NativeArray<int> colorIndices;
     public NativeArray<float> heights;
     public NativeArray<float> moistures;
     public Chunk chunk;

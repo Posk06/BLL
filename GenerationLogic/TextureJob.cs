@@ -13,6 +13,7 @@ public struct TextureJob : IJobParallelFor
     
     public NativeArray<float> moisturesOut;
     public NativeArray<float> heightsOut;
+    public NativeArray<int> colorIndices;
     
     [ReadOnly]
     public NativeArray<float> heightsIn;
@@ -44,10 +45,11 @@ public struct TextureJob : IJobParallelFor
         float height = heightSampling(x, z);
         float noiseValuemoisture = (noise.snoise(new float2(chunkPos.x * chunkSize + x, chunkPos.y * chunkSize + z) * biomeFrequency) + 1f) * 0.5f;
 
-
-        colorsOut[index] = colorassign(x, z, height, noiseValuemoisture);
+        int colorindex = 0;
+        colorsOut[index] = colorassign(x, z, height, noiseValuemoisture, out colorindex);
         moisturesOut[index] = noiseValuemoisture;
         heightsOut[index] = height;
+        colorIndices[index] = colorindex;
     }
 
     float heightSampling(float x, float y)
@@ -72,7 +74,7 @@ public struct TextureJob : IJobParallelFor
 
         return Mathf.Lerp(hx0, hx1, ty) / maxAmplitude;
     }
-    Color32 colorassign(float x, float y, float height, float moisture)
+    Color32 colorassign(float x, float y, float height, float moisture, out int index)
     {
         int biomeCount = colorsIn.Length;
 
@@ -81,7 +83,7 @@ public struct TextureJob : IJobParallelFor
         
         if(height == 0) {
             tempelev = 0; // NONE
-        } else if(height < 0.2) {
+        } else if(height < 0.05) {
             tempelev = 1; // LOW
         } else if(height < 0.5) {
             tempelev = 2; // MID
@@ -116,9 +118,11 @@ public struct TextureJob : IJobParallelFor
         }
 
         if(biomeIndex == -1) {
+            index = 0;
             return new Color32(0,255,0,255);
         } else
         {
+            index = biomeIndex;
             return colorsIn[biomeIndex];
         }
 

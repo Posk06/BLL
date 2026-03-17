@@ -20,6 +20,7 @@ MonoBehaviour:
     continentaless: 0
     color: {r: 0, g: 0, b: 1, a: 1}
     tree: {fileID: 0}
+    texture: {fileID: 2800000, guid: 40828b9cae2577045aec7ac5902283b9, type: 3}
   - name: Plains
     id: 1
     elevation: 2
@@ -27,6 +28,7 @@ MonoBehaviour:
     continentaless: 0
     color: {r: 0.17307973, g: 0.5019608, b: 0, a: 1}
     tree: {fileID: 3416579149820165379, guid: 67fc7923dbcf47447a74625d30aba72c, type: 3}
+    texture: {fileID: 2800000, guid: e2520f7ba41731c4d84996520d249a52, type: 3}
   - name: Mountain
     id: 2
     elevation: 3
@@ -34,6 +36,7 @@ MonoBehaviour:
     continentaless: 3
     color: {r: 0.3584906, g: 0.33650768, b: 0.33650768, a: 1}
     tree: {fileID: 5503166992987660084, guid: 7f32996f16966b6469fdc6ee180bab04, type: 3}
+    texture: {fileID: 2800000, guid: 889394077890a334f94311d68d816424, type: 3}
   - name: Desert
     id: 3
     elevation: 2
@@ -41,3 +44,4 @@ MonoBehaviour:
     continentaless: 0
     color: {r: 1, g: 0.91509783, b: 0.4764151, a: 1}
     tree: {fileID: 8185793832496569501, guid: 64df991afecf1ea40b853b2e1cabf4df, type: 3}
+    texture: {fileID: 2800000, guid: 2f2c02409265c144fb1e780fe00f19eb, type: 3}
