@@ -12,7 +12,7 @@ public class PlayerTracker : MonoBehaviour
     void Start()
     {
         coordinator = new ChunkCoordinator();
-        queue.AddComponent<ChunkStreamingQueue>();
+        //queue.AddComponent<ChunkStreamingQueue>();
     }
     void Update()
     {

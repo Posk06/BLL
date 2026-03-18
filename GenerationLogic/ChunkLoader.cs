@@ -62,6 +62,7 @@ public class ChunkLoader : MonoBehaviour
     NativeArray<float> moisturesOut;
     NativeArray<float> heightsOut;
     NativeArray<int> colorIndices;
+    NativeArray<Vector2Int> treepoints;
 
     NativeArray<int> elevations;
     NativeArray<int> moistures;
@@ -70,6 +71,7 @@ public class ChunkLoader : MonoBehaviour
 
     List<ChunkJob> activeJobs = new List<ChunkJob>();
     List<TexJob> activeTexJobs = new List<TexJob>();
+    List<TreeJob> activeTreeJobs = new List<TreeJob>();
 
     private Dictionary<Vector2Int, ChunkData> loadedChunks = new Dictionary<Vector2Int, ChunkData>();
     private Dictionary<Vector2Int, ChunkData>[] allGeneratedChunks = new Dictionary<Vector2Int, ChunkData>[4];
@@ -158,14 +160,31 @@ public class ChunkLoader : MonoBehaviour
                 
                 MakeTexture(job);
                 ApplyTexture(job);
-                SpawnTrees(job);
+                GenerateTreePoints(job);
 
                 job.colors.Dispose();
-                job.heights.Dispose();
 
                 activeTexJobs.RemoveAt(i);
             }
         }
+
+        for(int i = activeTreeJobs.Count - 1; i >= 0; i--)
+        {
+            var job = activeTreeJobs[i];
+
+            if (job.handle.IsCompleted)
+            {
+                job.handle.Complete();
+                SpawnTrees(job);
+
+                job.pointsOut.Dispose();
+                job.heights.Dispose();
+
+                activeTreeJobs.RemoveAt(i);
+            }
+        }
+
+
     }
 
     private void loadChunks()
@@ -289,7 +308,6 @@ public class ChunkLoader : MonoBehaviour
         }
     }
 
-
     private void GenerateChunk(Vector2Int pos, Chunk chunk, LOD distance, GameObject obj)
     {
 
@@ -351,12 +369,9 @@ public class ChunkLoader : MonoBehaviour
             terrainResolution = resolution,
             textureResolution = temptextureResolution,
             maxAmplitude = maxAmplitude,
-            colorsOut = colorsOut,
             heightsIn = heights,
             heightsOut = heightsOut,
-            moisturesOut = moisturesOut,
             moistures = moistures,
-            colorsIn = colorsIn,
             elevations = elevations,
             biomeFrequency = biomeFrequency,
             chunkSize = chunkSize,
@@ -381,7 +396,7 @@ public class ChunkLoader : MonoBehaviour
         int res = Mathf.FloorToInt(Mathf.Sqrt(job.colorIndices.Length));
         texture = new Texture2D(res, res, TextureFormat.RGBA32, false);
         float sizing = (float) (chunkResolution - 1) / Mathf.Max(1, res - 1);
-        int texture_factor = 4;
+        int texture_factor = biomeTextures[0].width / textureResolution;
 
 
         Color32[] col = new Color32[job.colorIndices.Length];
@@ -421,6 +436,8 @@ public class ChunkLoader : MonoBehaviour
     void ApplyTexture(TexJob job)
     {
         job.chunk.ApplyTexture(texture);
+        job.chunk.biomeMap = job.moistures;
+        job.chunk.heightmap = job.heights;
     }
 
     private void SpawnChunk(Vector2Int coord, LOD dist)
@@ -453,34 +470,48 @@ public class ChunkLoader : MonoBehaviour
         }
     }
 
-    private void SpawnTrees(TexJob job)
-    {   
-        int sides = Mathf.FloorToInt(Mathf.Sqrt(job.heights.Length));
-        float minRadius = job.moistures.Average() * chunkSize;
-        PoissonDiscSampler sampler = new PoissonDiscSampler(chunkSize, chunkSize, minRadius);
-        foreach (Vector2 sample in sampler.Samples()) {
-            Ray ray = new Ray(new Vector3(sample.x + job.position.x * chunkSize, maxAmplitude, sample.y + job.position.y * chunkSize), Vector3.down);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, maxAmplitude * 2f))
+    private void GenerateTreePoints(TexJob job)
+    {
+        int res = chunkResolution;
+        
+        treepoints = new NativeArray<Vector2Int>(res * res, Allocator.TempJob);
+        
+        PoissonDiscJob treeJob = new PoissonDiscJob
+        {
+            width = res,
+            height = res,
+            radius = 32f,
+            k = 30,
+            pointsOut = treepoints
+        };
+
+        JobHandle handle = treeJob.Schedule();
+
+        activeTreeJobs.Add(new TreeJob
+        {
+            handle = handle,
+            pointsOut = treepoints,
+            colorIndices = job.colorIndices,
+            heights = job.heights,
+            position = job.position,
+        });
+    }
+
+    private void SpawnTrees(TreeJob job)
+    {
+        int res = chunkResolution;
+        float sizing = Mathf.FloorToInt(Mathf.Sqrt(job.colorIndices.Length)) / chunkResolution;
+        var points = job.pointsOut;
+        {
+            foreach(var point in points)
             {
-                Texture2D tex = (Texture2D) hit.collider.gameObject.GetComponent<Renderer>().material.mainTexture;
-                Vector2 pixelUV = hit.textureCoord;
-                Color sampled = tex.GetPixelBilinear(pixelUV.x, pixelUV.y);
-                foreach (var biome in biomeData.biomes)
+                if(point.Equals(Vector2Int.zero)) continue; // No tree points generated
+                int index = Mathf.FloorToInt(point.x * sizing) + Mathf.FloorToInt(point.y * sizing) * res;
+                if(biomeData.biomes[job.colorIndices[index]].tree != null)
                 {
-                    Color biomeColor = biome.color;
-                    if (ColorsSimilar(biomeColor, sampled, 0.05f))
-                    {
-                        if (biome.tree != null)
-                        {
-                            Instantiate(biome.tree, hit.point, Quaternion.Euler(hit.normal * 20f));
-                            break;
-                        }
-                    }
+                    Vector3 pos = new Vector3(point.x + job.position.x * chunkSize, job.heights[index] * maxAmplitude, point.y + job.position.y * chunkSize);
+                    Instantiate(biomeData.biomes[job.colorIndices[index]].tree, pos, Quaternion.identity);
                 }
-            } else
-            {
-                Debug.LogWarning("Raycast did not hit terrain for tree at: " + new Vector3(sample.x + job.position.x * chunkSize, maxAmplitude, sample.y + job.position.y * chunkSize));
             }
         }
     }
@@ -598,6 +629,18 @@ public class ChunkLoader : MonoBehaviour
             return LOD.VERY_FAR;
         }
     }
+    private 
+
+    void OnDestroy()
+    {
+        if (trianglesA.IsCreated) trianglesA.Dispose();
+        if (trianglesB.IsCreated) trianglesB.Dispose();
+        if (trianglesC.IsCreated) trianglesC.Dispose();
+        if (trianglesD.IsCreated) trianglesD.Dispose();
+        if (elevations.IsCreated) elevations.Dispose();
+        if (moistures.IsCreated) moistures.Dispose();
+        if (colorsIn.IsCreated) colorsIn.Dispose();
+    }
 }
 public class CoordDistRelation
 {
@@ -621,6 +664,15 @@ public class ChunkData
         this.obj = obj;
         this.resolution = resolution;
     }
+}
+
+public class TreeJob
+{
+    public JobHandle handle;
+    public NativeArray<Vector2Int> pointsOut;
+    public NativeArray<int> colorIndices;
+    public NativeArray<float> heights;
+    public float2 position;
 }
 
 public enum LOD

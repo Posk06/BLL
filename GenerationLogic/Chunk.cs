@@ -9,6 +9,8 @@ public class Chunk : MonoBehaviour
     MeshFilter meshFilter;
     Renderer render;
     MeshCollider meshCollider;
+    public NativeArray<float> biomeMap;
+    public NativeArray<float> heightmap;
 
     void Awake()
     {

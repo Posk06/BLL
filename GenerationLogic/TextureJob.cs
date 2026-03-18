@@ -9,9 +9,7 @@ using UnityEngine;
 [BurstCompile]
 public struct TextureJob : IJobParallelFor
 {
-    public NativeArray<Color32> colorsOut;
     
-    public NativeArray<float> moisturesOut;
     public NativeArray<float> heightsOut;
     public NativeArray<int> colorIndices;
     
@@ -24,8 +22,6 @@ public struct TextureJob : IJobParallelFor
     [ReadOnly]
     public NativeArray<int> elevations;
 
-    [ReadOnly]
-    public NativeArray<Color32> colorsIn;
 
     public float2 chunkPos;
     public int textureResolution;
@@ -39,17 +35,14 @@ public struct TextureJob : IJobParallelFor
     public void Execute(int index)
     {
         float sizing = (float) (terrainResolution - 1) / Mathf.Max(1, textureResolution - 1);
-        float x = (index % textureResolution) * sizing;
-        float z = (index / textureResolution) * sizing;   
+        float x = index % textureResolution * sizing;
+        float z = index / textureResolution * sizing;   
 
         float height = heightSampling(x, z);
         float noiseValuemoisture = (noise.snoise(new float2(chunkPos.x * chunkSize + x, chunkPos.y * chunkSize + z) * biomeFrequency) + 1f) * 0.5f;
 
-        int colorindex = 0;
-        colorsOut[index] = colorassign(x, z, height, noiseValuemoisture, out colorindex);
-        moisturesOut[index] = noiseValuemoisture;
         heightsOut[index] = height;
-        colorIndices[index] = colorindex;
+        colorIndices[index] = colorassign(x, z, height, noiseValuemoisture);
     }
 
     float heightSampling(float x, float y)
@@ -74,9 +67,9 @@ public struct TextureJob : IJobParallelFor
 
         return Mathf.Lerp(hx0, hx1, ty) / maxAmplitude;
     }
-    Color32 colorassign(float x, float y, float height, float moisture, out int index)
+    int colorassign(float x, float y, float height, float moisture)
     {
-        int biomeCount = colorsIn.Length;
+        int biomeCount = elevations.Length;
 
         int tempelev;
         int tempmoist;
@@ -118,12 +111,10 @@ public struct TextureJob : IJobParallelFor
         }
 
         if(biomeIndex == -1) {
-            index = 0;
-            return new Color32(0,255,0,255);
+            return 0;
         } else
         {
-            index = biomeIndex;
-            return colorsIn[biomeIndex];
+            return biomeIndex;
         }
 
     }
