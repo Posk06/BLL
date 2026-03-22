@@ -1,35 +1,33 @@
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class ChunkStreamingQueue : MonoBehaviour
 {
+    private Queue<QueueChunk> chunkGenerationQueue = new Queue<QueueChunk>();
+    private HashSet<QueueChunk> queued = new HashSet<QueueChunk>();
+    
+    public int chunksPerTick = 2;
+    public GameObject chunkSpawner;
+    ChunkSpawner chunkSpawnerScript;
 
-    List<ChunkJob> activeJobs = new List<ChunkJob>();
-    private Queue<CoordDistRelation> chunkGenerationQueue = new Queue<CoordDistRelation>();
-    private HashSet<CoordDistRelation> queued = new HashSet<CoordDistRelation>();
-    public int chunksPerTick;
+    void Start()
+    {
+        chunkSpawnerScript = chunkSpawner.GetComponent<ChunkSpawner>();
+    }
 
     void Update()
     {
-        
-    }
-    public void loadChunk(Vector2Int pos, ChunkLOD lod)
-    {
-        
+        ProcessGenerationQueue();
     }
 
-    public void unloadChunk(GameObject obj, ChunkLOD lod)
+    public void EnqueueChunk(Vector2Int pos, ChunkLOD dist, bool replace)
     {
-        
+        if (queued.Contains(new QueueChunk(pos, dist, replace))) return;
+        queued.Add(new QueueChunk(pos, dist, replace));
+        chunkGenerationQueue.Enqueue(new QueueChunk(pos, dist, replace));
     }
-
-    private void EnqueueChunk(Vector2Int pos, LOD dist)
-    {
-        if (queued.Contains(new CoordDistRelation(pos, dist))) return;
-        queued.Add(new CoordDistRelation(pos, dist));
-        chunkGenerationQueue.Enqueue(new CoordDistRelation(pos, dist));
-    }
-    private void ProcessGenerationQueues()
+    private void ProcessGenerationQueue()
     {
         // Process a limited number of high-res chunks first
         float processed = 0;
@@ -38,9 +36,25 @@ public class ChunkStreamingQueue : MonoBehaviour
             var pos = chunkGenerationQueue.Dequeue();
             queued.Remove(pos);
             // double-check we still need it
-            //SpawnChunk();
-
+            chunkSpawnerScript.SpawnChunk(pos.coord, pos.lod, pos.replace);
             processed += Mathf.Pow(0.5f, (int) pos.lod);
+        }
+    }
+
+
+
+    private struct QueueChunk
+    {
+        public Vector2Int coord;
+        public ChunkLOD lod;
+        public bool replace;
+
+
+        public QueueChunk(Vector2Int coord, ChunkLOD lod, bool replace)
+        {
+            this.coord = coord;
+            this.lod = lod;
+            this.replace = replace;
         }
     }
 }

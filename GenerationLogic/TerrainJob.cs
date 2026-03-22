@@ -12,7 +12,7 @@ public struct TerrainJob : IJobParallelFor
     public int resolution;
 
     public float amplitude;
-    public float maxAmplitude;
+    public int maxAmplitude;
     public float frequency;
     public float lacunarity;
     public float gain;

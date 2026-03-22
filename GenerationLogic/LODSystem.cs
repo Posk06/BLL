@@ -1,10 +1,11 @@
+using System;
 using UnityEngine;
 
 public class LODSystem
 {
-    float thresholds_near = 500f;
-    float thresholds_mid = 1000f;
-    float thresholds_far = 2000f;
+    float thresholds_near = 4;
+    float thresholds_mid = 6;
+    float thresholds_far = 8;
 
 
     public LODSystem()
@@ -19,6 +20,22 @@ public class LODSystem
         else if (distanceSq <= thresholds_mid) return ChunkLOD.MIDDEL;
         else if (distanceSq <= thresholds_far) return ChunkLOD.FAR;
         else return ChunkLOD.VERY_FAR;
+    }
+    public float getFactorForLOD(ChunkLOD lod)
+    {
+        switch (lod)
+        {
+            case ChunkLOD.NEAR:
+                return 1f;
+            case ChunkLOD.MIDDEL:
+                return 0.5f;
+            case ChunkLOD.FAR:
+                return 0.25f;
+            case ChunkLOD.VERY_FAR:
+                return 0.125f;
+            default:
+                return 1f;
+        }
     }
 }
 

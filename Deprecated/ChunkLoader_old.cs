@@ -76,7 +76,6 @@ public class ChunkLoader_old : MonoBehaviour
         seed = rand.Next();
     }
 
-    float time = 0;
     void Update()
     { 
         playerPosition = new Vector2Int(Mathf.FloorToInt(player.position.x / chunkSize), Mathf.FloorToInt(player.position.z / chunkSize));
@@ -304,6 +303,15 @@ public class ChunkLoader_old : MonoBehaviour
             Destroy(chunk.Value);
         }
         allGeneratedLowResChunks.Clear();
+    }
+
+    struct ChunkJob
+    {
+        public JobHandle handle;
+        public NativeArray<float3> vertices;
+        public NativeArray<int> triangles;
+        public Chunk chunk;
+        public float2 position;
     }
 }
 

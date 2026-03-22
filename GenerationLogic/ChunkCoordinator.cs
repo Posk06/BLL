@@ -1,14 +1,27 @@
+using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine;
 
-public class ChunkCoordinator
+public class ChunkCoordinator : MonoBehaviour
 {
 
-    int viewDistanceinChunks;
+    public int viewDistanceinChunks = 8;
     LODSystem lodSystem = new LODSystem();
+    public GameObject chunkStreamingQueue;
+    ChunkStreamingQueue chunkStreamingQueueScript;
+    public GameObject chunkSpawner;
+    ChunkSpawner chunkSpawnerScript;
 
+    Dictionary<Vector2Int, ChunkLOD> activeChunks = new Dictionary<Vector2Int, ChunkLOD>();
+    List<Vector2Int> keystoRemove = new List<Vector2Int>();
 
+    void Start()
+    {
+        chunkStreamingQueueScript = chunkStreamingQueue.GetComponent<ChunkStreamingQueue>();
+        chunkSpawnerScript = chunkSpawner.GetComponent<ChunkSpawner>();
+    }
 
-    public void UpdateChunks(Vector2Int currentChunk, ChunkStreamingQueue queue)
+    public void UpdateChunks(Vector2Int currentChunk)
     {
         for (int r = 0; r <= viewDistanceinChunks; r++) 
         {
@@ -21,10 +34,47 @@ public class ChunkCoordinator
 
                     Vector2Int pos = currentChunk + new Vector2Int(x,z);
                     float dist = x*x + z*z;
+
+                    if(dist > viewDistanceinChunks * viewDistanceinChunks)
+                        continue;
+
                     ChunkLOD lod = lodSystem.getLOD(dist);
-                    queue.loadChunk(pos, lod);
+                    if(activeChunks.ContainsKey(pos))
+                    {
+                        // Check if we need to update LOD
+                        ChunkLOD chunkLOD = activeChunks[pos];
+                        if (lod != chunkLOD)
+                        {
+                            activeChunks[pos] = lod;
+                            // Update chunk LOD
+                            chunkStreamingQueueScript.EnqueueChunk(pos, lod, true);
+                        }
+                        continue;
+                    } else
+                    {
+                        chunkStreamingQueueScript.EnqueueChunk(pos, lod, false);
+                        activeChunks.Add(pos, lod);
+                    }
                 }
             }
-        }            
+        }
+
+        foreach(var chunk in activeChunks)
+        {
+            Vector2Int delta = chunk.Key - currentChunk;
+            float dist = delta.x * delta.x + delta.y * delta.y;
+            if (dist > viewDistanceinChunks * viewDistanceinChunks)
+            {
+                chunkSpawnerScript.DespawnChunk(chunk.Key);
+                keystoRemove.Add(chunk.Key);
+                Debug.Log("Unloading chunk at " + chunk.Key);
+            }
+        }
+
+        foreach(var key in keystoRemove)
+        {
+            activeChunks.Remove(key);
+        }
+        keystoRemove.Clear();            
     }
 }

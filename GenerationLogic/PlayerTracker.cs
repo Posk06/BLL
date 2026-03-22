@@ -4,15 +4,14 @@ using UnityEngine;
 public class PlayerTracker : MonoBehaviour
 {
     Vector2Int currentChunk;
-    Vector2Int lastchunk;
-    ChunkCoordinator coordinator;
+    Vector2Int lastchunk = new Vector2Int(100,100);
     int chunkSize = 16;
-    ChunkStreamingQueue queue;
+    public GameObject chunkCoordinator;
+    ChunkCoordinator coordinator;
 
     void Start()
     {
-        coordinator = new ChunkCoordinator();
-        //queue.AddComponent<ChunkStreamingQueue>();
+        coordinator = chunkCoordinator.GetComponent<ChunkCoordinator>();
     }
     void Update()
     {
@@ -20,7 +19,7 @@ public class PlayerTracker : MonoBehaviour
 
         if(currentChunk != lastchunk)
         {
-            coordinator.UpdateChunks(currentChunk, queue);
+            coordinator.UpdateChunks(currentChunk);
             lastchunk = currentChunk;
         }
     }

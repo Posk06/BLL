@@ -41,8 +41,8 @@ public struct TextureJob : IJobParallelFor
         float height = heightSampling(x, z);
         float noiseValuemoisture = (noise.snoise(new float2(chunkPos.x * chunkSize + x, chunkPos.y * chunkSize + z) * biomeFrequency) + 1f) * 0.5f;
 
-        heightsOut[index] = height;
-        colorIndices[index] = colorassign(x, z, height, noiseValuemoisture);
+        heightsOut[index] = height * maxAmplitude;
+        colorIndices[index] = colorassign(height, noiseValuemoisture);
     }
 
     float heightSampling(float x, float y)
@@ -67,7 +67,7 @@ public struct TextureJob : IJobParallelFor
 
         return Mathf.Lerp(hx0, hx1, ty) / maxAmplitude;
     }
-    int colorassign(float x, float y, float height, float moisture)
+    int colorassign(float height, float moisture)
     {
         int biomeCount = elevations.Length;
 

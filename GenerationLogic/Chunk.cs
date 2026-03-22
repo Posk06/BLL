@@ -3,7 +3,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
+
 public class Chunk : MonoBehaviour
 {
     MeshFilter meshFilter;
@@ -11,15 +11,22 @@ public class Chunk : MonoBehaviour
     MeshCollider meshCollider;
     public NativeArray<float> biomeMap;
     public NativeArray<float> heightmap;
+    public int maxAmplitude = 600;
 
     void Awake()
     {
+        
         meshFilter = GetComponent<MeshFilter>();
         render = GetComponent<Renderer>();
-        meshCollider = GetComponent<MeshCollider>();}
+        meshCollider = GetComponent<MeshCollider>();
+        }
 
     public void ApplyMesh(NativeArray<float3> vertices, NativeArray<int> triangles)
     {
+
+
+
+        int resolution = Mathf.FloorToInt(Mathf.Sqrt(vertices.Length));
         Mesh.MeshDataArray meshDataArray = Mesh.AllocateWritableMeshData(1);
         Mesh.MeshData meshData = meshDataArray[0];
 
@@ -48,6 +55,7 @@ public class Chunk : MonoBehaviour
             new SubMeshDescriptor(0, triangles.Length)
         );
 
+
         Mesh mesh = new Mesh();
 
         mesh.indexFormat = (vertices.Length > 65000) ? IndexFormat.UInt32 : IndexFormat.UInt16;
@@ -57,12 +65,14 @@ public class Chunk : MonoBehaviour
             mesh
         );     
 
-        int resolution = Mathf.FloorToInt(Mathf.Sqrt(vertices.Length));
+        int x;
+        int y;
+
         Vector2[] uv = new Vector2[vertices.Length];
         for (int i = 0; i < vertices.Length; i++)
         {
-            int x = i % resolution;
-            int y = i / resolution;
+            x = i % resolution;
+            y = i / resolution;
 
             uv[i] = new Vector2(
                 (float)x / (resolution - 1),
@@ -73,6 +83,7 @@ public class Chunk : MonoBehaviour
 
         mesh.uv = uv;
         mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
         
 
         meshFilter.mesh = mesh;
