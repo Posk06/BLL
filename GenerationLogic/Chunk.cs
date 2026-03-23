@@ -12,6 +12,7 @@ public class Chunk : MonoBehaviour
     public NativeArray<float> biomeMap;
     public NativeArray<float> heightmap;
     public int maxAmplitude = 600;
+    Mesh mesh;
 
     void Awake()
     {
@@ -19,9 +20,11 @@ public class Chunk : MonoBehaviour
         meshFilter = GetComponent<MeshFilter>();
         render = GetComponent<Renderer>();
         meshCollider = GetComponent<MeshCollider>();
+        mesh = new Mesh();
+        meshFilter.mesh = mesh;
         }
 
-    public void ApplyMesh(NativeArray<float3> vertices, NativeArray<int> triangles)
+    public void ApplyMesh(NativeArray<float3> vertices, NativeArray<int> triangles, NativeArray<Vector2> uvs, NativeArray<float3> normals)
     {
 
 
@@ -56,33 +59,18 @@ public class Chunk : MonoBehaviour
         );
 
 
-        Mesh mesh = new Mesh();
+        mesh.Clear();
 
         mesh.indexFormat = (vertices.Length > 65000) ? IndexFormat.UInt32 : IndexFormat.UInt16;
 
         Mesh.ApplyAndDisposeWritableMeshData(
             meshDataArray,
             mesh
-        );     
-
-        int x;
-        int y;
-
-        Vector2[] uv = new Vector2[vertices.Length];
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            x = i % resolution;
-            y = i / resolution;
-
-            uv[i] = new Vector2(
-                (float)x / (resolution - 1),
-                (float)y / (resolution - 1)
-            );
-        }
+        );   
         
 
-        mesh.uv = uv;
-        mesh.RecalculateNormals();
+        mesh.uv = uvs.ToArray();
+        mesh.SetNormals(normals);
         mesh.RecalculateBounds();
         
 

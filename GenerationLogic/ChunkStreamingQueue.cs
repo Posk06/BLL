@@ -10,6 +10,7 @@ public class ChunkStreamingQueue : MonoBehaviour
     public int chunksPerTick = 2;
     public GameObject chunkSpawner;
     ChunkSpawner chunkSpawnerScript;
+    bool processcheck = true;
 
     void Start()
     {
@@ -38,6 +39,13 @@ public class ChunkStreamingQueue : MonoBehaviour
             // double-check we still need it
             chunkSpawnerScript.SpawnChunk(pos.coord, pos.lod, pos.replace);
             processed += Mathf.Pow(0.5f, (int) pos.lod);
+            processcheck = true;
+        }
+
+        if(chunkGenerationQueue.Count == 0 && processcheck)
+        {
+            processcheck = false;
+            Debug.Log("Finished processing chunk queue after " + Time.timeSinceLevelLoad + " seconds");
         }
     }
 

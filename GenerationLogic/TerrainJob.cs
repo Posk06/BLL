@@ -18,6 +18,7 @@ public struct TerrainJob : IJobParallelFor
     public float gain;
     public int octaves;
     public float redistrobution;
+    public float seedOffset;
 
     public float2 chunkPosition;
 
@@ -30,8 +31,8 @@ public struct TerrainJob : IJobParallelFor
         float z = index / resolution * resolutionSizing;
 
         float2 worldPos = new float2(
-            x + chunkPosition.x * chunkSize,
-            z + chunkPosition.y * chunkSize
+            x + chunkPosition.x * chunkSize + seedOffset,
+            z + chunkPosition.y * chunkSize + seedOffset
         );
 
         float height = FractalNoise(worldPos) * maxAmplitude;

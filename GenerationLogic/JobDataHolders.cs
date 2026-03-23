@@ -6,8 +6,11 @@ using UnityEngine;
 public struct ChunkJob
     {
         public JobHandle handle;
+        public JobHandle normalHandle;
         public NativeArray<float3> vertices;
+        public NativeArray<float3> normals;
         public NativeArray<int> triangles;
+        public NativeArray<Vector2> uvs;
         public Chunk chunk;
         public float2 position;
     }
@@ -21,11 +24,22 @@ public struct TexJob
     public float2 position;
 }
 
-public class TreeJob
+public struct TreeJob
 {
     public JobHandle handle;
-    public NativeArray<Vector2Int> pointsOut;
+    public NativeArray<int2> pointsOut;
     public NativeArray<int> colorIndices;
     public NativeArray<float> heights;
     public float2 position;
+    public Chunk chunk;
+}
+
+public struct NormJob
+{
+    public JobHandle handle;
+    public NativeArray<float3> vertices;
+    public NativeArray<float3> normals;
+    public NativeArray<int> triangles;
+    public NativeArray<Vector2> uvs;
+    public Chunk chunk;
 }

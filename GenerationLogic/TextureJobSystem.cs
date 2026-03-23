@@ -17,6 +17,8 @@ public class TextureJobSystem : MonoBehaviour
     int chunkSize = 64;
     int chunkResolution = 64;
     int maxAmplitude = 600;
+    int seed = 0;
+    float seedOffset;
 
     NativeArray<int> moistures;
     NativeArray<int> elevations;
@@ -29,12 +31,13 @@ public class TextureJobSystem : MonoBehaviour
     List<TexJob> activeTextureJobs = new List<TexJob>();
 
 
-    public void Init(float biomeFrequency, int chunkSize, int chunkResolution, int maxAmplitude)
+    public void Init(float biomeFrequency, int chunkSize, int chunkResolution, int maxAmplitude, int seed)
     {
         this.biomeFrequency = biomeFrequency;
         this.chunkSize = chunkSize;
         this.chunkResolution = chunkResolution;
         this.maxAmplitude = maxAmplitude;
+        this.seed = seed;
     }
 
     void Start()
@@ -42,6 +45,9 @@ public class TextureJobSystem : MonoBehaviour
         populateArrays();
         treeJobSystemScript = treeJobSystem.GetComponent<TreeJobSystem>();
         treeJobSystemScript.Init(chunkResolution, chunkSize, biomeData);
+
+        Random.InitState(seed);
+        seedOffset = Random.Range(0f, 10000f);
     }
 
     void Update()
@@ -76,7 +82,8 @@ public class TextureJobSystem : MonoBehaviour
             biomeFrequency = biomeFrequency,
             chunkSize = chunkSize,
             colorIndices = colorIndices,
-            maxAmplitude = maxAmplitude
+            maxAmplitude = maxAmplitude,
+            seedOffset = seedOffset
         };
 
         JobHandle handle = texJob.Schedule(pixelCount, 64);
@@ -101,7 +108,7 @@ public class TextureJobSystem : MonoBehaviour
                 texJob.handle.Complete();
 
                 texJob.chunk.ApplyTexture(MakeTexture(texJob));
-                treeJobSystemScript.GenerateTreePoints(texJob);
+                //treeJobSystemScript.GenerateTreePoints(texJob);
 
                 texJob.moistures.Dispose();
 
@@ -133,6 +140,26 @@ public class TextureJobSystem : MonoBehaviour
         texture.wrapMode = TextureWrapMode.Clamp;
         texture.Apply(false);
         return texture;
+    }
+    private Texture2D MakeTexture2(TexJob job)
+    {
+        int res = Mathf.FloorToInt(Mathf.Sqrt(job.colorIndices.Length));
+
+        Texture2D tex = new Texture2D(res, res, TextureFormat.R8, false);
+        tex.filterMode = FilterMode.Point;
+        tex.wrapMode = TextureWrapMode.Clamp;
+
+        byte[] data = new byte[job.colorIndices.Length];
+
+        for (int i = 0; i < data.Length; i++)
+        {
+            data[i] = (byte)job.colorIndices[i];
+        }
+
+        tex.LoadRawTextureData(data);
+        tex.Apply(false);
+
+        return tex;
     }
 
     void populateArrays()

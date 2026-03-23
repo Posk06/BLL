@@ -104,6 +104,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95b716e9fdce9364cbbb7b188f2229d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxAmplitude: 600
+  material: {fileID: 2100000, guid: 6723acf9938ea524f8ec02ede0ccf9f7, type: 2}
 --- !u!64 &-2505676614777429368
 MeshCollider:
   m_ObjectHideFlags: 0

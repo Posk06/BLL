@@ -39,10 +39,9 @@ public class ChunkCoordinator : MonoBehaviour
                         continue;
 
                     ChunkLOD lod = lodSystem.getLOD(dist);
-                    if(activeChunks.ContainsKey(pos))
+                    if(activeChunks.TryGetValue(pos, out var chunkLOD))
                     {
                         // Check if we need to update LOD
-                        ChunkLOD chunkLOD = activeChunks[pos];
                         if (lod != chunkLOD)
                         {
                             activeChunks[pos] = lod;

@@ -29,6 +29,7 @@ public struct TextureJob : IJobParallelFor
     public int chunkSize;
     public float maxAmplitude;
     public float biomeFrequency;
+    public float seedOffset;
  
     
 
@@ -39,7 +40,7 @@ public struct TextureJob : IJobParallelFor
         float z = index / textureResolution * sizing;   
 
         float height = heightSampling(x, z);
-        float noiseValuemoisture = (noise.snoise(new float2(chunkPos.x * chunkSize + x, chunkPos.y * chunkSize + z) * biomeFrequency) + 1f) * 0.5f;
+        float noiseValuemoisture = (noise.snoise(new float2(chunkPos.x * chunkSize + x + seedOffset, chunkPos.y * chunkSize + z + seedOffset) * biomeFrequency) + 1f) * 0.5f;
 
         heightsOut[index] = height * maxAmplitude;
         colorIndices[index] = colorassign(height, noiseValuemoisture);

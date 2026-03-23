@@ -387,6 +387,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23eecffd578d69040969b63069c6bffe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TreeJobSystem
+  treePoolSize: 100
+  treeParent: {fileID: 1047208677}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -658,37 +660,6 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
---- !u!1 &416108633
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 416108634}
-  m_Layer: 0
-  m_Name: WorldLoader
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &416108634
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 416108633}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &600307865
 GameObject:
   m_ObjectHideFlags: 0
@@ -784,6 +755,37 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: 6d391b1fc9813d94490b2ee567f459fb, type: 2}
+--- !u!1 &1047208676
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1047208677}
+  m_Layer: 0
+  m_Name: TreePool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1047208677
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1047208676}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 300.07413, y: 0, z: -39.37011}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1067435713
 GameObject:
   m_ObjectHideFlags: 0
@@ -837,38 +839,7 @@ MonoBehaviour:
   octave: 4
   redistrobution: 2
   biomeFrequency: 0.0001
-  seed: 0
---- !u!1 &1174995410
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1174995412}
-  m_Layer: 0
-  m_Name: TerrainGenerator
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1174995412
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1174995410}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  seed: 200
 --- !u!1 &1179561153
 GameObject:
   m_ObjectHideFlags: 0
@@ -913,7 +884,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71fd947727c1c97458bb85405bd7a6e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChunkCoordinator
-  viewDistanceinChunks: 32
+  viewDistanceinChunks: 4
   chunkStreamingQueue: {fileID: 600307865}
   chunkSpawner: {fileID: 247534325}
 --- !u!1 &1215307273
@@ -995,6 +966,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TextureJobSystem
   treeJobSystem: {fileID: 348623034}
   biomeData: {fileID: 11400000, guid: ca40aa6202348454cbc1b8d0036ac26d, type: 2}
+  terrainMaterial: {fileID: 2100000, guid: 6723acf9938ea524f8ec02ede0ccf9f7, type: 2}
   textureResolution: 256
 --- !u!1 &1456776562
 GameObject:
@@ -1517,7 +1489,7 @@ Transform:
   m_GameObject: {fileID: 1602863746}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 40, z: 0}
+  m_LocalPosition: {x: 0, y: 30, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1756,10 +1728,9 @@ SceneRoots:
   - {fileID: 410087041}
   - {fileID: 101693012}
   - {fileID: 151461989}
-  - {fileID: 1174995412}
-  - {fileID: 416108634}
   - {fileID: 1215307274}
   - {fileID: 832575519}
   - {fileID: 1602863748}
   - {fileID: 1456776563}
   - {fileID: 1724945027}
+  - {fileID: 1047208677}
