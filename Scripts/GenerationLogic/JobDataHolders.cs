@@ -18,6 +18,7 @@ public struct VertJob
         public NativeArray<Vector2> uvs;
         public Chunk chunk;
         public float2 position;
+        public int generationId;
     }
 public struct TexJob
 {
@@ -27,6 +28,7 @@ public struct TexJob
     public NativeArray<float> moistures;
     public Chunk chunk;
     public float2 position;
+    public int generationId;
 }
 
 public struct TreeJob
@@ -38,6 +40,7 @@ public struct TreeJob
     public float2 position;
     public Chunk chunk;
     public NativeArray<float> moistures;
+    public int generationId;
 }
 
 public struct NormJob
@@ -48,4 +51,5 @@ public struct NormJob
     public NativeArray<int> triangles;
     public NativeArray<Vector2> uvs;
     public Chunk chunk;
+    public int generationId;
 }

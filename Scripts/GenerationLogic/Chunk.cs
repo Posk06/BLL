@@ -18,6 +18,7 @@ public class Chunk : MonoBehaviour
     public NativeArray<float> biomeMap;
     public float[] heightmap;
     public Vector2Int chunkPos;
+    public int generationId;
     public int maxAmplitude = 600;
     Mesh mesh;
     public bool spawnObjects;

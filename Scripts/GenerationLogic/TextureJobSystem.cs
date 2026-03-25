@@ -99,6 +99,7 @@ public class TextureJobSystem : MonoBehaviour
             heights = heights,
             moistures = moisturesOut,
             colorIndices = colorIndices
+            ,generationId = job.chunk != null ? job.chunk.generationId : 0
         });
     }
 
@@ -112,11 +113,20 @@ public class TextureJobSystem : MonoBehaviour
             {
                 texJob.handle.Complete();
 
-                //Apply the generated texture to the chunk
-                texJob.chunk.ApplyTexture(MakeTexture(texJob));
+                //Apply the generated texture to the chunk only if it hasn't been reused
+                if (texJob.chunk != null && texJob.chunk.generationId == texJob.generationId)
+                {
+                    texJob.chunk.ApplyTexture(MakeTexture(texJob));
 
-                //Generate tree pints, if necessary
-                if(texJob.chunk.spawnObjects) treeJobSystemScript.GenerateTreePoints(texJob);
+                    //Generate tree points, if necessary
+                    if (texJob.chunk.spawnObjects) treeJobSystemScript.GenerateTreePoints(texJob);
+                    else { texJob.colorIndices.Dispose(); texJob.heights.Dispose(); texJob.moistures.Dispose(); }
+                }
+                else
+                {
+                    // Chunk was reused/discarded before texture finished - free the native arrays
+                    texJob.colorIndices.Dispose(); texJob.heights.Dispose(); texJob.moistures.Dispose();
+                }
 
                 activeTextureJobs.RemoveAt(i);
             }

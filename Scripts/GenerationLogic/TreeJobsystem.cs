@@ -92,6 +92,7 @@ public class TreeJobSystem : MonoBehaviour
             heights = job.heights,
             position = job.position,
             chunk = job.chunk,
+            generationId = job.generationId,
             moistures = job.moistures
         });
     }
@@ -100,36 +101,53 @@ public class TreeJobSystem : MonoBehaviour
     {
         var points = job.pointsOut;
 
-        if(points.Length == 0)
+        // If there are no valid points, let the caller dispose the arrays and return
+        bool hasValid = false;
+        for (int i = 0; i < points.Length; i++)
         {
-            job.colorIndices.Dispose();
-            job.heights.Dispose(); 
+            if (points[i].x >= 0 && points[i].y >= 0) { hasValid = true; break; }
+        }
+        if (!hasValid) return;
+
+        // Ensure chunk wasn't reused while tree points were being generated
+        if (job.chunk == null || job.chunk.generationId != job.generationId)
+        {
             return;
         }
 
-        //Cycling trough each generated tree point spawning a tree there, again based on the biome index
+        //Cycle through each generated tree point spawning a tree there, skip invalid markers
         foreach (var point in points)
         {
-            int heightResolution = Mathf.FloorToInt(Mathf.Sqrt(job.heights.Length));
-            float heightsizing = (float) heightResolution / chunkSize;
-            int textureResolution = Mathf.FloorToInt(Mathf.Sqrt(job.colorIndices.Length));
-            float texturesizing = (float) textureResolution / chunkSize;
+            if (point.x < 0 || point.y < 0) continue; // skip unused/invalid points
 
-            int textureIndex = Mathf.FloorToInt(point.y * texturesizing * textureResolution + point.x * texturesizing);
-            int heightIndex = Mathf.FloorToInt(point.y * heightsizing * (heightResolution - 1) + point.x * heightsizing);
+            int textureResolution = Mathf.FloorToInt(Mathf.Sqrt(job.colorIndices.Length));
+            float textureScale = (textureResolution - 1) / (float)chunkSize;
+            int tx = Mathf.Clamp(Mathf.FloorToInt(point.x * textureScale), 0, textureResolution - 1);
+            int ty = Mathf.Clamp(Mathf.FloorToInt(point.y * textureScale), 0, textureResolution - 1);
+            int textureIndex = ty * textureResolution + tx;
+
+            int resolution = Mathf.FloorToInt(Mathf.Sqrt(job.heights.Length));
+
+            float height = SampleHeightBilinear(
+                point.x,
+                point.y,
+                job.heights,
+                resolution,
+                chunkSize
+            );
 
             if(biomeData.biomes[job.colorIndices[textureIndex]].tree != null)
             {
-                Vector3 spawnPos = new Vector3(job.position.x * chunkSize + point.x, job.heights[heightIndex], job.position.y * chunkSize + point.y);
+                Vector3 spawnPos = new Vector3(job.position.x * chunkSize + point.x, height, job.position.y * chunkSize + point.y);
                 if(treePool[job.colorIndices[textureIndex]].Count == 0)
                 {
-                    Instantiate(biomeData.biomes[job.colorIndices[textureIndex]].tree, spawnPos, Quaternion.identity, treeParent);
+                    Instantiate(biomeData.biomes[job.colorIndices[textureIndex]].tree, spawnPos, Quaternion.identity, job.chunk.transform);
                 } else
                 {
                     GameObject tree = treePool[job.colorIndices[textureIndex]][0];
                     tree.transform.position = spawnPos;
                     tree.SetActive(true);
-                    tree.transform.SetParent(treeParent);
+                    tree.transform.SetParent(job.chunk.transform);
                     treePool[job.colorIndices[textureIndex]].RemoveAt(0);
                 }
             }
@@ -171,4 +189,41 @@ public class TreeJobSystem : MonoBehaviour
             }
         }
     }
+    float SampleHeightBilinear(
+    float localX, 
+    float localZ, 
+    NativeArray<float> heights, 
+    int resolution, 
+    float chunkSize)
+{
+    // Convert from world (0 → chunkSize) to grid (0 → resolution-1)
+    float percentX = localX / chunkSize;
+    float percentZ = localZ / chunkSize;
+
+    float gridX = percentX * (resolution - 1);
+    float gridZ = percentZ * (resolution - 1);
+
+    int x0 = Mathf.FloorToInt(gridX);
+    int x1 = Mathf.Min(x0 + 1, resolution - 1);
+    int z0 = Mathf.FloorToInt(gridZ);
+    int z1 = Mathf.Min(z0 + 1, resolution - 1);
+
+    float tx = gridX - x0; // interpolation factor X
+    float tz = gridZ - z0; // interpolation factor Z
+
+    // Sample 4 surrounding points
+    float h00 = heights[z0 * resolution + x0];
+    float h10 = heights[z0 * resolution + x1];
+    float h01 = heights[z1 * resolution + x0];
+    float h11 = heights[z1 * resolution + x1];
+
+    // Interpolate along X
+    float hx0 = Mathf.Lerp(h00, h10, tx);
+    float hx1 = Mathf.Lerp(h01, h11, tx);
+
+    // Interpolate along Z
+    float h = Mathf.Lerp(hx0, hx1, tz);
+
+    return h;
+}
 }

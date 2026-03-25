@@ -9,7 +9,7 @@ public class PlayerTracker : MonoBehaviour
 {
     Vector2Int currentChunk;
     Vector2Int lastchunk = new Vector2Int(100,100);
-    int chunkSize = 16;
+    int chunkSize = 32;
     public GameObject chunkCoordinator;
     ChunkCoordinator coordinator;
 

@@ -18,6 +18,7 @@ public class ChunkSpawner : MonoBehaviour
     public int chunkResolution = 64;
     List<GameObject> chunkPool = new List<GameObject>();
     Dictionary<Vector2Int, GameObject> spawnedChunks = new Dictionary<Vector2Int, GameObject>();
+    int nextGenerationId = 1;
     public Transform chunkPoolParent;
     public GameObject terrainJobSystem;
     TerrainJobSystem terrainJobSystemScript;
@@ -63,6 +64,8 @@ public class ChunkSpawner : MonoBehaviour
                 chunkPool.RemoveAt(chunkPool.Count - 1);
                 spawnedChunks[position] = chunk;
                 Chunk chunkScript = chunk.GetComponent<Chunk>();
+                // assign a generation id so jobs can verify the chunk hasn't been reused
+                chunkScript.generationId = nextGenerationId++;
                 chunkScript.spawnObjects = spawnObjects;
 
                 //Call generation function
@@ -87,6 +90,11 @@ public class ChunkSpawner : MonoBehaviour
 
             chunk.transform.SetParent(lodFolder, false);
 
+            // update generation id when replacing LOD on an existing chunk to reflect this new generation
+            var chunkScript2 = chunk.GetComponent<Chunk>();
+            chunkScript2.generationId = nextGenerationId++;
+            chunkScript2.spawnObjects = spawnObjects;
+
             //Call generation function
             terrainJobSystemScript.GenerateChunk(position, lod, chunk.GetComponent<Chunk>()); 
         }
@@ -105,16 +113,22 @@ public class ChunkSpawner : MonoBehaviour
 
     public void UnloadChildren(Vector2Int position)
     {
-        spawnedChunks.TryGetValue(position, out GameObject chunk);
-        if (!chunk) return;
+        if (!spawnedChunks.TryGetValue(position, out GameObject chunk)) return;
 
+        // Collect active children first to avoid modifying the transform while iterating
+        List<GameObject> toReturn = new List<GameObject>();
         foreach (Transform child in chunk.transform)
         {
             if (child.gameObject.activeSelf)
             {
-                child.gameObject.SetActive(false);
-                TreeJobSystem.Instance.ReturnTreeToPool(child.gameObject);
+                toReturn.Add(child.gameObject);
             }
+        }
+
+        foreach (var childObj in toReturn)
+        {
+            childObj.SetActive(false);
+            TreeJobSystem.Instance.ReturnTreeToPool(childObj);
         }
     }
 }

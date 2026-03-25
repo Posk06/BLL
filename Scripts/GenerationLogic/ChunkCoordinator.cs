@@ -31,7 +31,6 @@ public class ChunkCoordinator : MonoBehaviour
 
         //The for-loop was created by AI, as well as the lod-update logic,
         //but the enqueuing was made by without AI
-
         //Loop trough all the chunks in the view Distance in a spiral pattern
         for (int r = 0; r <= viewDistanceinChunks; r++) 
         {
@@ -59,23 +58,20 @@ public class ChunkCoordinator : MonoBehaviour
                             if(dist <= objectsViewDistanceInChunks * objectsViewDistanceInChunks)
                             {
                                 chunkStreamingQueueScript.EnqueueChunk(pos, lod, true, true);
-                                activeChunks[pos] = new CoordinationData { lod = lod, hasObjects = false };
+                                activeChunks[pos] = new CoordinationData { lod = lod, hasObjects = true };
                             }
                             else
                             {
-                                // Outside objects view distance: don't spawn objects and unload existing ones
-                                if(data.hasObjects)
-                                {
-                                    chunkStreamingQueueScript.EnqueueChunk(pos, lod, true, false);
-                                    activeChunks[pos] = new CoordinationData { lod = lod, hasObjects = false };
-                                    chunkSpawnerScript.UnloadChildren(pos);
-                                }
-                                else
-                                {
-                                    chunkStreamingQueueScript.EnqueueChunk(pos, lod, true, false);
-                                    activeChunks[pos] = new CoordinationData { lod = lod, hasObjects = false };
-                                }
+                                chunkStreamingQueueScript.EnqueueChunk(pos, lod, true, false);
+                                chunkSpawnerScript.UnloadChildren(pos); 
+                                activeChunks[pos] = new CoordinationData { lod = lod, hasObjects = false };
+                                
                             }
+                        }
+
+                        if(!data.hasObjects && dist <= objectsViewDistanceInChunks * objectsViewDistanceInChunks) {
+                            chunkStreamingQueueScript.EnqueueChunk(pos, lod, true, true);
+                            activeChunks[pos] = new CoordinationData { lod = lod, hasObjects = true };
                         }
 
                         continue;
@@ -98,24 +94,28 @@ public class ChunkCoordinator : MonoBehaviour
             }
         }
         
-        //Check if any chunks need to be removed
-        foreach(var chunk in activeChunks)
+        //Check if any chunks need to be removed or have their objects toggled
+        var keys = new List<Vector2Int>(activeChunks.Keys);
+
+        foreach(var key in keys)
         {
-            Vector2Int diffrence = chunk.Key - currentChunk;
+            var chunk = activeChunks[key];
+            Vector2Int diffrence = key - currentChunk;
             float distSq = diffrence.x * diffrence.x + diffrence.y * diffrence.y;
+
             if (distSq > viewDistanceinChunks * viewDistanceinChunks)
             {
-                chunkSpawnerScript.DespawnChunk(chunk.Key);
-                keystoRemove.Add(chunk.Key);
-            } else if(distSq > objectsViewDistanceInChunks * objectsViewDistanceInChunks && chunk.Value.hasObjects)
+                chunkSpawnerScript.DespawnChunk(key);
+                keystoRemove.Add(key);
+            }
+            else if (distSq > objectsViewDistanceInChunks * objectsViewDistanceInChunks && chunk.hasObjects)
             {
-                activeChunks[chunk.Key] = new CoordinationData { lod = chunk.Value.lod, hasObjects = false };
-                chunkSpawnerScript.UnloadChildren(chunk.Key);
-                Debug.Log("Unloading objects for chunk at " + chunk.Key);
-            } else if(distSq <= objectsViewDistanceInChunks * objectsViewDistanceInChunks && !chunk.Value.hasObjects)
+                chunkSpawnerScript.UnloadChildren(key);
+                activeChunks[key] = new CoordinationData { lod = chunk.lod, hasObjects = false };
+            }
+            else if (distSq <= objectsViewDistanceInChunks * objectsViewDistanceInChunks && !chunk.hasObjects)
             {
-                activeChunks[chunk.Key] = new CoordinationData { lod = chunk.Value.lod, hasObjects = true };
-                chunkStreamingQueueScript.EnqueueChunk(chunk.Key, chunk.Value.lod, false, true);
+                chunkStreamingQueueScript.EnqueueChunk(key, chunk.lod, true, true);
             }
         }
 

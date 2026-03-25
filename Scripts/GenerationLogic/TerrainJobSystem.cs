@@ -109,7 +109,8 @@ public class TerrainJobSystem : MonoBehaviour
             triangles = triangles[(int)lod],
             uvs = uvs[(int)lod],
             position = new float2(position.x, position.y),
-            chunk = chunk
+            chunk = chunk,
+            generationId = chunk.generationId
         };
 
         activeTerrainJobs.Add(chunkJob);
@@ -139,6 +140,7 @@ public class TerrainJobSystem : MonoBehaviour
             triangles = chunkJob.triangles,
             uvs = chunkJob.uvs,
             chunk = chunkJob.chunk,
+            generationId = chunkJob.generationId,
             normals = normals
         };
         activeNormalJobs.Add(normJob);
@@ -209,7 +211,11 @@ public class TerrainJobSystem : MonoBehaviour
                 chunkJob.handle.Complete();
 
                 //Apply results to mesh
-                chunkJob.chunk.ApplyMesh(chunkJob.vertices, chunkJob.triangles, chunkJob.uvs, chunkJob.normals);
+                // Verify chunk hasn't been reused since this job was scheduled
+                if (chunkJob.chunk != null && chunkJob.chunk.generationId == chunkJob.generationId)
+                {
+                    chunkJob.chunk.ApplyMesh(chunkJob.vertices, chunkJob.triangles, chunkJob.uvs, chunkJob.normals);
+                }
 
                 chunkJob.normals.Dispose();
                 chunkJob.vertices.Dispose();

@@ -54,28 +54,31 @@ public struct PoissonDiscJob : IJob
                 float distance = random.NextFloat(noiseRadius, 2 * noiseRadius);
                 int2 candidate = spawnCenter + new int2(Mathf.RoundToInt(Mathf.Cos(angle) * distance), Mathf.RoundToInt(Mathf.Sin(angle) * distance));
 
-                if (candidate.x >= 0 && candidate.x < width && candidate.y >= 0 && candidate.y < height)
-                {
-                    bool valid = true;
-                    foreach (var point in points)
+                    if (candidate.x >= 0 && candidate.x < width && candidate.y >= 0 && candidate.y < height)
                     {
-                        if ((point - candidate).x * (point - candidate).x + (point - candidate).y * (point - candidate).y < noiseRadius * noiseRadius)
+                        bool valid = true;
+                        for (int p = 0; p < pointCount; p++)
                         {
-                            valid = false;
+                            var point = points[p];
+                            int dx = point.x - candidate.x;
+                            int dy = point.y - candidate.y;
+                            if (dx * dx + dy * dy < noiseRadius * noiseRadius)
+                            {
+                                valid = false;
+                                break;
+                            }
+                        }
+
+                        if (valid)
+                        {
+                            points[pointCount] = candidate;
+                            spawnPoints[spawnCount] = candidate;
+                            pointCount++;
+                            spawnCount++;
+                            candidateAccepted = true;
                             break;
                         }
                     }
-
-                    if (valid)
-                    {
-                        points[pointCount] = candidate;
-                        spawnPoints[spawnCount] = candidate;
-                        pointCount++;
-                        spawnCount++;
-                        candidateAccepted = true;
-                        break;
-                    }
-                }
             }
 
             if (!candidateAccepted)
@@ -89,15 +92,16 @@ public struct PoissonDiscJob : IJob
             }
         }
 
-        for(int i = 0; i < pointCount; i++)
+        // Write out generated points; mark unused slots as invalid (-1,-1)
+        for (int i = 0; i < pointsOut.Length; i++)
         {
-            if(i < points.Length)
+            if (i < pointCount)
             {
                 pointsOut[i] = points[i];
             }
             else
             {
-                pointsOut[i] = new int2(0, 0); // No more points to generate
+                pointsOut[i] = new int2(-1, -1);
             }
         }
 

@@ -35,7 +35,7 @@ public class ChunkStreamingQueue : MonoBehaviour
 
     //AI generated, but modifed by QueueChunk struct
     //This method adds a chunk to the generation Queue while maintaining relevant Data
-    public void EnqueueChunk(Vector2Int pos, ChunkLOD dist, bool replace, bool spawnObjects, bool unloadObjects = false)
+    public void EnqueueChunk(Vector2Int pos, ChunkLOD dist, bool replace, bool spawnObjects)
     {
         if (queued.Contains(new QueueChunk(pos, dist, replace, spawnObjects))) return;
         queued.Add(new QueueChunk(pos, dist, replace, spawnObjects));
