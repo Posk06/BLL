@@ -1,5 +1,13 @@
+//--------------------------------------------
+//This code manages the players movment by issuing the correct animation based on the input
+//This code is heavily based on on two tutorials
+// https://www.youtube.com/watch?v=-FhvQDqmgmU&list=PLwyUzJb_FNeTQwyGujWRLqnfKpV-cj-eO
+// https://www.youtube.com/watch?v=1mf730eb5Wo
+//--------------------------------------------
+// - Oskar Benjamin Trillitzsch
+
+
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class Movment : MonoBehaviour
 {
@@ -55,6 +63,7 @@ public class Movment : MonoBehaviour
 
     private void Update()
     {
+        //Check if the player is on the ground
         grounded = Physics.Raycast(new Vector3(transform.position.x, transform.position.y, transform.position.z), Vector3.down, 0.04f, whatisGround);
 
         myInput();
@@ -76,9 +85,12 @@ public class Movment : MonoBehaviour
 
     private void myInput()
     {
+
+        //Get input for movement
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
+        //Handle inputs for other actions the player can do
         if (Input.GetKey(jumpKey) && readytoJump && grounded && sprinting)
         {
             readytoJump = false;
@@ -113,6 +125,7 @@ public class Movment : MonoBehaviour
             }
         }
 
+        //This is for testing the save system, it will be removed in the final game
         if(Input.GetKeyDown(KeyCode.F)) {
             Debug.Log("Saved");
             PlayerSaveSystem.Save();
@@ -126,6 +139,8 @@ public class Movment : MonoBehaviour
 
     private void movePlayer()
     {
+        //Calculate movement direction from 1-8 along the 8 cardinal directions
+        //Setting those values in the animator, will trigger the corresponding animation
         rb.linearDamping = groundDrag;
 
         if (verticalInput > 0.01f)
@@ -195,6 +210,7 @@ public class Movment : MonoBehaviour
 
     }
 
+    //These functions handle diffrent states of the player
     private void sprintJump()
     {
         animator.SetTrigger("jump");
@@ -232,6 +248,7 @@ public class Movment : MonoBehaviour
         cap.height *= 2f;
     }
 
+    //Functions for saving and loading the players position and rotation
     public void Save(ref PlayerSaveData data)
     {
         data.position = transform.position;

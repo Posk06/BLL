@@ -1,4 +1,8 @@
-using Unity.VisualScripting;
+//--------------------------------------------
+//This code tracks the players position and updates the active chunks accordingly
+//--------------------------------------------
+// - Oskar Benjamin Trillitzsch
+
 using UnityEngine;
 
 public class PlayerTracker : MonoBehaviour
@@ -17,6 +21,7 @@ public class PlayerTracker : MonoBehaviour
     {
         currentChunk = new Vector2Int(Mathf.FloorToInt(transform.position.x / chunkSize), Mathf.FloorToInt(transform.position.z / chunkSize));
 
+        //Check if current chunk is the same as before, if not update world
         if(currentChunk != lastchunk)
         {
             coordinator.UpdateChunks(currentChunk);

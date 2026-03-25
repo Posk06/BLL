@@ -1,3 +1,9 @@
+//----------AI GENERATED CODE-----------------
+//This code calculates the normals of an mesh
+//--------------------------------------------
+// - Oskar Benjamin Trillitzsch
+
+
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -13,8 +19,9 @@ public struct NormalJob : IJob
 
     public void Execute()
     {
-       for (int i = 0; i < triangles.Length; i += 3)
+        for (int i = 0; i < triangles.Length; i += 3)
         {
+            //Gets the verticies of each triangles corners
             int i0 = triangles[i];
             int i1 = triangles[i + 1];
             int i2 = triangles[i + 2];
@@ -23,8 +30,10 @@ public struct NormalJob : IJob
             float3 b = vertices[i1];
             float3 c = vertices[i2];
 
+            //Calculate the normal of the triangle
             float3 normal = math.normalize(math.cross(b - a, c - a));
 
+            //Adds it to the Native Array, so we can average it later
             normals[i0] += normal;
             normals[i1] += normal;
             normals[i2] += normal;

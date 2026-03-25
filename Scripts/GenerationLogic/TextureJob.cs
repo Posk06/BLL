@@ -1,5 +1,10 @@
+//--------------------------------------------
+//This code calculates the color indices for the chunktexture based on the height and moisture values of the chunk
+//Partly AI generated, but a lot of own code
+//--------------------------------------------
+// - Oskar Benjamin Trillitzsch
 
-using System;
+
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -46,8 +51,9 @@ public struct TextureJob : IJobParallelFor
         colorIndices[index] = colorassign(height, noiseValuemoisture);
     }
 
-    float heightSampling(float x, float y)
+    float heightSampling(float x, float y) //AI
     {
+        //Bilinear interpolation to generate presumed height values between verticies
         int ix = (int)Mathf.Floor(x);
         int iy = (int)Mathf.Floor(y);
         float tx = x - ix;
@@ -68,13 +74,14 @@ public struct TextureJob : IJobParallelFor
 
         return Mathf.Lerp(hx0, hx1, ty) / maxAmplitude;
     }
-    int colorassign(float height, float moisture)
+    int colorassign(float height, float moisture) //Human
     {
         int biomeCount = elevations.Length;
 
         int tempelev;
         int tempmoist;
         
+        //Checks which elevation values fits
         if(height == 0) {
             tempelev = 0; // NONE
         } else if(height < 0.05) {
@@ -85,6 +92,7 @@ public struct TextureJob : IJobParallelFor
             tempelev = 3; // HIGH
         }
 
+        //Checks which moisture value fits
         if(moisture == 0) {
             tempmoist = 0; // NONE
         } else if(moisture < 0.2) {
@@ -95,6 +103,7 @@ public struct TextureJob : IJobParallelFor
             tempmoist = 3;  // HIGH
         }
 
+        //Decides the index based on the elevation and mositure value from BiomData
         int biomeIndex = -1;
 
         for(int i = 0; i < biomeCount; i++) {

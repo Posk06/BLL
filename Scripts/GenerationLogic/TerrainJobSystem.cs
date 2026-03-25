@@ -1,12 +1,15 @@
+//--------------------------------------------
+//This code manages the terrain generation jobs
+//Not AI generated but first iterations came from AI and some of those code parts are still present
+//--------------------------------------------
+// - Oskar Benjamin Trillitzsch
+
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 using Vector2 = UnityEngine.Vector2;
 
@@ -35,7 +38,7 @@ public class TerrainJobSystem : MonoBehaviour
 
     LODSystem lodSystem;
 
-    List<ChunkJob> activeTerrainJobs = new List<ChunkJob>();
+    List<VertJob> activeTerrainJobs = new List<VertJob>();
     List<NormJob> activeNormalJobs = new List<NormJob>();
 
 
@@ -56,8 +59,11 @@ public class TerrainJobSystem : MonoBehaviour
         triangles = new NativeArray<int>[4];
         uvs = new NativeArray<Vector2>[4];
         textureJobSystemScript.Init(biomeFrequency, chunkSize, chunkResolution, maxAmplitude, seed);
+
+        //Generate the triangle and uv arrays for each LOD level, these are reused for each chunk
         generatePersistentArrays();
 
+        //Generate a random offset using a seed to allow for diffrences but als reproduceablity
         Random.InitState(seed);
         seedOffset = Random.Range(0f, 10000f);
     }
@@ -69,11 +75,13 @@ public class TerrainJobSystem : MonoBehaviour
 
     public void GenerateChunk(Vector2Int position, ChunkLOD lod, Chunk chunk)
     {
+        //Generate the right resolution based on LOD
         int resolution = Mathf.FloorToInt(chunkResolution * lodSystem.getFactorForLOD(lod));
         int vertexCount = resolution * resolution;
         NativeArray<float3> vertices = new NativeArray<float3>(vertexCount, Allocator.TempJob);
 
 
+        //Assign Job values
         TerrainJob terrainJob = new TerrainJob
         {
             chunkSize = chunkSize,
@@ -93,7 +101,8 @@ public class TerrainJobSystem : MonoBehaviour
 
         JobHandle handle = terrainJob.Schedule(vertexCount, 64);
 
-        ChunkJob chunkJob = new ChunkJob
+        //Save the job data
+        VertJob chunkJob = new VertJob
         {
             handle = handle,
             vertices = vertices,
@@ -106,11 +115,13 @@ public class TerrainJobSystem : MonoBehaviour
         activeTerrainJobs.Add(chunkJob);
     }
 
-    public void GenerateNormals(ChunkJob chunkJob)
+    public void GenerateNormals(VertJob chunkJob)
     {
         int vertexCount = chunkJob.vertices.Length;
         NativeArray<float3> normals = new NativeArray<float3>(vertexCount, Allocator.TempJob);
 
+
+        //Assign Job values
         NormalJob normalJob = new NormalJob
         {
             vertices = chunkJob.vertices,
@@ -120,6 +131,7 @@ public class TerrainJobSystem : MonoBehaviour
 
         JobHandle normalHandle = normalJob.Schedule();
 
+        //Save the job data
         NormJob normJob = new NormJob
         {
             handle = normalHandle,
@@ -133,6 +145,7 @@ public class TerrainJobSystem : MonoBehaviour
     }
 
 
+    //Schedules jobs and waits on them to complete
     private void generatePersistentArrays()
     {
         for(int i = 0; i < triangles.Length; i++)
@@ -169,13 +182,16 @@ public class TerrainJobSystem : MonoBehaviour
 
     void updateJobs()
     {
+
+        //Check if any terrain jobs are completed
         for (int i = activeTerrainJobs.Count - 1; i >= 0; i--)
         {
-            ChunkJob chunkJob = activeTerrainJobs[i];
+            VertJob chunkJob = activeTerrainJobs[i];
             if (chunkJob.handle.IsCompleted)
             {
                 chunkJob.handle.Complete();
 
+                //Call texture generation and normal generation
                 textureJobSystemScript.GenerateTexture(chunkJob);
                 GenerateNormals(chunkJob);
 
@@ -183,6 +199,8 @@ public class TerrainJobSystem : MonoBehaviour
             }
         }
 
+
+        //Check if any normal jobs are completed
         for(int i = activeNormalJobs.Count - 1; i >= 0; i--)
         {
             NormJob chunkJob = activeNormalJobs[i];
@@ -190,6 +208,7 @@ public class TerrainJobSystem : MonoBehaviour
             {
                 chunkJob.handle.Complete();
 
+                //Apply results to mesh
                 chunkJob.chunk.ApplyMesh(chunkJob.vertices, chunkJob.triangles, chunkJob.uvs, chunkJob.normals);
 
                 chunkJob.normals.Dispose();

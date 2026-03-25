@@ -1,3 +1,8 @@
+//--------------------------------------------
+//This code manages the mesh, collider and texture of a single Chunk
+//--------------------------------------------
+// - Oskar Benjamin Trillitzsch
+
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
@@ -23,7 +28,7 @@ public class Chunk : MonoBehaviour
         meshCollider = GetComponent<MeshCollider>();
         mesh = new Mesh();
         meshFilter.mesh = mesh;
-        }
+    }
 
     public void ApplyMesh(NativeArray<float3> vertices, NativeArray<int> triangles, NativeArray<Vector2> uvs, NativeArray<float3> normals)
     {

@@ -1,9 +1,12 @@
+//--------------------------------------------
+//This code manages the texture jobs
+//--------------------------------------------
+// - Oskar Benjamin Trillitzsch
+
 using System.Collections.Generic;
-using System.Reflection;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class TextureJobSystem : MonoBehaviour
 {
@@ -55,10 +58,11 @@ public class TextureJobSystem : MonoBehaviour
         updateJobs();
     }
 
-    public void GenerateTexture(ChunkJob job)
+    public void GenerateTexture(VertJob job)
     {
         NativeArray<float> heights = new NativeArray<float>(job.vertices.Length, Allocator.TempJob);
         
+        //Extract height values from vertices
         for (int i = 0; i < heights.Length; i++)
             heights[i] = job.vertices[i].y;
 
@@ -70,6 +74,8 @@ public class TextureJobSystem : MonoBehaviour
         heightsOut = new NativeArray<float>(pixelCount, Allocator.TempJob);
         colorIndices = new NativeArray<int>(pixelCount, Allocator.TempJob);
 
+
+        //Assign Job values
         TextureJob texJob = new TextureJob
         {
             chunkPos = job.position,
@@ -88,6 +94,7 @@ public class TextureJobSystem : MonoBehaviour
 
         JobHandle handle = texJob.Schedule(pixelCount, 64);
 
+        //Store job data for later retrieval
         activeTextureJobs.Add(new TexJob{
             handle = handle,
             chunk = job.chunk,
@@ -99,7 +106,8 @@ public class TextureJobSystem : MonoBehaviour
     }
 
     void updateJobs()
-    {
+    {   
+        //Check if a job has finished
         for(int i = activeTextureJobs.Count - 1; i >= 0; i--)
         {
             TexJob texJob = activeTextureJobs[i];
@@ -107,7 +115,10 @@ public class TextureJobSystem : MonoBehaviour
             {
                 texJob.handle.Complete();
 
+                //Apply the generated texture to the chunk
                 texJob.chunk.ApplyTexture(MakeTexture(texJob));
+
+                //Generate tree pints, if necessary
                 if(texJob.chunk.spawnObjects) treeJobSystemScript.GenerateTreePoints(texJob);
 
                 activeTextureJobs.RemoveAt(i);
@@ -115,8 +126,11 @@ public class TextureJobSystem : MonoBehaviour
         }
     }
 
+    
    private Texture2D MakeTexture(TexJob job)
     {
+
+        //translate the color indicies to an actual texture
         int res = Mathf.FloorToInt(Mathf.Sqrt(job.colorIndices.Length));
         Texture2D texture = new Texture2D(res, res, TextureFormat.RGBA32, false);
         int texture_factor = biomeTextures[0].width / res;
@@ -139,29 +153,10 @@ public class TextureJobSystem : MonoBehaviour
         texture.Apply(false);
         return texture;
     }
-    private Texture2D MakeTexture2(TexJob job)
-    {
-        int res = Mathf.FloorToInt(Mathf.Sqrt(job.colorIndices.Length));
-
-        Texture2D tex = new Texture2D(res, res, TextureFormat.R8, false);
-        tex.filterMode = FilterMode.Point;
-        tex.wrapMode = TextureWrapMode.Clamp;
-
-        byte[] data = new byte[job.colorIndices.Length];
-
-        for (int i = 0; i < data.Length; i++)
-        {
-            data[i] = (byte)job.colorIndices[i];
-        }
-
-        tex.LoadRawTextureData(data);
-        tex.Apply(false);
-
-        return tex;
-    }
 
     void populateArrays()
     {   
+        //Transform BIomeData into NativeArrays for faster access in jobs
         int length = biomeData.biomes.Count;
 
         elevations = new NativeArray<int>(length, Allocator.Persistent);

@@ -1,5 +1,9 @@
+//--------------------------------------------
+//This code manages the chunk loading and unloading based on the players position
+//--------------------------------------------
+// - Oskar Benjamin Trillitzsch
+
 using System.Collections.Generic;
-using System.Numerics;
 using UnityEngine;
 
 public class ChunkCoordinator : MonoBehaviour
@@ -24,6 +28,11 @@ public class ChunkCoordinator : MonoBehaviour
 
     public void UpdateChunks(Vector2Int currentChunk)
     {
+
+        //The for-loop was created by AI, as well as the lod-update logic,
+        //but the enqueuing was made by without AI
+
+        //Loop trough all the chunks in the view Distance in a spiral pattern
         for (int r = 0; r <= viewDistanceinChunks; r++) 
         {
             for (int x = -r; x <= r; x++)
@@ -36,6 +45,7 @@ public class ChunkCoordinator : MonoBehaviour
                     Vector2Int pos = currentChunk + new Vector2Int(x,z);
                     float dist = x*x + z*z;
 
+                    //Check if chunk is in view distance
                     if(dist > viewDistanceinChunks * viewDistanceinChunks)
                         continue;
 
@@ -46,7 +56,8 @@ public class ChunkCoordinator : MonoBehaviour
                         if (lod != chunkLOD)
                         {
                             activeChunks[pos] = lod;
-                            // Update chunk LOD
+
+                            // Check if objects should be spawned
                             if(dist <= objectsViewDistanceInChunks * objectsViewDistanceInChunks)
                             {
                                 chunkStreamingQueueScript.EnqueueChunk(pos, lod, true, true);
@@ -58,6 +69,7 @@ public class ChunkCoordinator : MonoBehaviour
                         continue;
                     } else
                     {
+                        // Check if objects should be spawned
                         if(dist <= objectsViewDistanceInChunks * objectsViewDistanceInChunks)
                         {
                             chunkStreamingQueueScript.EnqueueChunk(pos, lod, false, true);
@@ -71,12 +83,13 @@ public class ChunkCoordinator : MonoBehaviour
                 }
             }
         }
-
+        
+        //Check if any chunks need to be removed
         foreach(var chunk in activeChunks)
         {
-            Vector2Int delta = chunk.Key - currentChunk;
-            float dist = delta.x * delta.x + delta.y * delta.y;
-            if (dist > viewDistanceinChunks * viewDistanceinChunks)
+            Vector2Int diffrence = chunk.Key - currentChunk;
+            float distSq = diffrence.x * diffrence.x + diffrence.y * diffrence.y;
+            if (distSq > viewDistanceinChunks * viewDistanceinChunks)
             {
                 chunkSpawnerScript.DespawnChunk(chunk.Key);
                 keystoRemove.Add(chunk.Key);

@@ -1,7 +1,13 @@
+
+//-------------AI GENERATED CODE--------------
+//This code creates am editor Interface for the Scriptable Object BIomeData,
+//allowing easy modification of the biome list in the Inspector.
+//--------------------------------------------
+// - Oskar Benjamin Trillitzsch
+
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
-using Unity.VisualScripting;
 
 [CustomEditor(typeof(BiomeData))]
 public class BiomeDataEditor : Editor

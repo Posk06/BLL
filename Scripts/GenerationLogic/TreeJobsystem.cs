@@ -1,4 +1,8 @@
-using System;
+//--------------------------------------------
+//This code manages the tree point jobs
+//--------------------------------------------
+// - Oskar Benjamin Trillitzsch
+
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Jobs;
@@ -28,7 +32,9 @@ public class TreeJobSystem : MonoBehaviour
         this.biomeData = biomeData;
 
         treePool = new List<GameObject>[biomeData.biomes.Count];
-        for (int i = 0; i < biomeData.biomes.Count; i++)
+
+        //Create a tree pool for each biome type
+        for (int i = 0; i < biomeData.biomes.Count; i++) //AI
         {
             treePool[i] = new List<GameObject>();
             for(int j = 0; j < treePoolSize; j++)
@@ -53,6 +59,7 @@ public class TreeJobSystem : MonoBehaviour
         
         treepoints = new NativeArray<int2>(res * res, Allocator.TempJob);
         
+        //Assign values to job
         PoissonDiscJob treeJob = new PoissonDiscJob
         {
             width = res,
@@ -68,6 +75,7 @@ public class TreeJobSystem : MonoBehaviour
 
         JobHandle handle = treeJob.Schedule();
 
+        //Store job data for later retrieval
         activeTreeJobs.Add(new TreeJob
         {
             handle = handle,
@@ -82,6 +90,7 @@ public class TreeJobSystem : MonoBehaviour
 
     void ApplyTrees(TreeJob job)
     {
+
         int texRes = Mathf.FloorToInt(Mathf.Sqrt(job.colorIndices.Length));
         float sizing = (float) texRes / (float) chunkResolution;
         var points = job.pointsOut;
@@ -93,6 +102,8 @@ public class TreeJobSystem : MonoBehaviour
             return;
         }
 
+        //This for-loop is AI generated, but I added the raycast to get the exact height of the terrain
+        //Cycling trough each generated tree point spawning a tree there, again based on the biome index
         foreach (var point in points)
         {
             if (point.Equals(int2.zero)) continue; // No tree points generated (or unused slot)
@@ -135,20 +146,22 @@ public class TreeJobSystem : MonoBehaviour
                 }
             }
         }
-        job.colorIndices.Dispose();
-        job.heights.Dispose();
     }
 
     void updateJob()
     {
         for (int i = activeTreeJobs.Count - 1; i >= 0; i--)
-        {
+        {   
+            //Check if a job has finished
             if (activeTreeJobs[i].handle.IsCompleted)
             {
                 activeTreeJobs[i].handle.Complete();
 
+                //Spawn trees
                 ApplyTrees(activeTreeJobs[i]);
 
+                activeTreeJobs[i].colorIndices.Dispose();
+                activeTreeJobs[i].heights.Dispose();
                 activeTreeJobs[i].pointsOut.Dispose();
                 activeTreeJobs[i].moistures.Dispose();
                 activeTreeJobs.RemoveAt(i);

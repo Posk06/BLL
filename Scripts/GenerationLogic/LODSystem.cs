@@ -1,4 +1,9 @@
-using System;
+//--------------------------------------------
+//This code holds the diffrent LOD thresholds and
+//provides useful methods to handle the LOD-Logic of chunks
+//--------------------------------------------
+// - Oskar Benjamin Trillitzsch
+
 using UnityEngine;
 
 public class LODSystem
@@ -14,6 +19,7 @@ public class LODSystem
         thresholds_mid = Mathf.Pow(thresholds_mid,2f);
         thresholds_near = Mathf.Pow(thresholds_near,2f);
     }
+    
     public ChunkLOD getLOD(float distanceSq)
     {
         if(distanceSq <= thresholds_near) return ChunkLOD.NEAR;

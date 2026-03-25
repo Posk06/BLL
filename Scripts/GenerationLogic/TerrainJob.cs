@@ -1,3 +1,9 @@
+//--------------------------------------------
+//This code generates terrain height values for each chunk
+//Not AI generated but first iterations came from AI, but was modified and completely rewritten
+//--------------------------------------------
+// - Oskar Benjamin Trillitzsch
+
 using System;
 using Unity.Burst;
 using Unity.Collections;
@@ -26,6 +32,7 @@ public struct TerrainJob : IJobParallelFor
 
     public void Execute(int index)
     {
+        //Generate Sizing to allow for more/less than chunkSize x chunkSize verticies
         float resolutionSizing = (float) chunkSize / (float) ( resolution - 1);
         float x = index % resolution * resolutionSizing;
         float z = index / resolution * resolutionSizing;
@@ -51,10 +58,11 @@ public struct TerrainJob : IJobParallelFor
         float v = 0;
         float ampsum = 0;
 
-        // work on copies so fields stay constant per vertex
+        // work on copies so values stay constant per vertex
         float f = frequency;
         float a = amplitude;
 
+        //Generate multiple Layers of noise with increasing detail and decreasing impact
         for (int i = 0; i < octaves; i++)
         {
             v += noise.snoise(pos * f) * a;
@@ -66,7 +74,7 @@ public struct TerrainJob : IJobParallelFor
 
         if (ampsum == 0)
             return 0;
-
+        //Redistubute using a power function for higher/lower contrast
         return (float) Math.Pow(Math.Abs(v / ampsum), redistrobution);
     }
 }

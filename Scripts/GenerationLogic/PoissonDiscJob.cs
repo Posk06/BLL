@@ -1,4 +1,9 @@
-using System.Collections.Generic;
+//----------AI GENERATED CODE-----------------
+//This code generates an array of points in an semi-avrage pattern to spawn objects naturally
+//It uses noise to create natural clusters and moisture in the case of trees
+//--------------------------------------------
+// - Oskar Benjamin Trillitzsch
+
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -27,10 +32,13 @@ public struct PoissonDiscJob : IJob
         NativeArray<int2> points = new NativeArray<int2>(width * height, Allocator.Temp);
         Unity.Mathematics.Random random = new Unity.Mathematics.Random(1234);
 
+        //Set starting point in the middle of the chunk
         spawnPoints[0] = new int2(width / 2, height / 2);
         int spawnCount = 1;
         int pointCount = 0;
 
+        //Cycle trough all spawn points and try to spawn new points around them, if it fails after k tries, remove the spawn point
+        //If a new point gets generated try to spawn around it as well
         while (spawnCount > 0)
         {
             int spawnIndex = random.NextInt(0, spawnCount);
