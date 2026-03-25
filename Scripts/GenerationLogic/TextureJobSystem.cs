@@ -28,7 +28,6 @@ public class TextureJobSystem : MonoBehaviour
     Texture2D[] biomeTextures;
 
     NativeArray<float> moisturesOut;
-    NativeArray<float> heightsOut;
     NativeArray<int> colorIndices;
 
     List<TexJob> activeTextureJobs = new List<TexJob>();
@@ -71,7 +70,6 @@ public class TextureJobSystem : MonoBehaviour
         int pixelCount = temptextureResolution * temptextureResolution;
 
         moisturesOut = new NativeArray<float>(pixelCount, Allocator.TempJob);
-        heightsOut = new NativeArray<float>(pixelCount, Allocator.TempJob);
         colorIndices = new NativeArray<int>(pixelCount, Allocator.TempJob);
 
 
@@ -82,7 +80,6 @@ public class TextureJobSystem : MonoBehaviour
             terrainResolution = resolution,
             textureResolution = temptextureResolution,
             heightsIn = heights,
-            heightsOut = heightsOut,
             moistures = moistures,
             elevations = elevations,
             biomeFrequency = biomeFrequency,
@@ -99,7 +96,7 @@ public class TextureJobSystem : MonoBehaviour
             handle = handle,
             chunk = job.chunk,
             position = job.position,
-            heights = heightsOut,
+            heights = heights,
             moistures = moisturesOut,
             colorIndices = colorIndices
         });

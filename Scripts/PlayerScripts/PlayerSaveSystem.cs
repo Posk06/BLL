@@ -1,3 +1,8 @@
+//--------------------------------------------
+//This code manages the saving and loading of the players position and rotation
+//--------------------------------------------
+// - Oskar Benjamin Trillitzsch
+
 using System.IO;
 using UnityEngine;
 

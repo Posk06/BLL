@@ -17,7 +17,7 @@ public class ChunkCoordinator : MonoBehaviour
     public GameObject chunkSpawner;
     ChunkSpawner chunkSpawnerScript;
 
-    Dictionary<Vector2Int, ChunkLOD> activeChunks = new Dictionary<Vector2Int, ChunkLOD>();
+    Dictionary<Vector2Int, CoordinationData> activeChunks = new Dictionary<Vector2Int, CoordinationData>();
     List<Vector2Int> keystoRemove = new List<Vector2Int>();
 
     void Start()
@@ -50,35 +50,53 @@ public class ChunkCoordinator : MonoBehaviour
                         continue;
 
                     ChunkLOD lod = lodSystem.getLOD(dist);
-                    if(activeChunks.TryGetValue(pos, out var chunkLOD))
+                    if(activeChunks.TryGetValue(pos, out var data))
                     {
                         // Check if we need to update LOD
-                        if (lod != chunkLOD)
+                        if (lod != data.lod)
                         {
-                            activeChunks[pos] = lod;
 
                             // Check if objects should be spawned
                             if(dist <= objectsViewDistanceInChunks * objectsViewDistanceInChunks)
                             {
-                                chunkStreamingQueueScript.EnqueueChunk(pos, lod, true, true);
+                                if(data.hasObjects)
+                                {
+                                    chunkStreamingQueueScript.EnqueueChunk(pos, lod, true, false);
+                                    activeChunks[pos] = new CoordinationData { lod = lod, hasObjects = true };
+                                } else
+                                {
+                                    chunkStreamingQueueScript.EnqueueChunk(pos, lod, true, true);
+                                    activeChunks[pos] = new CoordinationData { lod = lod, hasObjects = true };
+                                }
                             } else
                             {
-                                chunkStreamingQueueScript.EnqueueChunk(pos, lod, true, false);
+                                if(data.hasObjects)
+                                {
+                                    chunkStreamingQueueScript.EnqueueChunk(pos, lod, true, false);
+                                    activeChunks[pos] = new CoordinationData { lod = lod, hasObjects = false };
+                                } else
+                                {
+                                    chunkStreamingQueueScript.EnqueueChunk(pos, lod, true, false);
+                                    activeChunks[pos] = new CoordinationData { lod = lod, hasObjects = false };
+                                }
                             }
                         }
+
                         continue;
+
                     } else
                     {
                         // Check if objects should be spawned
                         if(dist <= objectsViewDistanceInChunks * objectsViewDistanceInChunks)
                         {
                             chunkStreamingQueueScript.EnqueueChunk(pos, lod, false, true);
+                            activeChunks[pos] = new CoordinationData { lod = lod, hasObjects = true };
 
                         } else
                         {
                             chunkStreamingQueueScript.EnqueueChunk(pos, lod, false, false);
+                            activeChunks[pos] = new CoordinationData { lod = lod, hasObjects = false };
                         }
-                        activeChunks.Add(pos, lod);
                     }
                 }
             }
@@ -93,6 +111,11 @@ public class ChunkCoordinator : MonoBehaviour
             {
                 chunkSpawnerScript.DespawnChunk(chunk.Key);
                 keystoRemove.Add(chunk.Key);
+            } else if(distSq > objectsViewDistanceInChunks * objectsViewDistanceInChunks && chunk.Value.hasObjects)
+            {
+                activeChunks[chunk.Key] = new CoordinationData { lod = chunk.Value.lod, hasObjects = false };
+                chunkSpawnerScript.UnloadChildren(chunk.Key);
+                Debug.Log("Unloading objects for chunk at " + chunk.Key);
             }
         }
 
@@ -101,5 +124,11 @@ public class ChunkCoordinator : MonoBehaviour
             activeChunks.Remove(key);
         }
         keystoRemove.Clear();            
+    }
+
+    struct CoordinationData
+    {
+        public ChunkLOD lod;
+        public bool hasObjects;
     }
 }

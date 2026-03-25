@@ -22,8 +22,11 @@ public class TreeJobSystem : MonoBehaviour
     public int treePoolSize = 100;
     public int maxDistance;
     public int minDistance;
+    public int maxTreesPerChunk = 50;
     public Transform treeParent;
     public LayerMask whatIsGround;
+
+    public static TreeJobSystem Instance { get; private set; }
 
     public void Init(int chunkResolution, int chunkSize, BiomeData biomeData)
     {
@@ -48,6 +51,11 @@ public class TreeJobSystem : MonoBehaviour
         }
     }
 
+    void Awake()
+    {
+        Instance = this;
+    }
+
     void Update()
     {
         updateJob();
@@ -55,22 +63,22 @@ public class TreeJobSystem : MonoBehaviour
 
     public void GenerateTreePoints(TexJob job)
     {
-        int res = chunkResolution;
         
-        treepoints = new NativeArray<int2>(res * res, Allocator.TempJob);
+        treepoints = new NativeArray<int2>(maxTreesPerChunk, Allocator.TempJob);
         
         //Assign values to job
         PoissonDiscJob treeJob = new PoissonDiscJob
         {
-            width = res,
-            height = res,
+            width = chunkSize,
+            height = chunkSize,
             minRadius = minDistance,
             maxRadius = maxDistance,
             k = 30,
             pointsOut = treepoints,
             chunkSize = chunkSize,
             position = job.position,
-            moistures = job.moistures
+            moistures = job.moistures,
+            maxTrees = maxTreesPerChunk
         };
 
         JobHandle handle = treeJob.Schedule();
@@ -90,9 +98,6 @@ public class TreeJobSystem : MonoBehaviour
 
     void ApplyTrees(TreeJob job)
     {
-
-        int texRes = Mathf.FloorToInt(Mathf.Sqrt(job.colorIndices.Length));
-        float sizing = (float) texRes / (float) chunkResolution;
         var points = job.pointsOut;
 
         if(points.Length == 0)
@@ -102,47 +107,30 @@ public class TreeJobSystem : MonoBehaviour
             return;
         }
 
-        //This for-loop is AI generated, but I added the raycast to get the exact height of the terrain
         //Cycling trough each generated tree point spawning a tree there, again based on the biome index
         foreach (var point in points)
         {
-            if (point.Equals(int2.zero)) continue; // No tree points generated (or unused slot)
+            int heightResolution = Mathf.FloorToInt(Mathf.Sqrt(job.heights.Length));
+            float heightsizing = (float) heightResolution / chunkSize;
+            int textureResolution = Mathf.FloorToInt(Mathf.Sqrt(job.colorIndices.Length));
+            float texturesizing = (float) textureResolution / chunkSize;
 
-            int tx = Mathf.FloorToInt(point.x * sizing);
-            int ty = Mathf.FloorToInt(point.y * sizing);
-            int index = tx + ty * texRes;
+            int textureIndex = Mathf.FloorToInt(point.y * texturesizing * textureResolution + point.x * texturesizing);
+            int heightIndex = Mathf.FloorToInt(point.y * heightsizing * (heightResolution - 1) + point.x * heightsizing);
 
-            if (index < 0 || index >= job.colorIndices.Length) continue;
-            int colorIdx = job.colorIndices[index];
-
-            if (biomeData.biomes[colorIdx].tree != null)
+            if(biomeData.biomes[job.colorIndices[textureIndex]].tree != null)
             {
-                float height = job.heights[index];
-                Vector3 pos;
-
-                float px = point.x + job.position.x * chunkSize;
-                float pz = point.y + job.position.y * chunkSize;
-                
-                if (Physics.Raycast(new Vector3(px, 1000f, pz), Vector3.down, out RaycastHit hit, 2000f, whatIsGround))
+                Vector3 spawnPos = new Vector3(job.position.x * chunkSize + point.x, job.heights[heightIndex], job.position.y * chunkSize + point.y);
+                if(treePool[job.colorIndices[textureIndex]].Count == 0)
                 {
-                    pos = new Vector3(px, hit.point.y, pz);
-                }
-                else
+                    Instantiate(biomeData.biomes[job.colorIndices[textureIndex]].tree, spawnPos, Quaternion.identity, treeParent);
+                } else
                 {
-                    pos = new Vector3(px, height, pz); // fallback
-                }
-
-                if(treePool[colorIdx].Count > 0)
-                {
-                    var tree = treePool[colorIdx][0];
-                    treePool[colorIdx].RemoveAt(0);
+                    GameObject tree = treePool[job.colorIndices[textureIndex]][0];
+                    tree.transform.position = spawnPos;
                     tree.SetActive(true);
-                    tree.transform.position = pos;
-                    tree.transform.SetParent(job.chunk.transform);
-                }
-                else
-                {
-                    Instantiate(biomeData.biomes[colorIdx].tree, pos, Quaternion.identity, job.chunk.transform);
+                    tree.transform.SetParent(treeParent);
+                    treePool[job.colorIndices[textureIndex]].RemoveAt(0);
                 }
             }
         }
@@ -165,6 +153,21 @@ public class TreeJobSystem : MonoBehaviour
                 activeTreeJobs[i].pointsOut.Dispose();
                 activeTreeJobs[i].moistures.Dispose();
                 activeTreeJobs.RemoveAt(i);
+            }
+        }
+    }
+
+    public void ReturnTreeToPool(GameObject tree)
+    {
+        //Return tree to pool based on biome index
+        foreach(var biome in biomeData.biomes)
+        {
+            if(biome.tree != null && tree.name.Contains(biome.tree.name))
+            {
+                tree.transform.SetParent(treeParent);
+                int biomeIndex = biomeData.biomes.IndexOf(biome);
+                treePool[biomeIndex].Add(tree);
+                break;
             }
         }
     }

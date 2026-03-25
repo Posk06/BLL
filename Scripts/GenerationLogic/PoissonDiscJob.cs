@@ -19,6 +19,7 @@ public struct PoissonDiscJob : IJob
     public int height;
     public float minRadius;
     public float maxRadius;
+    public int maxTrees;
     public int k;
     public NativeArray<int2> pointsOut;
     [ReadOnly] public NativeArray<float> moistures;
@@ -28,8 +29,8 @@ public struct PoissonDiscJob : IJob
 
     public void Execute()
     {
-        NativeArray<int2> spawnPoints = new NativeArray<int2>(width * height, Allocator.Temp);
-        NativeArray<int2> points = new NativeArray<int2>(width * height, Allocator.Temp);
+        NativeArray<int2> spawnPoints = new NativeArray<int2>(maxTrees, Allocator.Temp);
+        NativeArray<int2> points = new NativeArray<int2>(maxTrees, Allocator.Temp);
         Unity.Mathematics.Random random = new Unity.Mathematics.Random(1234);
 
         //Set starting point in the middle of the chunk
@@ -79,8 +80,12 @@ public struct PoissonDiscJob : IJob
 
             if (!candidateAccepted)
             {
-                spawnPoints[spawnIndex] = new int2(0, 0); // Mark as invalid
                 spawnCount--;
+            }
+
+            if(pointCount >= maxTrees)
+            {
+                break; // Reached maximum tree count
             }
         }
 

@@ -6,7 +6,9 @@
 
 
 using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine;
+using Vector3 = UnityEngine.Vector3;
 
 public class ChunkSpawner : MonoBehaviour
 {
@@ -98,6 +100,21 @@ public class ChunkSpawner : MonoBehaviour
             chunk.SetActive(false);
             chunkPool.Add(chunk);
             spawnedChunks.Remove(position);
+        }
+    }
+
+    public void UnloadChildren(Vector2Int position)
+    {
+        spawnedChunks.TryGetValue(position, out GameObject chunk);
+        if (!chunk) return;
+
+        foreach (Transform child in chunk.transform)
+        {
+            if (child.gameObject.activeSelf)
+            {
+                child.gameObject.SetActive(false);
+                TreeJobSystem.Instance.ReturnTreeToPool(child.gameObject);
+            }
         }
     }
 }

@@ -1,3 +1,8 @@
+//--------------------------------------------
+//This code calculates the triangles indicies for the meshes
+//--------------------------------------------
+// - Oskar Benjamin Trillitzsch
+
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -13,6 +18,9 @@ public struct TriangleJob : IJobParallelFor
 
     public void Execute(int index)
     {
+
+        // Calculate the triangles corner points
+
         int x = index % (chunkResolution - 1);
         int z = index / (chunkResolution - 1);
 

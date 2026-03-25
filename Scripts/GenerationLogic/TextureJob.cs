@@ -15,7 +15,6 @@ using UnityEngine;
 public struct TextureJob : IJobParallelFor
 {
     
-    public NativeArray<float> heightsOut;
     public NativeArray<int> colorIndices;
     
     [ReadOnly]
@@ -47,7 +46,6 @@ public struct TextureJob : IJobParallelFor
         float height = heightSampling(x, z);
         float noiseValuemoisture = (noise.snoise(new float2(chunkPos.x * chunkSize + x + seedOffset, chunkPos.y * chunkSize + z + seedOffset) * biomeFrequency) + 1f) * 0.5f;
 
-        heightsOut[index] = height * maxAmplitude;
         colorIndices[index] = colorassign(height, noiseValuemoisture);
     }
 

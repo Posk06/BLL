@@ -3,6 +3,7 @@
 //--------------------------------------------
 // - Oskar Benjamin Trillitzsch
 
+using System.IO;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
@@ -15,10 +16,13 @@ public class Chunk : MonoBehaviour
     Renderer render;
     MeshCollider meshCollider;
     public NativeArray<float> biomeMap;
-    public NativeArray<float> heightmap;
+    public float[] heightmap;
+    public Vector2Int chunkPos;
     public int maxAmplitude = 600;
     Mesh mesh;
     public bool spawnObjects;
+
+    string saveFile;
 
     void Awake()
     {
@@ -78,11 +82,66 @@ public class Chunk : MonoBehaviour
 
         meshFilter.mesh = mesh;
         meshCollider.sharedMesh = mesh;
+
+        chunkPos = new Vector2Int((int)(transform.position.x / mesh.bounds.size.x), (int)(transform.position.z / mesh.bounds.size.z));
+        saveFile = Application.persistentDataPath + "/chunk_" + chunkPos.x + "_" + chunkPos.y + ".chunk";
+
+        heightmap = new float[vertices.Length];
+        for (int i = 0; i < vertices.Length; i++)
+            heightmap[i] = vertices[i].y;
+
+        Save();
     }
+
+
 
     public void ApplyTexture(Texture2D texture) {
         render.material.mainTexture = texture;
         render.material.SetFloat("_Smoothness", 0f);
     
     }
+
+    private void Save()
+    {
+        string saveFile = Application.persistentDataPath + "/chunk_" + chunkPos.x + "_" + chunkPos.y + ".chunk";
+
+        ChunkSaveData data = new ChunkSaveData
+        {
+            position = chunkPos,
+            heightmap = heightmap
+        };
+
+        File.WriteAllBytes(saveFile, System.Text.Encoding.UTF8.GetBytes(JsonUtility.ToJson(data, true)));
+    }
+
+    private void Load(int chunkSize, int resolution)
+    {
+       
+        ChunkSaveData data = JsonUtility.FromJson<ChunkSaveData>(File.ReadAllText(saveFile));
+
+        mesh.Clear();
+
+        Vector3[] vertices = new Vector3[data.heightmap.Length];
+        float resolutionSizing = (float) chunkSize / (float) ( resolution - 1);
+
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            float x = i % resolution * resolutionSizing;
+            float z = i / resolution * resolutionSizing;
+            vertices[i] = new Vector3(x, data.heightmap[i], z);
+        }
+
+        
+
+
+    }
+    
+}
+
+[System.Serializable]
+
+public struct ChunkSaveData
+{
+    public Vector2Int position;
+    public float[] heightmap;
 }

@@ -1,5 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
+//--------------------------------------------
+//This code manages the buttons on the title screen
+//--------------------------------------------
+// - Oskar Benjamin Trillitzsch
+
 using UnityEngine;
 
 public class TitleButtons : MonoBehaviour

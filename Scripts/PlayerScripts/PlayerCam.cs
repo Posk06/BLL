@@ -1,3 +1,8 @@
+//--------------------------------------------
+//This code manages the rotaton of the camera based on mosue movements
+//--------------------------------------------
+// - Oskar Benjamin Trillitzsch
+
 using UnityEngine;
 
 public class PlayerCam : MonoBehaviour

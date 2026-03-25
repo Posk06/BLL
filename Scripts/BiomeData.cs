@@ -1,3 +1,9 @@
+//--------------------------------------------
+//This code creates the scriptable object BiomeData which holds a list of BIomes with their own Data
+//The first iteration was AI generated but multiple values were addded and removed 
+//--------------------------------------------
+// - Oskar Benjamin Trillitzsch
+
 using System.Collections.Generic;
 using UnityEngine;
 
