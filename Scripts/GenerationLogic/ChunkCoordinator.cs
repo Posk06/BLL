@@ -55,26 +55,22 @@ public class ChunkCoordinator : MonoBehaviour
                         // Check if we need to update LOD
                         if (lod != data.lod)
                         {
-
-                            // Check if objects should be spawned
+                            // If we're within the objects view distance, ensure objects are (re)spawned
                             if(dist <= objectsViewDistanceInChunks * objectsViewDistanceInChunks)
                             {
-                                if(data.hasObjects)
-                                {
-                                    chunkStreamingQueueScript.EnqueueChunk(pos, lod, true, false);
-                                    activeChunks[pos] = new CoordinationData { lod = lod, hasObjects = true };
-                                } else
-                                {
-                                    chunkStreamingQueueScript.EnqueueChunk(pos, lod, true, true);
-                                    activeChunks[pos] = new CoordinationData { lod = lod, hasObjects = true };
-                                }
-                            } else
+                                chunkStreamingQueueScript.EnqueueChunk(pos, lod, true, true);
+                                activeChunks[pos] = new CoordinationData { lod = lod, hasObjects = false };
+                            }
+                            else
                             {
+                                // Outside objects view distance: don't spawn objects and unload existing ones
                                 if(data.hasObjects)
                                 {
                                     chunkStreamingQueueScript.EnqueueChunk(pos, lod, true, false);
                                     activeChunks[pos] = new CoordinationData { lod = lod, hasObjects = false };
-                                } else
+                                    chunkSpawnerScript.UnloadChildren(pos);
+                                }
+                                else
                                 {
                                     chunkStreamingQueueScript.EnqueueChunk(pos, lod, true, false);
                                     activeChunks[pos] = new CoordinationData { lod = lod, hasObjects = false };
@@ -116,6 +112,10 @@ public class ChunkCoordinator : MonoBehaviour
                 activeChunks[chunk.Key] = new CoordinationData { lod = chunk.Value.lod, hasObjects = false };
                 chunkSpawnerScript.UnloadChildren(chunk.Key);
                 Debug.Log("Unloading objects for chunk at " + chunk.Key);
+            } else if(distSq <= objectsViewDistanceInChunks * objectsViewDistanceInChunks && !chunk.Value.hasObjects)
+            {
+                activeChunks[chunk.Key] = new CoordinationData { lod = chunk.Value.lod, hasObjects = true };
+                chunkStreamingQueueScript.EnqueueChunk(chunk.Key, chunk.Value.lod, false, true);
             }
         }
 
