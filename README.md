@@ -1,5 +1,5 @@
 # Information zu dem BLL "Xplorer"
-Dieses Projekt ist entstanden durch meine Leidenschaft zu Videospielen und Informatik, welche sich in eine Neugier zur eignene Videospielentwicklung wiederfindet. Inspiriert ist dieses Videospiel durch spiele wie No Man's Sky, Minecraft und Skyrim. Es ist ein Projekt, welches mich herausfordern sollte die Prozesse hinter solchen Spielen zu verstehen und Erfahrungen in diesem Feld zu sammeln. 
+Dieses Projekt ist entstanden durch meine Leidenschaft an Videospielen und Informatik, welche sich in eine Neugier zur eignene Videospielentwicklung wiederfanden. Inspiriert ist dieses Videospiel durch Spiele wie No Man's Sky, Minecraft und Skyrim. Es ist ein Projekt, welches mich herausfordern sollte die Prozesse hinter solchen Spielen zu verstehen und Erfahrungen in diesem Feld zu sammeln. 
 
 ## Inhalt
 - [Aufbau](#aufbau-des-projekts)
@@ -29,7 +29,7 @@ Dieser Ordner enthält verschiedene Datein die helfen das Spiel zu bauen
 Die Dokumentation dieses Projektes finden sie in der Datei "Project Documentation BLL Oskar Trillitzsch.pdf" und eine kurze Erklärung zu den verschiedenen Klassen finden sie in "Generation Logic Short Explanation.pdf"
 
 ## Quellen und AI-Nutzung
-Das Projekt stütz sich auf mehrere Quellen, besonders Tutorials auf Youtube, die Unity Dokumentation und AI. Alle Codeschnipsel die komplett mit AI generiert worden sind, sind innerhalb der einzelnen Klassen makiert. Es kann jedoch sein, dass manchen Codeschnipsel die in AI-Gesprächen und meinem Code aufkommen nicht makiert sind, die lag häufig daran, dass ich schon Prozesse implimentiert hatte, welche die AI erst später vorgeschlagen hat oder es gibt Schnipsel, die erstmals von AI generiert worden sind, dann jedoch von Grund auf neu geschreiben worden sind, aber dennoch dem Orginalen ähnlich sehen.
+Das Projekt stütz sich auf mehrere Quellen, besonders Tutorials auf Youtube, die Unity Dokumentation und AI (ChatGPT und Github Copilot). Alle Codeschnipsel die komplett mit AI generiert worden sind, sind innerhalb der einzelnen Klassen makiert. Es kann jedoch sein, dass manchen Codeschnipsel die in AI-Gesprächen und meinem Code aufkommen nicht makiert sind, die lag häufig daran, dass ich schon Prozesse implimentiert hatte, welche die AI erst später vorgeschlagen hat. Es gibt auch Schnipsel, die erstmals von AI generiert worden sind, dann jedoch von Grund auf neu geschreiben worden sind, aber dennoch dem Orginalen ähnlich sehen. Solche neu geschreibenen oder stark modifizierten Codeschnispel sind nicht als AI markiert.
 
 ### Youtube
 - [Tutorial Serie von Brackeys](https://www.youtube.com/watch?v=eJEpeUH1EMg&list=PLrMEhC9sAD1zprGu_lphl3cQSS3uFIXA9) (zuletzt aufgerufen 26.03.2026)
