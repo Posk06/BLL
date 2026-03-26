@@ -26,8 +26,7 @@ Diese Datein sind vorgefertigte Modelle welche im Spiel kreiert werden
 Dieser Ordner enthält verschiedene Datein die helfen das Spiel zu bauen
 
 ## Dokumentation
-Die Dokumentation dieses Projektes finden sie [hier](main/project-dokumentatio-bll-oskar-trillitzsch.pdf) und eine kurze Erklärung zu den verschiedenen Klassen finden sie [hier](main/generation-logic-short-eplanation.pdf).
-
+Die Dokumentation dieses Projektes finden sie in der Datei "Project Documentation BLL Oskar Trillitzsch.pdf" und eine kurze Erklärung zu den verschiedenen Klassen finden sie in "Generation Logic Short Explanation.pdf"
 ## Quellen und AI-Nutzung
 Das Projekt stütz sich auf mehrere Quellen, besonders Tutorials auf Youtube, die Unity Dokumentation und AI. Alle Codeschnipsel die komplett mit AI generiert worden sind, sind innerhalb der einzelnen Klassen makiert. Es kann jedoch sein, dass manchen Codeschnipsel die in AI-Gesprächen und meinem Code aufkommen nicht makiert sind, die lag häufig daran, dass ich schon Prozesse implimentiert hatte, welche die AI erst später vorgeschlagen hat oder es gibt Schnipsel, die erstemals von AI generiert worden sind, dann jedoch von Grund auf neu geschreiben worden sind, aber dennoch dem Orginalen ähnlich sehen.
 
