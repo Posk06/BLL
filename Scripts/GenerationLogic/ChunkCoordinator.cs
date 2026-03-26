@@ -20,10 +20,11 @@ public class ChunkCoordinator : MonoBehaviour
     Dictionary<Vector2Int, CoordinationData> activeChunks = new Dictionary<Vector2Int, CoordinationData>();
     List<Vector2Int> keystoRemove = new List<Vector2Int>();
 
-    void Start()
+    void Awake()
     {
         chunkStreamingQueueScript = chunkStreamingQueue.GetComponent<ChunkStreamingQueue>();
         chunkSpawnerScript = chunkSpawner.GetComponent<ChunkSpawner>();
+        chunkStreamingQueueScript.Init(viewDistanceinChunks);
     }
 
     public void UpdateChunks(Vector2Int currentChunk)

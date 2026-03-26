@@ -13,7 +13,7 @@ public class PlayerTracker : MonoBehaviour
     public GameObject chunkCoordinator;
     ChunkCoordinator coordinator;
 
-    void Start()
+    void Awake()
     {
         coordinator = chunkCoordinator.GetComponent<ChunkCoordinator>();
     }

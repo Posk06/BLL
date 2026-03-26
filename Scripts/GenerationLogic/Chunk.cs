@@ -25,6 +25,14 @@ public class Chunk : MonoBehaviour
 
     string saveFile;
 
+
+    public void Init(int maxAmplitude, bool spawnObjects, int generationId)
+    {
+        this.maxAmplitude = maxAmplitude;
+        this.spawnObjects = spawnObjects;
+        this.generationId = generationId;
+    }
+
     void Awake()
     {
         

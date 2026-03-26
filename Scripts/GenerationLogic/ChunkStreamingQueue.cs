@@ -15,7 +15,14 @@ public class ChunkStreamingQueue : MonoBehaviour
     public int ticksPerSecond = 10;
     public GameObject chunkSpawner;
     ChunkSpawner chunkSpawnerScript;
-    void Start()
+    int firstGeneration;
+
+    public void Init(int viewDistanceinChunks)
+    {
+        firstGeneration = Mathf.FloorToInt(viewDistanceinChunks * viewDistanceinChunks * Mathf.PI);
+        chunksPerTick *= 10;
+    }
+    void Awake()
     {
         chunkSpawnerScript = chunkSpawner.GetComponent<ChunkSpawner>();
     }
@@ -55,6 +62,8 @@ public class ChunkStreamingQueue : MonoBehaviour
             // double-check we still need it
             chunkSpawnerScript.SpawnChunk(pos.coord, pos.lod, pos.replace, pos.spawnObjects);
             processed += Mathf.Pow(0.5f, (int) pos.lod);
+            
+            if(firstGeneration == 0) { chunksPerTick /= 10; }
         }
     }
 

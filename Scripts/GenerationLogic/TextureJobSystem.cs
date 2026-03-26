@@ -42,7 +42,7 @@ public class TextureJobSystem : MonoBehaviour
         this.seed = seed;
     }
 
-    void Start()
+    void Awake()
     {
         populateArrays();
         treeJobSystemScript = treeJobSystem.GetComponent<TreeJobSystem>();

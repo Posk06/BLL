@@ -65,8 +65,7 @@ public class ChunkSpawner : MonoBehaviour
                 spawnedChunks[position] = chunk;
                 Chunk chunkScript = chunk.GetComponent<Chunk>();
                 // assign a generation id so jobs can verify the chunk hasn't been reused
-                chunkScript.generationId = nextGenerationId++;
-                chunkScript.spawnObjects = spawnObjects;
+                chunkScript.Init(terrainJobSystemScript.maxAmplitude, spawnObjects, nextGenerationId++);
 
                 //Call generation function
                 terrainJobSystemScript.GenerateChunk(position, lod, chunkScript);
@@ -92,8 +91,7 @@ public class ChunkSpawner : MonoBehaviour
 
             // update generation id when replacing LOD on an existing chunk to reflect this new generation
             var chunkScript2 = chunk.GetComponent<Chunk>();
-            chunkScript2.generationId = nextGenerationId++;
-            chunkScript2.spawnObjects = spawnObjects;
+            chunkScript2.Init(terrainJobSystemScript.maxAmplitude, spawnObjects, nextGenerationId++);
 
             //Call generation function
             terrainJobSystemScript.GenerateChunk(position, lod, chunk.GetComponent<Chunk>()); 

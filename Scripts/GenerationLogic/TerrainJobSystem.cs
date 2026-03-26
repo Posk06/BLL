@@ -47,10 +47,10 @@ public class TerrainJobSystem : MonoBehaviour
     public void Init(int chunkSize, int resolution)
     {
         this.chunkSize = chunkSize;
-        this.chunkResolution = resolution;
+        chunkResolution = resolution;
     }
 
-    void Start()
+    void Awake()
     {
         seed = Random.Range(0, int.MaxValue);
 
