@@ -6,12 +6,11 @@ Dieses Projekt ist entstanden durch meine Leidenschaft an Videospielen und Infor
 - [Dokumentation](#dokumentation)
 - [Quellen und AI-Nutzung](#quellen-und-ai-nutzung)
 
-## BLL_Xplorer.exe
-Dies ist die Datei des Spieles. Einfach runterladen, entpacken und ausprobiere.
-(Warnung: Manche Funktionen des Menus sind noch nicht fertig und verlangen eventuell eine Neustart des Spieles)
-
 ## Aufbau des Projekts
 Den Ordner den dieses Git Repository darstellt ist der Asset Folder innerhalb eines Unity Projektes.
+### BLL_Xplorer.exe
+Dies ist die Datei des Spieles. Einfach runterladen, entpacken und ausprobiere.
+(Warnung: Manche Funktionen des Menus sind noch nicht fertig und verlangen eventuell eine Neustart des Spieles)
 ### Scripts
 Hier sind alle Scripts gelagert welche das Spiel ausmachen.
 #### Editor Scripts
