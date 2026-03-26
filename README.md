@@ -6,24 +6,28 @@ Dieses Projekt ist entstanden durch meine Leidenschaft an Videospielen und Infor
 - [Dokumentation](#dokumentation)
 - [Quellen und AI-Nutzung](#quellen-und-ai-nutzung)
 
+## BLL_Xplorer.exe
+Dies ist die Datei des Spieles. Einfach runterladen, entpacken und ausprobiere.
+(Warnung: Manche Funktionen des Menus sind noch nicht fertig und verlangen eventuell eine Neustart des Spieles)
+
 ## Aufbau des Projekts
 Den Ordner den dieses Git Repository darstellt ist der Asset Folder innerhalb eines Unity Projektes.
 ### Scripts
-Hier sind alle Scripts gelagert welche das Spiel ausmachen
+Hier sind alle Scripts gelagert welche das Spiel ausmachen.
 #### Editor Scripts
-Diese Scripts sind dazu dar den Inspector innerhalb von Unity zu gestalten und neue Funktionen hinzuzufügen, die bei der Entwicklung des Spieles helfen
+Diese Scripts sind dazu dar den Inspector innerhalb von Unity zu gestalten und neue Funktionen hinzuzufügen, die bei der Entwicklung des Spieles helfen.
 #### Generation Logic
-Diese Scripts enthalten den ganze Code für das generieren der Welt um den Spieler herum
+Diese Scripts enthalten den ganze Code für das generieren der Welt um den Spieler herum.
 #### Player Scripts
-Diese Scripts steueren den Spieler und seine Kamera, wie auch die Position in der Relation zu Welt
+Diese Scripts steueren den Spieler und seine Kamera, wie auch die Position in der Relation zu Welt.
 #### Weiter Scripts
-Diese Scripts erstellen/steuern weiter Teile des Videospiels sind aber keiner Kategorie zuzuordnen
+Diese Scripts erstellen/steuern weiter Teile des Videospiels sind aber keiner Kategorie zuzuordnen.
 ### Scenes
-Diese Dateien enthalten den Aufbau der verschiedenen Welten die genutzt werden um das Spiel zusammenzubauen
+Diese Dateien enthalten den Aufbau der verschiedenen Welten die genutzt werden um das Spiel zusammenzubauen.
 ### Prefabs
-Diese Datein sind vorgefertigte Objekte welche im Spiel instanziieren werden
+Diese Datein sind vorgefertigte Objekte welche im Spiel instanziieren werden.
 ### Misc_Data
-Dieser Ordner enthält verschiedene Datein die helfen das Spiel zu bauen
+Dieser Ordner enthält verschiedene Datein die helfen das Spiel zu bauen.
 
 ## Dokumentation
 Die Dokumentation dieses Projektes finden sie in der Datei "Project Documentation BLL Oskar Trillitzsch.pdf" und eine kurze Erklärung zu den verschiedenen Klassen finden sie in "Generation Logic Short Explanation.pdf"
@@ -63,4 +67,9 @@ Das Projekt stütz sich auf mehrere Quellen, besonders Tutorials auf Youtube, di
 - [Code Debugging Help](https://chatgpt.com/share/69c5412c-f0c8-8329-b5e6-8d05ee99458c)
 - [Unity Performance Optimization](https://chatgpt.com/share/69c54142-cb2c-8333-8a7a-662e4bb75f70)
 - [Tree Spawn Issue Fix](https://chatgpt.com/share/69c52b57-9760-832c-8b05-a4362050e5b4)
+
+Nun das Problem, was man mit den AI Chats innerhalb von VIsual Studio Code hat. Sie sind leider nicht gut exportierbar. Diese Chats können nur als unleserliche JSON Datei abgespeichert werden, deswegen hab ich mir von ChatGPT ein HTML-Script generieren lassen, der diese Dateien auslesen und wiedergeben kann. Um diese also einzusehen muss man:
+- Die Datei chatviewer.html mit einem Browser öffnen
+- In das Feld für JSON Dateien die gewünschte Datei aus VSCode_AI_Chats auswählen
+- Damit hat man eine relativ gut leserliche Darstellung dieser Dateien
 
