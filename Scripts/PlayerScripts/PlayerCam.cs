@@ -27,6 +27,6 @@ public class PlayerCam : MonoBehaviour
     xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
     Quaternion target = Quaternion.Euler(xRotation, yRotation, 0f);
-    transform.rotation = Quaternion.Slerp(transform.rotation, target, 20f * Time.deltaTime);
+    transform.rotation = Quaternion.Slerp(transform.rotation, target, 20f * Time.deltaTime); //AI
     }
 }

@@ -72,10 +72,6 @@ public class Movment : MonoBehaviour
 
         if (grounded) { rb.linearDamping = groundDrag; } else { rb.linearDamping = groundDrag; }
         if(Input.GetKeyUp(jumpKey) && jumpCooldownCounter <= 0f) { readytoJump = true; }
-
-
-
-    
     }
 
     private void FixedUpdate()
@@ -134,6 +130,9 @@ public class Movment : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.G)) {
             Debug.Log("Loaded");
             PlayerSaveSystem.Load();
+        }
+        if(Input.GetKeyDown(KeyCode.Escape)) {
+            Application.Quit();
         }
     }    
 

@@ -115,6 +115,7 @@ public class TreeJobSystem : MonoBehaviour
             return;
         }
 
+        //This Code was partly genrated by AI, but was also modified and optimized by me
         //Cycle through each generated tree point spawning a tree there, skip invalid markers
         foreach (var point in points)
         {

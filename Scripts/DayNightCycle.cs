@@ -16,7 +16,7 @@ public class DayNightCycle : MonoBehaviour
     float time = 0f;
     // Update is called once per frame
     void Update()
-    {
+    { 
         time += Time.deltaTime / 60f;
         float sunAngle = time / minituresPerDay * 360f;
         sun.rotation = Quaternion.Euler(sunAngle, 0f, 0f);
