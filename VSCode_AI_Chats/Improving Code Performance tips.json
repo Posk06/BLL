@@ -1,0 +1,3763 @@
+{
+  "responderUsername": "GitHub Copilot",
+  "initialLocation": "panel",
+  "requests": [
+    {
+      "requestId": "request_2a34c8fa-3335-4a93-884d-5692d12bf7a0",
+      "message": {
+        "text": "what could i do to make this code more pefromant?",
+        "parts": [
+          {
+            "range": {
+              "start": 0,
+              "endExclusive": 49
+            },
+            "editorRange": {
+              "startLineNumber": 1,
+              "startColumn": 1,
+              "endLineNumber": 1,
+              "endColumn": 50
+            },
+            "text": "what could i do to make this code more pefromant?",
+            "kind": "text"
+          }
+        ]
+      },
+      "variableData": {
+        "variables": []
+      },
+      "response": [
+        {
+          "kind": "mcpServersStarting",
+          "didStartServerIds": []
+        },
+        {
+          "kind": "prepareToolInvocation",
+          "toolName": "copilot_readFile"
+        },
+        {
+          "kind": "toolInvocationSerialized",
+          "invocationMessage": {
+            "value": "Reading [](file:///c%3A/Users/oskar/BLL/Assets/ComputeShaders/TerrainShader.compute#1-1), lines 1 to 100",
+            "supportThemeIcons": false,
+            "supportHtml": false,
+            "supportAlertSyntax": false,
+            "uris": {
+              "file:///c%3A/Users/oskar/BLL/Assets/ComputeShaders/TerrainShader.compute#1-1": {
+                "$mid": 1,
+                "path": "/c:/Users/oskar/BLL/Assets/ComputeShaders/TerrainShader.compute",
+                "scheme": "file",
+                "fragment": "1-1"
+              }
+            }
+          },
+          "pastTenseMessage": {
+            "value": "Read [](file:///c%3A/Users/oskar/BLL/Assets/ComputeShaders/TerrainShader.compute#1-1), lines 1 to 100",
+            "supportThemeIcons": false,
+            "supportHtml": false,
+            "supportAlertSyntax": false,
+            "uris": {
+              "file:///c%3A/Users/oskar/BLL/Assets/ComputeShaders/TerrainShader.compute#1-1": {
+                "$mid": 1,
+                "path": "/c:/Users/oskar/BLL/Assets/ComputeShaders/TerrainShader.compute",
+                "scheme": "file",
+                "fragment": "1-1"
+              }
+            }
+          },
+          "isConfirmed": {
+            "type": 1
+          },
+          "isComplete": true,
+          "source": {
+            "type": "internal",
+            "label": "Built-In"
+          },
+          "toolCallId": "a1d325fa-28a4-44de-9452-d7dd99d06731",
+          "toolId": "copilot_readFile",
+          "generatedTitle": "Read TerrainShader.compute lines 1 to 183",
+          "isAttachedToThinking": false
+        },
+        {
+          "kind": "prepareToolInvocation",
+          "toolName": "copilot_readFile"
+        },
+        {
+          "kind": "toolInvocationSerialized",
+          "invocationMessage": {
+            "value": "Reading [](file:///c%3A/Users/oskar/BLL/Assets/ComputeShaders/TerrainShader.compute#101-101), lines 101 to 183",
+            "supportThemeIcons": false,
+            "supportHtml": false,
+            "supportAlertSyntax": false,
+            "uris": {
+              "file:///c%3A/Users/oskar/BLL/Assets/ComputeShaders/TerrainShader.compute#101-101": {
+                "$mid": 1,
+                "path": "/c:/Users/oskar/BLL/Assets/ComputeShaders/TerrainShader.compute",
+                "scheme": "file",
+                "fragment": "101-101"
+              }
+            }
+          },
+          "pastTenseMessage": {
+            "value": "Read [](file:///c%3A/Users/oskar/BLL/Assets/ComputeShaders/TerrainShader.compute#101-101), lines 101 to 183",
+            "supportThemeIcons": false,
+            "supportHtml": false,
+            "supportAlertSyntax": false,
+            "uris": {
+              "file:///c%3A/Users/oskar/BLL/Assets/ComputeShaders/TerrainShader.compute#101-101": {
+                "$mid": 1,
+                "path": "/c:/Users/oskar/BLL/Assets/ComputeShaders/TerrainShader.compute",
+                "scheme": "file",
+                "fragment": "101-101"
+              }
+            }
+          },
+          "isConfirmed": {
+            "type": 1
+          },
+          "isComplete": true,
+          "source": {
+            "type": "internal",
+            "label": "Built-In"
+          },
+          "toolCallId": "a729c6ec-5dd1-48b3-bcfc-03a04cb474a5",
+          "toolId": "copilot_readFile",
+          "generatedTitle": "Read TerrainShader.compute lines 1 to 183",
+          "isAttachedToThinking": false
+        },
+        {
+          "value": "To improve performance in this Unity compute shader (TerrainShader.compute), focus on reducing computational overhead per thread, as the kernel processes each vertex independently with heavy noise calculations. Here are targeted suggestions based on the code's structure (e.g., multiple loops over `biomeCount`, nested noise calls in `fbmcustom`, and domain warping). These assume `biomeCount` is small (e.g., ≤10) and `octaves` per biome is reasonable; profile with Unity's Profiler or RenderDoc to confirm bottlenecks.\n\n### 1. **Reduce Noise Complexity**\n   - **Lower octave counts**: In `fbmcustom`, reduce `octaves[l]` (e.g., from 4-8 to 2-4) per biome. Each octave adds a `snoise` call and multiplications—fewer iterations halve computation time.\n   - **Simplify domain warping**: The `domainWarp` call in `heightcalc` adds an extra `snoise` per vertex. Reduce `warpStrength` (e.g., from 20.0 to 5.0-10.0) or `warpFreq` (e.g., from 0.0003 to 0.001) to lessen its impact, or remove it if terrain detail allows.\n   - **Optimize noise functions**: If `snoise` (from noiseSimplex.cginc) is a bottleneck, consider switching to a faster noise implementation (e.g., Perlin via Unity's built-in functions) or precomputing noise textures on the CPU for lookup.\n\n### 2. **Optimize Loops and Branches**\n   - **Unroll small loops**: If `biomeCount` is fixed and small (e.g., 5-10), manually unroll the loops in `heightcalc` (e.g., `biomeWeights[0] = ...; biomeWeights[1] = ...;`) to eliminate loop overhead. Avoid if `biomeCount` varies dynamically.\n   - **Minimize conditional logic**: The `weightcalc` switches are fine, but ensure `biomeCount` is clamped to prevent out-of-bounds access. The normalization `if (total > 0.0001f)` is cheap but could be avoided by ensuring weights sum correctly.\n   - **Batch computations**: Instead of separate loops for weights, heights, normalization, and summing, combine them into one loop over `biomeCount` to reduce redundant iterations.\n\n### 3. **Memory and Data Access**\n   - **Use constant buffers**: Move static arrays like `biomeWeights` and `biomeHeights` to local variables or precompute on CPU if possible. StructuredBuffers are fine, but avoid unnecessary reads.\n   - **Calculate proper normals**: Currently, normals are hardcoded to `(0,1,0)`, which is fast but inaccurate for terrain. If needed, compute them via finite differences (e.g., sample neighboring heights), but only if performance allows—profile first.\n\n### 4. **Kernel Dispatch and Threading**\n   - **Adjust thread group size**: `[numthreads(16,16,1)]` is reasonable for GPUs, but test `[numthreads(8,8,1)]` or `[numthreads(32,32,1)]` based on your GPU (NVIDIA prefers 32x32, AMD 16x16). Ensure dispatch size matches `resolution` (e.g., dispatch `(resolution/16, resolution/16, 1)`).\n   - **Early exit**: The `if (x >= resolution || y >= resolution) return;` is good—keeps it.\n\n### 5. **General Best Practices**\n   - **Profile and benchmark**: Run on target hardware. Use Unity's Frame Debugger to isolate shader time. Aim for <16ms per frame if real-time.\n   - **Reduce resolution or biomes**: If `resolution` is high (e.g., 1024+), lower it or use level-of-detail. Fewer biomes reduce loops exponentially.\n   - **GPU-specific tweaks**: Enable fast math (`#pragma fastmath`) if precision loss is acceptable. Use half-precision floats (`half`) for positions/UVs if supported.\n   - **Avoid unused code**: `ridgedNoise` isn't called—remove it to clean up.\n\nThese changes could improve performance by 2-5x depending on settings. Test incrementally and validate terrain quality. If you share profiling data or specific bottlenecks, I can refine further.",
+          "supportThemeIcons": false,
+          "supportHtml": false,
+          "baseUri": {
+            "$mid": 1,
+            "path": "/C:/Users/oskar/BLL/",
+            "scheme": "file"
+          }
+        }
+      ],
+      "agent": {
+        "extensionId": {
+          "value": "GitHub.copilot-chat",
+          "_lower": "github.copilot-chat"
+        },
+        "extensionVersion": "0.36.1",
+        "publisherDisplayName": "GitHub",
+        "extensionPublisherId": "GitHub",
+        "extensionDisplayName": "GitHub Copilot Chat",
+        "id": "github.copilot.editsAgent",
+        "description": "Edit files in your workspace in agent mode",
+        "when": "config.chat.agent.enabled",
+        "metadata": {
+          "themeIcon": {
+            "id": "tools"
+          },
+          "hasFollowups": false,
+          "supportIssueReporting": false
+        },
+        "name": "agent",
+        "fullName": "GitHub Copilot",
+        "isDefault": true,
+        "locations": [
+          "panel"
+        ],
+        "modes": [
+          "agent"
+        ],
+        "slashCommands": [],
+        "disambiguation": []
+      },
+      "timestamp": 1769177145220,
+      "modelId": "copilot/auto",
+      "responseId": "response_bc6b25fe-1ae8-432e-b3e1-49a2b0ab8203",
+      "result": {
+        "timings": {
+          "firstProgress": 3073,
+          "totalElapsed": 18213
+        },
+        "metadata": {
+          "codeBlocks": [],
+          "renderedUserMessage": [
+            {
+              "type": 1,
+              "text": "<context>\nThe current date is January 23, 2026.\nTerminals:\nTerminal: powershell\nTerminal: powershell\n\n</context>\n<editorContext>\nThe user's current file is c:\\Users\\oskar\\BLL\\Assets\\ComputeShaders\\TerrainShader.compute. \n</editorContext>\n<reminderInstructions>\nWhen using the replace_string_in_file tool, include 3-5 lines of unchanged code before and after the string you want to replace, to make it unambiguous which part of the file should be edited.\n\n</reminderInstructions>\n<user_query>\nwhat could i do to make this code more pefromant?\n</user_query>\n"
+            },
+            {
+              "type": 3,
+              "cacheType": "ephemeral"
+            }
+          ],
+          "renderedGlobalContext": [
+            {
+              "type": 1,
+              "text": "<environment_info>\nThe user's current OS is: Windows\n</environment_info>\n<workspace_info>\nI am working in a workspace with the following folders:\n- c:\\Users\\oskar\\BLL \nI am working in a workspace that has the following structure:\n```\nAssembly-CSharp-Editor.csproj\nAssembly-CSharp.csproj\nBLL.sln\nAssets/\n\tAnimations.meta\n\tBiomeData.cs\n\tBiomeData.cs.meta\n\tBiomeDataTable.asset\n\tBiomeDataTable.asset.meta\n\tChunkLoader.cs\n\tChunkLoader.cs.meta\n\tComputeShaders.meta\n\tEditor.meta\n\tFastNoiseLite.cs\n\tFastNoiseLite.cs.meta\n\tGenerateButton.cs\n\tGenerateButton.cs.meta\n\tMaterials.meta\n\tModelRotation.cs\n\tModelRotation.cs.meta\n\tMoveCamera.cs\n\tMoveCamera.cs.meta\n\tMovment.cs\n\tMovment.cs.meta\n\tNoFriction.physicMaterial\n\tNoFriction.physicMaterial.meta\n\tPlayerCam.cs\n\tPlayerCam.cs.meta\n\tProcedualGenerator.cs\n\tProcedualGenerator.cs.meta\n\tScenes.meta\n\tSettings.meta\n\tShaders.meta\n\tStandartTerrain.prefab\n\tStandartTerrain.prefab.meta\n\tTerrainAtlas_HighRes.png.meta\n\tTerrainColors.meta\n\tTerrainMaterial_HIghRes.mat\n\tTerrainMaterial_HIghRes.mat.meta\n\tTerrainMaterial.mat\n\tTerrainMaterial.mat.meta\n\tUniversalRenderPipelineGlobalSettings.asset\n\tUniversalRenderPipelineGlobalSettings.asset.meta\n\tAnimations/\n\t\t...\n\tComputeShaders/\n\tEditor/\n\tMaterials/\n\tScenes/\n\tSettings/\n\tShaders/\n\tTerrainColors/\nLibrary/\n\tAnnotationManager\n\tArtifactDB\n\tArtifactDB-lock\n\tBuildPlayer.prefs\n\tBuildSettings.asset\n\tEditorInstance.json\n\tEditorOnlyScriptingSettings.json\n\tEditorOnlyVirtualTextureState.json\n\tEditorSnapSettings.asset\n\tEditorUserBuildSettings.asset\n\texpandedItems\n\tilpp.pid\n\tInspectorExpandedItems.asset\n\tLastSceneManagerSetup.txt\n\tLibraryFormatVersion.txt\n\tMonoManager.asset\n\tSceneVisibilityState.asset\n\tScriptMapper\n\tSourceAssetDB\n\tSourceAssetDB-lock\n\tSpriteAtlasDatabase.asset\n\tStyle.catalog\n\tAPIUpdater/\n\tArtifacts/\n\tBee/\n\tBurstCache/\n\tPackageCache/\n\tPackageManager/\n\tPlayModeViewStates/\n\tScriptAssemblies/\n\tSearch/\n\tShaderCache/\n\tStateCache/\n\tTempArtifacts/\n\tTerrainTools/\n\tUIElements/\nLogs/\nPackages/\n\tmanifest.json\n\tpackages-lock.json\nProjectSettings/\n\tAudioManager.asset\n\tBurstAotSettings_StandaloneWindows.json\n\tClusterInputManager.asset\n\tCommonBurstAotSettings.json\n\tDynamicsManager.asset\n\tEditorBuildSettings.asset\n\t...\nTemp/\n\t...\nUserSettings/\n\t...\n```\nThis is the state of the context at this point in the conversation. The view of the workspace structure may be truncated. You can use tools to collect more context if needed.\n</workspace_info>\n"
+            },
+            {
+              "type": 3,
+              "cacheType": "ephemeral"
+            }
+          ],
+          "cacheKey": "file:///c%3A/Users/oskar/BLL",
+          "toolCallRounds": [
+            {
+              "response": "",
+              "toolCalls": [
+                {
+                  "name": "read_file",
+                  "arguments": "{\"endLine\":100,\"filePath\":\"c:\\\\Users\\\\oskar\\\\BLL\\\\Assets\\\\ComputeShaders\\\\TerrainShader.compute\",\"startLine\":1}",
+                  "id": "call_95685495__vscode-1769176761965"
+                }
+              ],
+              "toolInputRetry": 0,
+              "id": "3af9506c-917c-4cfa-b1df-eb2de4026be9"
+            },
+            {
+              "response": "",
+              "toolCalls": [
+                {
+                  "name": "read_file",
+                  "arguments": "{\"endLine\":183,\"filePath\":\"c:\\\\Users\\\\oskar\\\\BLL\\\\Assets\\\\ComputeShaders\\\\TerrainShader.compute\",\"startLine\":101}",
+                  "id": "call_14080834__vscode-1769176761966"
+                }
+              ],
+              "toolInputRetry": 0,
+              "id": "88ef756b-912f-4ebf-8fd4-fa9ea68b2f79"
+            },
+            {
+              "response": "To improve performance in this Unity compute shader (TerrainShader.compute), focus on reducing computational overhead per thread, as the kernel processes each vertex independently with heavy noise calculations. Here are targeted suggestions based on the code's structure (e.g., multiple loops over `biomeCount`, nested noise calls in `fbmcustom`, and domain warping). These assume `biomeCount` is small (e.g., ≤10) and `octaves` per biome is reasonable; profile with Unity's Profiler or RenderDoc to confirm bottlenecks.\n\n### 1. **Reduce Noise Complexity**\n   - **Lower octave counts**: In `fbmcustom`, reduce `octaves[l]` (e.g., from 4-8 to 2-4) per biome. Each octave adds a `snoise` call and multiplications—fewer iterations halve computation time.\n   - **Simplify domain warping**: The `domainWarp` call in `heightcalc` adds an extra `snoise` per vertex. Reduce `warpStrength` (e.g., from 20.0 to 5.0-10.0) or `warpFreq` (e.g., from 0.0003 to 0.001) to lessen its impact, or remove it if terrain detail allows.\n   - **Optimize noise functions**: If `snoise` (from noiseSimplex.cginc) is a bottleneck, consider switching to a faster noise implementation (e.g., Perlin via Unity's built-in functions) or precomputing noise textures on the CPU for lookup.\n\n### 2. **Optimize Loops and Branches**\n   - **Unroll small loops**: If `biomeCount` is fixed and small (e.g., 5-10), manually unroll the loops in `heightcalc` (e.g., `biomeWeights[0] = ...; biomeWeights[1] = ...;`) to eliminate loop overhead. Avoid if `biomeCount` varies dynamically.\n   - **Minimize conditional logic**: The `weightcalc` switches are fine, but ensure `biomeCount` is clamped to prevent out-of-bounds access. The normalization `if (total > 0.0001f)` is cheap but could be avoided by ensuring weights sum correctly.\n   - **Batch computations**: Instead of separate loops for weights, heights, normalization, and summing, combine them into one loop over `biomeCount` to reduce redundant iterations.\n\n### 3. **Memory and Data Access**\n   - **Use constant buffers**: Move static arrays like `biomeWeights` and `biomeHeights` to local variables or precompute on CPU if possible. StructuredBuffers are fine, but avoid unnecessary reads.\n   - **Calculate proper normals**: Currently, normals are hardcoded to `(0,1,0)`, which is fast but inaccurate for terrain. If needed, compute them via finite differences (e.g., sample neighboring heights), but only if performance allows—profile first.\n\n### 4. **Kernel Dispatch and Threading**\n   - **Adjust thread group size**: `[numthreads(16,16,1)]` is reasonable for GPUs, but test `[numthreads(8,8,1)]` or `[numthreads(32,32,1)]` based on your GPU (NVIDIA prefers 32x32, AMD 16x16). Ensure dispatch size matches `resolution` (e.g., dispatch `(resolution/16, resolution/16, 1)`).\n   - **Early exit**: The `if (x >= resolution || y >= resolution) return;` is good—keeps it.\n\n### 5. **General Best Practices**\n   - **Profile and benchmark**: Run on target hardware. Use Unity's Frame Debugger to isolate shader time. Aim for <16ms per frame if real-time.\n   - **Reduce resolution or biomes**: If `resolution` is high (e.g., 1024+), lower it or use level-of-detail. Fewer biomes reduce loops exponentially.\n   - **GPU-specific tweaks**: Enable fast math (`#pragma fastmath`) if precision loss is acceptable. Use half-precision floats (`half`) for positions/UVs if supported.\n   - **Avoid unused code**: `ridgedNoise` isn't called—remove it to clean up.\n\nThese changes could improve performance by 2-5x depending on settings. Test incrementally and validate terrain quality. If you share profiling data or specific bottlenecks, I can refine further.",
+              "toolCalls": [],
+              "toolInputRetry": 0,
+              "id": "d9790184-7109-431e-9eca-66ebe41c0491"
+            }
+          ],
+          "toolCallResults": {
+            "call_95685495__vscode-1769176761965": {
+              "$mid": 20,
+              "content": [
+                {
+                  "$mid": 23,
+                  "value": {
+                    "node": {
+                      "type": 1,
+                      "ctor": 2,
+                      "ctorName": "jfe",
+                      "children": [
+                        {
+                          "type": 2,
+                          "priority": 9007199254740991,
+                          "text": "File: `",
+                          "lineBreakBefore": false
+                        },
+                        {
+                          "type": 2,
+                          "priority": 9007199254740991,
+                          "text": "c:\\Users\\oskar\\BLL\\Assets\\ComputeShaders\\TerrainShader.compute",
+                          "lineBreakBefore": false
+                        },
+                        {
+                          "type": 2,
+                          "priority": 9007199254740991,
+                          "text": "`. Lines ",
+                          "lineBreakBefore": false
+                        },
+                        {
+                          "type": 2,
+                          "priority": 9007199254740991,
+                          "text": "1",
+                          "lineBreakBefore": false
+                        },
+                        {
+                          "type": 2,
+                          "priority": 9007199254740991,
+                          "text": " to ",
+                          "lineBreakBefore": false
+                        },
+                        {
+                          "type": 2,
+                          "priority": 9007199254740991,
+                          "text": "100",
+                          "lineBreakBefore": false
+                        },
+                        {
+                          "type": 2,
+                          "priority": 9007199254740991,
+                          "text": " (",
+                          "lineBreakBefore": false
+                        },
+                        {
+                          "type": 2,
+                          "priority": 9007199254740991,
+                          "text": "183",
+                          "lineBreakBefore": false
+                        },
+                        {
+                          "type": 2,
+                          "priority": 9007199254740991,
+                          "text": " lines total): ",
+                          "lineBreakBefore": false
+                        },
+                        {
+                          "type": 2,
+                          "priority": 9007199254740991,
+                          "text": "\n",
+                          "lineBreakBefore": false
+                        },
+                        {
+                          "type": 1,
+                          "ctor": 2,
+                          "ctorName": "Kt",
+                          "children": [
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 102,
+                                  "text": "```UnityShader\n",
+                                  "references": [
+                                    {
+                                      "anchor": {
+                                        "$mid": 1,
+                                        "fsPath": "c:\\Users\\oskar\\BLL\\Assets\\ComputeShaders\\TerrainShader.compute",
+                                        "_sep": 1,
+                                        "external": "file:///c%3A/Users/oskar/BLL/Assets/ComputeShaders/TerrainShader.compute",
+                                        "path": "/c:/Users/oskar/BLL/Assets/ComputeShaders/TerrainShader.compute",
+                                        "scheme": "file"
+                                      },
+                                      "options": {
+                                        "isFromTool": true
+                                      }
+                                    }
+                                  ],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 102
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 101,
+                                  "text": "// Each #kernel tells which function to compile; you can have many kernels\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 101
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 100,
+                                  "text": "#pragma kernel CSMain\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 100
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 99,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 99
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 98,
+                                  "text": "#include \"Assets/ComputeShaders/noiseSimplex.cginc\"\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 98
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 97,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 97
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 96,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 96
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 95,
+                                  "text": "RWStructuredBuffer<float3> vertices;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 95
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 94,
+                                  "text": "RWStructuredBuffer<float3> normals;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 94
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 93,
+                                  "text": "RWStructuredBuffer<float2> uvs;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 93
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 92,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 92
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 91,
+                                  "text": "StructuredBuffer<float> frequencys;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 91
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 90,
+                                  "text": "StructuredBuffer<float> amplitudes;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 90
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 89,
+                                  "text": "StructuredBuffer<float> lacunarities;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 89
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 88,
+                                  "text": "StructuredBuffer<float> gains;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 88
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 87,
+                                  "text": "StructuredBuffer<int> octaves;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 87
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 86,
+                                  "text": "StructuredBuffer<int> biometemps;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 86
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 85,
+                                  "text": "StructuredBuffer<int> biomemoist;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 85
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 84,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 84
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 83,
+                                  "text": "int resolution;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 83
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 82,
+                                  "text": "int xOffset;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 82
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 81,
+                                  "text": "int yOffset;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 81
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 80,
+                                  "text": "float tempFreq;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 80
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 79,
+                                  "text": "float moistFreq;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 79
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 78,
+                                  "text": "int biomeCount;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 78
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 77,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 77
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 76,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 76
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 75,
+                                  "text": "float2 noisePos(float2 pos, float freq) { return float2(pos.x * freq, pos.y * freq); }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 75
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 74,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 74
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 73,
+                                  "text": "float fbmcustom(float2 pos, float freq, float amp, float lac, float ga, int oct) {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 73
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 72,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 72
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 71,
+                                  "text": "    float v = 0;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 71
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 70,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 70
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 69,
+                                  "text": "    for (int i = 0; i < oct; i++)\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 69
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 68,
+                                  "text": "        {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 68
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 67,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 67
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 66,
+                                  "text": "            v += snoise(noisePos(pos, freq)) * amp;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 66
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 65,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 65
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 64,
+                                  "text": "            freq *= lac;  // usually 2.0\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 64
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 63,
+                                  "text": "            amp *= ga;    // usually 0.5\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 63
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 62,
+                                  "text": "        }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 62
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 61,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 61
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 60,
+                                  "text": "    return v;    \r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 60
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 59,
+                                  "text": "}\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 59
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 58,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 58
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 57,
+                                  "text": "float ridgedNoise(float2 pos, float freq, float amp, float lac, float ga, int oct) {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 57
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 56,
+                                  "text": "    float v = 0;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 56
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 55,
+                                  "text": "    float maxAmp = 0;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 55
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 54,
+                                  "text": "    \r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 54
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 53,
+                                  "text": "    for (int i = 0; i < oct; i++) {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 53
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 52,
+                                  "text": "        float n = snoise(noisePos(pos, freq));\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 52
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 51,
+                                  "text": "        n = abs(n);  // Make it ridged\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 51
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 50,
+                                  "text": "        n = 1.0 - n; // Invert for peaks\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 50
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 49,
+                                  "text": "        v += n * n * amp;  // Square for sharper ridges\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 49
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 48,
+                                  "text": "        maxAmp += amp;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 48
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 47,
+                                  "text": "        \r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 47
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 46,
+                                  "text": "        freq *= lac;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 46
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 45,
+                                  "text": "        amp *= ga;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 45
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 44,
+                                  "text": "    }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 44
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 43,
+                                  "text": "    \r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 43
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 42,
+                                  "text": "    return v / maxAmp;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 42
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 41,
+                                  "text": "}\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 41
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 40,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 40
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 39,
+                                  "text": "float2 domainWarp(float2 pos, float warpStrength, float warpFreq) {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 39
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 38,
+                                  "text": "    float warp = snoise(noisePos(pos, warpFreq)) * warpStrength;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 38
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 37,
+                                  "text": "    return pos + float2(warp, warp);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 37
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 36,
+                                  "text": "}\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 36
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 35,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 35
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 34,
+                                  "text": "float low(float i) {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 34
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 33,
+                                  "text": "    return 1.0 - smoothstep(0.4, 0.6, i);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 33
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 32,
+                                  "text": "}\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 32
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 31,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 31
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 30,
+                                  "text": "float mid(float i) {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 30
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 29,
+                                  "text": "    return smoothstep(0.1, 0.3, i) - smoothstep(0.7, 0.9, i);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 29
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 28,
+                                  "text": "}\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 28
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 27,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 27
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 26,
+                                  "text": "float high(float i) {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 26
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 25,
+                                  "text": "    return smoothstep(0.4, 0.6, i);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 25
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 24,
+                                  "text": "}\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 24
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 23,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 23
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 22,
+                                  "text": "float weightcalc(float temp, float moist, int tempIndex, int moistIndex) {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 22
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 21,
+                                  "text": "    float v = 1.0f;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 21
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 20,
+                                  "text": "    \r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 20
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 19,
+                                  "text": "    switch (tempIndex) {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 19
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 18,
+                                  "text": "        case 0:\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 18
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 17,
+                                  "text": "            v *= low(temp);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 17
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 16,
+                                  "text": "            break;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 16
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 15,
+                                  "text": "        case 1:\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 15
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 14,
+                                  "text": "            v *= mid(temp);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 14
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 13,
+                                  "text": "            break;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 13
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 12,
+                                  "text": "        case 2:\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 12
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 11,
+                                  "text": "            v *= high(temp);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 11
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 10,
+                                  "text": "            break;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 10
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 9,
+                                  "text": "    }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 9
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 8,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 8
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 7,
+                                  "text": "    switch (moistIndex) {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 7
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 6,
+                                  "text": "        case 0:\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 6
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 5,
+                                  "text": "            v *= low(moist);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 5
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 4,
+                                  "text": "            break;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 4
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 3,
+                                  "text": "        case 1:\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 3
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 2,
+                                  "text": "            v *= mid(moist);\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 2
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 102,
+                                  "text": "```",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 102
+                              },
+                              "references": []
+                            }
+                          ],
+                          "props": {},
+                          "references": []
+                        }
+                      ],
+                      "props": {},
+                      "references": []
+                    }
+                  }
+                }
+              ]
+            },
+            "call_14080834__vscode-1769176761966": {
+              "$mid": 20,
+              "content": [
+                {
+                  "$mid": 23,
+                  "value": {
+                    "node": {
+                      "type": 1,
+                      "ctor": 2,
+                      "ctorName": "jfe",
+                      "children": [
+                        {
+                          "type": 1,
+                          "ctor": 2,
+                          "ctorName": "Kt",
+                          "children": [
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 85,
+                                  "text": "```UnityShader\n",
+                                  "references": [
+                                    {
+                                      "anchor": {
+                                        "$mid": 1,
+                                        "fsPath": "c:\\Users\\oskar\\BLL\\Assets\\ComputeShaders\\TerrainShader.compute",
+                                        "_sep": 1,
+                                        "external": "file:///c%3A/Users/oskar/BLL/Assets/ComputeShaders/TerrainShader.compute",
+                                        "path": "/c:/Users/oskar/BLL/Assets/ComputeShaders/TerrainShader.compute",
+                                        "scheme": "file"
+                                      },
+                                      "options": {
+                                        "isFromTool": true
+                                      }
+                                    }
+                                  ],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 85
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 84,
+                                  "text": "            break;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 84
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 83,
+                                  "text": "        case 2:\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 83
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 82,
+                                  "text": "            v *= high(moist);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 82
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 81,
+                                  "text": "            break;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 81
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 80,
+                                  "text": "    }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 80
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 79,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 79
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 78,
+                                  "text": "    return v;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 78
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 77,
+                                  "text": "}\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 77
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 76,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 76
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 75,
+                                  "text": "float heightcalc(float2 pos, out float biomeIndex) {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 75
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 74,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 74
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 73,
+                                  "text": "    float biomeWeights[20];\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 73
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 72,
+                                  "text": "    float biomeHeights[20];\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 72
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 71,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 71
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 70,
+                                  "text": "    float temperature = snoise(noisePos(pos, tempFreq)) * 0.5 + 0.5;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 70
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 69,
+                                  "text": "    float moisture    = snoise(noisePos(pos, moistFreq)) * 0.5 + 0.5;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 69
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 68,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 68
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 67,
+                                  "text": "    float2 warpedPos = domainWarp(pos, 20.0, 0.0003);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 67
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 66,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 66
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 65,
+                                  "text": "    for(int i = 0; i < biomeCount; i++) {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 65
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 64,
+                                  "text": "        biomeWeights[i] = weightcalc(temperature, moisture, biometemps[i], biomemoist[i]);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 64
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 63,
+                                  "text": "    }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 63
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 62,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 62
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 61,
+                                  "text": "    for(int l = 0; l < biomeCount; l++) {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 61
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 60,
+                                  "text": "        biomeHeights[l] = fbmcustom(warpedPos, frequencys[l], amplitudes[l], lacunarities[l], gains[l], octaves[l]);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 60
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 59,
+                                  "text": "    }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 59
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 58,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 58
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 57,
+                                  "text": "    float total = 0;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 57
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 56,
+                                  "text": "    for(int h = 0; h < biomeCount; h++) {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 56
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 55,
+                                  "text": "        total += biomeWeights[h];\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 55
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 54,
+                                  "text": "    }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 54
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 53,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 53
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 52,
+                                  "text": "    if (total > 0.0001f) {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 52
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 51,
+                                  "text": "        for(int j = 0; j < biomeCount; j++) {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 51
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 50,
+                                  "text": "            biomeWeights[j] /= total;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 50
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 49,
+                                  "text": "        }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 49
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 48,
+                                  "text": "    } else {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 48
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 47,
+                                  "text": "        for(int k = 0; k < biomeCount; k++) {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 47
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 46,
+                                  "text": "            biomeWeights[k] = 1.0f / biomeCount;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 46
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 45,
+                                  "text": "        }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 45
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 44,
+                                  "text": "    }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 44
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 43,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 43
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 42,
+                                  "text": "    float height = 0;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 42
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 41,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 41
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 40,
+                                  "text": "    for(int m = 0; m < biomeCount; m++) {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 40
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 39,
+                                  "text": "        height += biomeHeights[m] * biomeWeights[m];\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 39
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 38,
+                                  "text": "    }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 38
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 37,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 37
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 36,
+                                  "text": "    // Find the biome with max weight\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 36
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 35,
+                                  "text": "    float maxWeight = 0;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 35
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 34,
+                                  "text": "    biomeIndex = 0;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 34
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 33,
+                                  "text": "    for(int n = 0; n < biomeCount; n++) {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 33
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 32,
+                                  "text": "        if(biomeWeights[n] > maxWeight) {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 32
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 31,
+                                  "text": "            maxWeight = biomeWeights[n];\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 31
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 30,
+                                  "text": "            biomeIndex = n;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 30
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 29,
+                                  "text": "        }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 29
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 28,
+                                  "text": "    }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 28
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 27,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 27
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 26,
+                                  "text": "    return height;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 26
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 25,
+                                  "text": "}\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 25
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 24,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 24
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 23,
+                                  "text": "[numthreads(16,16,1)]\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 23
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 22,
+                                  "text": "void CSMain (uint3 id : SV_DispatchThreadID)\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 22
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 21,
+                                  "text": "{\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 21
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 20,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 20
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 19,
+                                  "text": "    uint x = id.x;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 19
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 18,
+                                  "text": "    uint y = id.y;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 18
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 17,
+                                  "text": "    if (x >= resolution || y >= resolution) return;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 17
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 16,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 16
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 15,
+                                  "text": "    uint idx = x + y * resolution;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 15
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 14,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 14
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 13,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 13
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 12,
+                                  "text": "    float2 noisepos = float2(x,y) + float2(xOffset, yOffset);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 12
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 11,
+                                  "text": "    float biomeIndex;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 11
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 10,
+                                  "text": "    float height = heightcalc(noisepos, biomeIndex);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 10
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 9,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 9
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 8,
+                                  "text": "    vertices[idx] = float3(x, height, y);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 8
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 7,
+                                  "text": "    normals[idx] = float3(0,1,0);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 7
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 6,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 6
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 5,
+                                  "text": "    \r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 5
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 4,
+                                  "text": "    float offsetX = biomeIndex / (float) biomeCount;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 4
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 3,
+                                  "text": "    uvs[idx] = float2((x / (float) resolution) * (1.0 / biomeCount) + offsetX,(y / (float) resolution));\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 3
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 2,
+                                  "text": "}    \n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 2
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "sCe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 85,
+                                  "text": "```",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 85
+                              },
+                              "references": []
+                            }
+                          ],
+                          "props": {},
+                          "references": []
+                        }
+                      ],
+                      "props": {},
+                      "references": []
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "modelMessageId": "68ae7e18-9aac-463e-a323-99a15d96237e",
+          "responseId": "b8c4b2e6-cbff-45fc-9713-f0abf73bede8",
+          "sessionId": "585f6564-7dbb-427b-ab96-d248da35b9e1",
+          "agentId": "github.copilot.editsAgent"
+        },
+        "details": "Grok Code Fast 1 • 1x"
+      },
+      "responseMarkdownInfo": [],
+      "followups": [],
+      "modelState": {
+        "value": 1,
+        "completedAt": 1769177163454
+      },
+      "contentReferences": [],
+      "codeCitations": [],
+      "timeSpentWaiting": 0
+    }
+  ]
+}

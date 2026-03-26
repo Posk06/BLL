@@ -1,0 +1,3883 @@
+{
+  "responderUsername": "GitHub Copilot",
+  "initialLocation": "panel",
+  "requests": [
+    {
+      "requestId": "request_19fc58e2-17e9-438f-ac0e-21b17e0ca4c6",
+      "message": {
+        "text": "my standing variable is changing constatnly to true even if i am moving why?",
+        "parts": [
+          {
+            "range": {
+              "start": 0,
+              "endExclusive": 76
+            },
+            "editorRange": {
+              "startLineNumber": 1,
+              "startColumn": 1,
+              "endLineNumber": 1,
+              "endColumn": 77
+            },
+            "text": "my standing variable is changing constatnly to true even if i am moving why?",
+            "kind": "text"
+          }
+        ]
+      },
+      "variableData": {
+        "variables": []
+      },
+      "response": [
+        {
+          "kind": "mcpServersStarting",
+          "didStartServerIds": []
+        },
+        {
+          "kind": "thinking",
+          "value": [],
+          "id": "qmdPwCkM/agDRzD/8xYaCB3PYBfXqsuD02JxpyALifeWyZC8Qb7FWt5ewTPellxb2H2YMPKMu5W9W4uQp/Maftkx7cy8eqzB6PN0TtCOsuCGi3Rk3Tj6PRtXzEBGcPHwNVEPS3xy0zVmFEhxP3IuQEbJ30j35hiQGfXSs3M68ENS6o0ZefqmsVooNOAtm1cI7uZ0oxyD2wtSlBpBBsVOuChQmfZ36r6/eZYhTlVBeZDoplBsIIY0V1r/9ta1xgcS0rc0znESGgfeMJIzIfJifVq8x3IY6CRKp9ymE6Y/atT+JHWJKwmRJEFLNju7+i1Xxy0rkz+kAJO8WXWnBolTLfXH2QxxaiE/Q5nCeMJk3aDr9Ej2RGE8rN+MopAqnTQLWxQETmaPJ5svm6yrhyxDqPEWaw=="
+        },
+        {
+          "kind": "thinking",
+          "value": "",
+          "id": "",
+          "metadata": {
+            "vscodeReasoningDone": true,
+            "stopReason": "text"
+          }
+        },
+        {
+          "value": "I'll first create a short todo plan, then open ",
+          "supportThemeIcons": false,
+          "supportHtml": false,
+          "baseUri": {
+            "$mid": 1,
+            "path": "/c:/Users/oskar/BLL/",
+            "scheme": "file"
+          }
+        },
+        {
+          "kind": "inlineReference",
+          "inlineReference": {
+            "$mid": 1,
+            "fsPath": "c:\\Users\\oskar\\BLL\\Assets\\Movment.cs",
+            "_sep": 1,
+            "external": "file:///c%3A/Users/oskar/BLL/Assets/Movment.cs",
+            "path": "/c:/Users/oskar/BLL/Assets/Movment.cs",
+            "scheme": "file"
+          }
+        },
+        {
+          "value": " to inspect the standing logic.",
+          "supportThemeIcons": false,
+          "supportHtml": false,
+          "baseUri": {
+            "$mid": 1,
+            "path": "/c:/Users/oskar/BLL/",
+            "scheme": "file"
+          }
+        },
+        {
+          "kind": "toolInvocationSerialized",
+          "invocationMessage": "",
+          "pastTenseMessage": {
+            "value": "Created 5 todos",
+            "isTrusted": false,
+            "supportThemeIcons": false,
+            "supportHtml": false,
+            "supportAlertSyntax": false
+          },
+          "isConfirmed": {
+            "type": 1
+          },
+          "isComplete": true,
+          "source": {
+            "type": "internal",
+            "label": "Built-In"
+          },
+          "toolSpecificData": {
+            "kind": "todoList",
+            "todoList": [
+              {
+                "id": "1",
+                "title": "Create investigation plan",
+                "status": "in-progress"
+              },
+              {
+                "id": "2",
+                "title": "Open Movment.cs and locate standing variable logic",
+                "status": "not-started"
+              },
+              {
+                "id": "3",
+                "title": "Identify condition causing standing to be true while moving",
+                "status": "not-started"
+              },
+              {
+                "id": "4",
+                "title": "Propose and apply fix",
+                "status": "not-started"
+              },
+              {
+                "id": "5",
+                "title": "Run basic static checks and report back",
+                "status": "not-started"
+              }
+            ]
+          },
+          "toolCallId": "9c45e114-3d78-4e9c-b043-a4fc1bb2c7e8",
+          "toolId": "manage_todo_list",
+          "isAttachedToThinking": true
+        },
+        {
+          "kind": "toolInvocationSerialized",
+          "invocationMessage": {
+            "value": "Reading [](file:///c%3A/Users/oskar/BLL/Assets/Movment.cs)",
+            "supportThemeIcons": false,
+            "supportHtml": false,
+            "supportAlertSyntax": false,
+            "uris": {
+              "file:///c%3A/Users/oskar/BLL/Assets/Movment.cs": {
+                "$mid": 1,
+                "path": "/c:/Users/oskar/BLL/Assets/Movment.cs",
+                "scheme": "file"
+              }
+            }
+          },
+          "pastTenseMessage": {
+            "value": "Read [](file:///c%3A/Users/oskar/BLL/Assets/Movment.cs)",
+            "supportThemeIcons": false,
+            "supportHtml": false,
+            "supportAlertSyntax": false,
+            "uris": {
+              "file:///c%3A/Users/oskar/BLL/Assets/Movment.cs": {
+                "$mid": 1,
+                "path": "/c:/Users/oskar/BLL/Assets/Movment.cs",
+                "scheme": "file"
+              }
+            }
+          },
+          "isConfirmed": {
+            "type": 1
+          },
+          "isComplete": true,
+          "source": {
+            "type": "internal",
+            "label": "Built-In"
+          },
+          "toolCallId": "fad9e6b2-ae88-4480-b2dc-e40186424c96",
+          "toolId": "copilot_readFile",
+          "generatedTitle": "Reviewed Movment.cs and updated the todo list",
+          "isAttachedToThinking": false
+        },
+        {
+          "kind": "thinking",
+          "value": "**Proposing code changes**\n\nI should suggest moving the standing calculation to FixedUpdate or utilizing Time.fixedDeltaTime. The most straightforward solution would be to revise the Update logic so that after myInput() and speedControl(), the move hasn't applied yet. \n\nI can incorporate the standing check into FixedUpdate, implementing a new method called UpdateStanding that checks horizontal velocity. I wonder if the user wants a simple patch instead—changing the existing standing assignment based on horizontal and vertical input. Should I ask for clarification?",
+          "id": "ggL1xeIbtbZJi6Nqs9FKVOrT48wEc8ioYjcvSaAvha6OEEo/jMI+QWYYlFcwVZuEDnVb+4hJs5g1WpIoinb6+PJePplLrknqmYVPDBq/fMfPeyVbOuBRG3x7kvjmxMekxzLBiWHALNOF12aZF0jrN+tAZnNTy0svnGeKdAF8A3qbIS8mP9dR/BVf5M7XCvDGlCg5MXYZemMDQPzbdnjG0oqrEL+O2ZFl2jGNMkl8eR2GDVF8okM1rOZe9PtHPRNDoBeAJsdF25YwvIfdoGYZF0Mwb8aHrBZi33jWMVyf3oJ6VcnVCPSHfcxBThL1EnC3A6Vv+/RHESDPnHkCA9Ut0amGXmcLOxIT8lvA7ul6vr6eOSgyMs75/UoIypvvKZmojCbVegJjdcgpNISwcIyvZnSJog=="
+        },
+        {
+          "kind": "thinking",
+          "value": "",
+          "id": "lRkRah4LutTsMIRFqGSBXtmOM84KZYE14hYTiUUYdjB624HExPGN7HXfhZT4IeZorYo5sZYR/KtFQVbd1PnOU31jN108Xeu7O9oYGP4VTXgGuAE9x4H4CuLio4cgBcVfbra2t+lvlqYyvQjUYwrVQmem7CWGlNz3J3cC7Nbvy7vwc1cxccnqOATc/BiyiMB+sTM7Pt08T30Rb27FIRg1FEC8oBfRgBa/tgFhcCXke/tSQAfO2r/s32SWPFOJ+vnRbMEFw11Bkg5iIT/RHq9zJCJhbdfiE/G4kC7B3Qc3RiTBABB5/dVXWbczHXXsgF49lyJLAVGdJ+aAhNHekVUTHqfwLnU96Xn4Cw1BlSV/cgDjfowzspEkChkpDN5AqgEPzidpNkZeY5F0PQSgkTtTngQi2w=="
+        },
+        {
+          "kind": "thinking",
+          "value": "**Updating the todo list**\n\nI need to update the todo list using manage_todo_list to mark my steps. I'll begin by marking step 2 as completed and step 3 as in progress. Next, I should prepare a preamble message before calling the tool. \n\nThen, I plan to apply a patch to Movement.cs, modifying the Update section for the standing calculation. I'll replace the current logic with a condition that considers both horizontal and vertical input, along with rb.velocity. Alternatively, I could also move the standing update to FixedUpdate for more accuracy.",
+          "id": "b+Pp6HGcpPMqfQ28b5DRfZXugqTeCNf1colWSNq36safl7C1D3eJ7B/ZgQwwCuRoJHpmSaU2h3L7ubpOz7WFvir5XLtPLiaHrQN026w2/9XG6P9WUY58CrzPAI7qVPUs4u1FEJW5t0w26433FCmjsk+uGyVNsrNtKhJkuy2O921SIQ8UlMF8yDj/AllGDD0MezGPsxKZv+Nm4HLkcnLqtPDZfI3//MH7qIG7dWmtB/uPkEExjrenSRuTO2SaVe/IpKrYWxqqw0JQJ5vW4jWTHhsNkSwQJEtgjIvpBdpDmxDaqcqwZxuus6k/vaVYxxqHycurPLNtl98QrXdGI9lpHCbLPQEAYZpB1AVbXxFQCMKYQ88BdWT32cyiKjq5tZrlperqaT8kM3Vo/LvHhObpXPl1Mw=="
+        },
+        {
+          "kind": "thinking",
+          "value": "",
+          "id": "xHE89sQC4rog52Zdqynw6TiUEZ8nJ3MRBJJpCzfkVfxDVjSO2va9lOM1dZ+wChQRJv3Jj/frK6C+I5bWuj9JY76BjtDQ8BXWSoDXIlN9EWjT+tYSyCWCQBFTfP3kEPJHbtUNTFALB7zDUdMANno1ClUsGMQ5mfJzFtMuYQgkTZCSoYW2tGFC2T6D2PxRcpHcPivpEAS6f1t1CX+yVPWEB4gfJ3YZfkjF2pEMPVOonf1iQKuyCgwc5dX6a0E0n05sdtuKFjftEWxdiA0jOBJZw2gIz6PceO79V0emHxEFq+GUmUgCAcR85cnzeadHLEV43CXIYYbHjnA7qUZSzLXuNovrH0K+raW5oho0P7oPX+cw+SPzARp8wNFzZeKbVXzqNe3ILkey8Puu7WeiOvCEqvATWQ=="
+        },
+        {
+          "kind": "thinking",
+          "value": "**Preparing to run the todo list**\n\nI need to run manage_todo_list to mark the steps as completed and finalize everything. To stay organized, I'll make sure to send short preambles before calling both apply_patch and manage_todo_list. \n\nGetting these preambles ready allows me to keep everything clear as I proceed. Once I’ve set that up, I'll be prepared to apply the patch and update the statuses in the todo list. Let's keep everything flowing smoothly!",
+          "id": "VqgxJqQ/hzR8t3zUqP9rFY6tw28ydL6Njw4AFzyGOPFPhvdFR9aVGe0tJYU9O0T8j3FkRfL0EoEQDmbec0T9Yn9Ewg68Hn0XizPKMRsI1PeJI2U54EwkgCBONNHjXxjhk/5Js3vtqReVtIedz4sW2DmVoSHfmW38XY4dkcjdCzUtuGZgUwDCPXGzIODuJiecF3xDaIhzpsup+z8/rcjnJanMzz0huXsXAOqIWy76PzXc6vMnrMkV50xJGOK/wAR0sFm9OgXSEnA+P2XSyvwRetwE4n0ZtCcuBG7QVZAVb4sVosLIyn3Gqfy8Iceu94jHWIdrpEVZ/jwYuaac4ASMyjCoFDXVwD+SONzl0d2GPL/GSBLF7KqnvY3/LmEM1JU8h/pq9u245eXqfyBd5DpjTUYpPQ==",
+          "generatedTitle": "Reviewed Movment.cs and updated the todo list"
+        },
+        {
+          "kind": "thinking",
+          "value": "",
+          "id": "mOunw/uhKsS+7hq7lDk6qgucEL3nf70bbMVbkA1c0uKIX1hV/fD1rEwpj0KDiWGfoRBve96qii63/eue/u3bji+R4yqVIKwV/YTBu/X2tIl6i2DX19Z+SBCOx+urkxSeI3xVKs5jqhn+skkv3PpEDg3xDYunrNJ9mytFCudccS8hegx53YxfNqwzT75twCJ5b4loQUHxKGhLC5JaozI3Er0FoUpPeCrdqyn6VJYB5JNaztp4RadTBr0LzIcGAgEqgpSNT/aNiKY9YhbcQ1alaKgYqmWfBJmvJ2GwYVR8JHNVc3JO7Zy3nVtj916S/VYXEecMPNkx1Q/eNpS7roujrhRZnOMfxdsa8bzH8NwOjxD4M74LM4lYFFdVw/XLHBCQu1Txuw/Y3ovClhAB5FeEg9DlbA=="
+        },
+        {
+          "kind": "thinking",
+          "value": "",
+          "id": "",
+          "metadata": {
+            "vscodeReasoningDone": true,
+            "stopReason": "text"
+          }
+        },
+        {
+          "value": "Now I'll update ",
+          "supportThemeIcons": false,
+          "supportHtml": false,
+          "baseUri": {
+            "$mid": 1,
+            "path": "/c:/Users/oskar/BLL/",
+            "scheme": "file"
+          }
+        },
+        {
+          "kind": "inlineReference",
+          "inlineReference": {
+            "$mid": 1,
+            "fsPath": "c:\\Users\\oskar\\BLL\\Assets\\Movment.cs",
+            "_sep": 1,
+            "external": "file:///c%3A/Users/oskar/BLL/Assets/Movment.cs",
+            "path": "/c:/Users/oskar/BLL/Assets/Movment.cs",
+            "scheme": "file"
+          }
+        },
+        {
+          "value": " to compute ",
+          "supportThemeIcons": false,
+          "supportHtml": false,
+          "baseUri": {
+            "$mid": 1,
+            "path": "/c:/Users/oskar/BLL/",
+            "scheme": "file"
+          }
+        },
+        {
+          "kind": "inlineReference",
+          "inlineReference": {
+            "name": "standing",
+            "kind": 12,
+            "containerName": "",
+            "location": {
+              "range": {
+                "startLineNumber": 13,
+                "startColumn": 10,
+                "endLineNumber": 13,
+                "endColumn": 10
+              },
+              "uri": {
+                "$mid": 1,
+                "fsPath": "c:\\Users\\oskar\\BLL\\Assets\\Movment.cs",
+                "_sep": 1,
+                "external": "file:///c%3A/Users/oskar/BLL/Assets/Movment.cs",
+                "path": "/C:/Users/oskar/BLL/Assets/Movment.cs",
+                "scheme": "file"
+              }
+            }
+          },
+          "resolveId": "5209f9b2-1b12-406b-b6b6-08c7c5e3ecae"
+        },
+        {
+          "value": " using input and horizontal velocity (less frame-timing sensitive).",
+          "supportThemeIcons": false,
+          "supportHtml": false,
+          "baseUri": {
+            "$mid": 1,
+            "path": "/c:/Users/oskar/BLL/",
+            "scheme": "file"
+          }
+        },
+        {
+          "kind": "toolInvocationSerialized",
+          "presentation": "hidden",
+          "invocationMessage": {
+            "value": "Generating patch (16 lines) in [](file:///c%3A/Users/oskar/BLL/Assets/Movment.cs)",
+            "supportThemeIcons": false,
+            "supportHtml": false,
+            "supportAlertSyntax": false,
+            "uris": {
+              "file:///c%3A/Users/oskar/BLL/Assets/Movment.cs": {
+                "$mid": 1,
+                "path": "/c:/Users/oskar/BLL/Assets/Movment.cs",
+                "scheme": "file"
+              }
+            }
+          },
+          "isConfirmed": {
+            "type": 1
+          },
+          "isComplete": true,
+          "source": {
+            "type": "internal",
+            "label": "Built-In"
+          },
+          "toolCallId": "call_AgLrwoeq8sI4r9SFWKdYH6aE",
+          "toolId": "copilot_applyPatch"
+        },
+        {
+          "value": "\n```\n",
+          "supportThemeIcons": false,
+          "supportHtml": false,
+          "supportAlertSyntax": false,
+          "uris": {}
+        },
+        {
+          "id": "cea37021-99bd-4680-b22f-4c0ff130b0f5",
+          "kind": "undoStop"
+        },
+        {
+          "kind": "codeblockUri",
+          "uri": {
+            "$mid": 1,
+            "fsPath": "c:\\Users\\oskar\\BLL\\Assets\\Movment.cs",
+            "_sep": 1,
+            "external": "file:///c%3A/Users/oskar/BLL/Assets/Movment.cs",
+            "path": "/C:/Users/oskar/BLL/Assets/Movment.cs",
+            "scheme": "file"
+          },
+          "isEdit": true
+        },
+        {
+          "kind": "textEditGroup",
+          "uri": {
+            "$mid": 1,
+            "fsPath": "c:\\Users\\oskar\\BLL\\Assets\\Movment.cs",
+            "_sep": 1,
+            "external": "file:///c%3A/Users/oskar/BLL/Assets/Movment.cs",
+            "path": "/C:/Users/oskar/BLL/Assets/Movment.cs",
+            "scheme": "file"
+          },
+          "edits": [
+            [
+              {
+                "text": "using UnityEngine;\r\n\r\npublic class Movment : MonoBehaviour\r\n{\r\n    [Header(\"Movement\")]\r\n    public float moveSpeed;\r\n    public float groundDrag;\r\n    public float jumpForce;\r\n    public float jumpCooldown;\r\n    public float airMultiplier;\r\n    bool readytoJump = true;\r\n    bool sprinting = false;\r\n    bool standing = true;\r\n    bool ducking = false;\r\n    bool falling = false;\r\n    [Header(\"Key Binds\")]\r\n    public KeyCode jumpKey = KeyCode.Space;\r\n    public KeyCode sprintKey = KeyCode.LeftShift;\r\n    public KeyCode duckKey = KeyCode.C;\r\n\r\n    [Header(\"Groundcheck\")]\r\n    public LayerMask whatisGround;\r\n    bool grounded;\r\n\r\n    [Header(\"Object Relations\")]\r\n    public Transform orientation;\r\n\r\n    float horizontalInput;\r\n    float verticalInput;\r\n\r\n    Vector3 moveDirection;\r\n\r\n    Rigidbody rb;\r\n    CapsuleCollider cap;\r\n    Animator animator;\r\n\r\n    private void Start()\r\n    {\r\n        rb = GetComponent<Rigidbody>();\r\n        cap = GetComponent<CapsuleCollider>();\r\n        animator = GetComponentInChildren<Animator>();\r\n        rb.freezeRotation = true;\r\n    }\r\n\r\n    private void Update()\r\n    {\r\n        grounded = Physics.Raycast(new Vector3(transform.position.x, cap.transform.position.y, transform.position.z), Vector3.down, cap.height * 0.5f + 0.1f, whatisGround);\r\n\r\n        myInput();\r\n        speedControl();\r\n\r\n        if (grounded) { rb.drag = groundDrag; } else { rb.drag = 0f; }\r\n        // Use input and horizontal velocity to determine standing so the check\n        // isn't affected by Update/FixedUpdate timing differences.\n        Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);\n        if (Mathf.Abs(horizontalInput) > 0.01f || Mathf.Abs(verticalInput) > 0.01f || flatVel.magnitude > 0.1f)\n        {\n            standing = false;\n        }\n        else\n        {\n            standing = true;\n        }\n        if (!grounded) { falling = true; standing = false;} else { falling = false; }\r\n        if (standing && sprinting) { resetSprint(); }\r\n        if (!Input.GetKey(duckKey) && ducking) { resetDuck(); }\r\n        Debug.Log(\"Grounded: \" + grounded);\r\n        Debug.Log(\"Standing: \" + standing);\r\n\r\n        animator.SetBool(\"isWalking\", !standing && grounded);\r\n        animator.SetBool(\"isRunning\", sprinting);\r\n    }\r\n\r\n    private void FixedUpdate()\r\n    {\r\n        movePlayer();\r\n    }\r\n\r\n    private void myInput()\r\n    {\r\n        horizontalInput = Input.GetAxisRaw(\"Horizontal\");\r\n        verticalInput = Input.GetAxisRaw(\"Vertical\");\r\n\r\n        if (Input.GetKey(jumpKey) && readytoJump && grounded)\r\n        {\r\n            readytoJump = false;\r\n\r\n            jump();\r\n\r\n            Invoke(nameof(resetJump), jumpCooldown);\r\n        }\r\n\r\n        if (Input.GetKey(sprintKey) && !sprinting && !ducking)\r\n        {\r\n            sprinting = true;\r\n\r\n            sprint();\r\n\r\n        }\r\n\r\n        if (Input.GetKey(duckKey) && !ducking)\r\n        {\r\n            if (sprinting)\r\n            {\r\n                ducking = true;\r\n\r\n                duck();\r\n            }\r\n            else\r\n            {\r\n                ducking = true;\r\n\r\n            duck();\r\n            }\r\n        }\r\n    }\r\n\r\n    private void movePlayer()\r\n    {\r\n        rb.drag = groundDrag;\r\n        moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;\r\n\r\n        if (grounded)\r\n        {\r\n            rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);\r\n        }\r\n        else if (!grounded)\r\n        {\r\n            rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);\r\n        }\r\n    }\r\n\r\n    private void speedControl()\r\n    {\r\n        Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);\r\n\r\n        if (flatVel.magnitude > moveSpeed)\r\n        {\r\n            Vector3 limitedVel = flatVel.normalized * moveSpeed;\r\n            rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);\r\n        }\r\n    }\r\n\r\n    private void jump()\r\n    {\r\n        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);\r\n\r\n        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);\r\n    }\r\n\r\n    private void resetJump()\r\n    {\r\n        readytoJump = true;\r\n    }\r\n\r\n    private void sprint()\r\n    {\r\n        moveSpeed *= 3f;\r\n    }\r\n\r\n    private void resetSprint()\r\n    {\r\n        sprinting = false;\r\n        moveSpeed /= 3f;\r\n    }\r\n\r\n    private void duck()\r\n    {\r\n        cap.height *= 0.5f;\r\n    }\r\n\r\n    private void resetDuck()\r\n    {\r\n        ducking = false;\r\n\r\n        cap.height *= 2f;\r\n    }\r\n\r\n}   \r\n\r\n",
+                "range": {
+                  "startLineNumber": 1,
+                  "startColumn": 1,
+                  "endLineNumber": 182,
+                  "endColumn": 1
+                }
+              }
+            ],
+            []
+          ],
+          "done": true
+        },
+        {
+          "value": "\n```\n",
+          "supportThemeIcons": false,
+          "supportHtml": false,
+          "supportAlertSyntax": false,
+          "uris": {}
+        },
+        {
+          "kind": "toolInvocationSerialized",
+          "invocationMessage": "",
+          "pastTenseMessage": {
+            "value": "Starting: *Run basic static checks and report back* (5/5)",
+            "isTrusted": false,
+            "supportThemeIcons": false,
+            "supportHtml": false,
+            "supportAlertSyntax": false
+          },
+          "isConfirmed": {
+            "type": 1
+          },
+          "isComplete": true,
+          "source": {
+            "type": "internal",
+            "label": "Built-In"
+          },
+          "toolSpecificData": {
+            "kind": "todoList",
+            "todoList": [
+              {
+                "id": "1",
+                "title": "Create investigation plan",
+                "status": "completed"
+              },
+              {
+                "id": "2",
+                "title": "Open Movment.cs and locate standing variable logic",
+                "status": "completed"
+              },
+              {
+                "id": "3",
+                "title": "Identify condition causing standing to be true while moving",
+                "status": "completed"
+              },
+              {
+                "id": "4",
+                "title": "Propose and apply fix",
+                "status": "completed"
+              },
+              {
+                "id": "5",
+                "title": "Run basic static checks and report back",
+                "status": "in-progress"
+              }
+            ]
+          },
+          "toolCallId": "ac83dc9f-a032-4541-9786-af37229f849c",
+          "toolId": "manage_todo_list",
+          "isAttachedToThinking": true
+        },
+        {
+          "value": "Progress: inspected ",
+          "supportThemeIcons": false,
+          "supportHtml": false,
+          "baseUri": {
+            "$mid": 1,
+            "path": "/c:/Users/oskar/BLL/",
+            "scheme": "file"
+          }
+        },
+        {
+          "kind": "inlineReference",
+          "inlineReference": {
+            "$mid": 1,
+            "fsPath": "c:\\Users\\oskar\\BLL\\Assets\\Movment.cs",
+            "_sep": 1,
+            "external": "file:///c%3A/Users/oskar/BLL/Assets/Movment.cs",
+            "path": "/c:/Users/oskar/BLL/Assets/Movment.cs",
+            "scheme": "file"
+          }
+        },
+        {
+          "value": ", applied a fix so ",
+          "supportThemeIcons": false,
+          "supportHtml": false,
+          "baseUri": {
+            "$mid": 1,
+            "path": "/c:/Users/oskar/BLL/",
+            "scheme": "file"
+          }
+        },
+        {
+          "kind": "inlineReference",
+          "inlineReference": {
+            "name": "standing",
+            "kind": 12,
+            "containerName": "",
+            "location": {
+              "range": {
+                "startLineNumber": 13,
+                "startColumn": 10,
+                "endLineNumber": 13,
+                "endColumn": 10
+              },
+              "uri": {
+                "$mid": 1,
+                "fsPath": "c:\\Users\\oskar\\BLL\\Assets\\Movment.cs",
+                "_sep": 1,
+                "external": "file:///c%3A/Users/oskar/BLL/Assets/Movment.cs",
+                "path": "/C:/Users/oskar/BLL/Assets/Movment.cs",
+                "scheme": "file"
+              }
+            }
+          },
+          "resolveId": "83293fe4-f166-46bf-a06f-babd9582e868"
+        },
+        {
+          "value": " uses input + horizontal velocity (avoids Update/FixedUpdate timing). Next: run or test in Unity and let me know if the flicker continues.",
+          "supportThemeIcons": false,
+          "supportHtml": false,
+          "baseUri": {
+            "$mid": 1,
+            "path": "/c:/Users/oskar/BLL/",
+            "scheme": "file"
+          }
+        }
+      ],
+      "agent": {
+        "extensionId": {
+          "value": "GitHub.copilot-chat",
+          "_lower": "github.copilot-chat"
+        },
+        "extensionVersion": "0.37.8",
+        "publisherDisplayName": "GitHub",
+        "extensionPublisherId": "GitHub",
+        "extensionDisplayName": "GitHub Copilot Chat",
+        "id": "github.copilot.editsAgent",
+        "description": "Edit files in your workspace in agent mode",
+        "when": "config.chat.agent.enabled",
+        "metadata": {
+          "themeIcon": {
+            "id": "tools"
+          },
+          "hasFollowups": false,
+          "supportIssueReporting": false
+        },
+        "name": "agent",
+        "fullName": "GitHub Copilot",
+        "isDefault": true,
+        "locations": [
+          "panel"
+        ],
+        "modes": [
+          "agent"
+        ],
+        "slashCommands": [],
+        "disambiguation": []
+      },
+      "timestamp": 1772473690635,
+      "modelId": "copilot/gpt-5-mini",
+      "responseId": "response_c5dde611-5523-48c7-94a6-7f09c4b59f8a",
+      "result": {
+        "timings": {
+          "firstProgress": 5916,
+          "totalElapsed": 42314
+        },
+        "metadata": {
+          "codeBlocks": [],
+          "renderedUserMessage": [
+            {
+              "type": 1,
+              "text": "<context>\nThe current date is March 2, 2026.\n</context>\n<editorContext>\nThe user's current file is c:\\Users\\oskar\\BLL\\Assets\\Movment.cs. \n</editorContext>\n<reminderInstructions>\nYou are an agent—keep going until the user's query is completely resolved before ending your turn. ONLY stop if solved or genuinely blocked.\nTake action when possible; the user expects you to do useful work without unnecessary questions.\nAfter any parallel, read-only context gathering, give a concise progress update and what's next.\nAvoid repetition across turns: don't restate unchanged plans or sections (like the todo list) verbatim; provide delta updates or only the parts that changed.\nTool batches: You MUST preface each batch with a one-sentence why/what/outcome preamble.\nProgress cadence: After 3 to 5 tool calls, or when you create/edit > ~3 files in a burst, report progress.\nRequirements coverage: Read the user's ask in full and think carefully. Do not omit a requirement. If something cannot be done with available tools, note why briefly and propose a viable alternative.\nSkip filler acknowledgements like \"Sounds good\" or \"Okay, I will…\". Open with a purposeful one-liner about what you're doing next.\nWhen sharing setup or run steps, present terminal commands in fenced code blocks with the correct language tag. Keep commands copyable and on separate lines.\nAvoid definitive claims about the build or runtime setup unless verified from the provided context (or quick tool checks). If uncertain, state what's known from attachments and proceed with minimal steps you can adapt later.\nWhen you create or edit runnable code, run a test yourself to confirm it works; then share optional fenced commands for more advanced runs.\nFor non-trivial code generation, produce a complete, runnable solution: necessary source files, a tiny runner or test/benchmark harness, a minimal `README.md`, and updated dependency manifests (e.g., `package.json`, `requirements.txt`, `pyproject.toml`). Offer quick \"try it\" commands and optional platform-specific speed-ups when relevant.\nYour goal is to act like a pair programmer: be friendly and helpful. If you can do more, do more. Be proactive with your solutions, think about what the user needs and what they want, and implement it proactively.\n<importantReminders>\nDo NOT volunteer your model name unless the user explicitly asks you about it. \nYou MUST use the todo list tool to plan and track your progress. NEVER skip this step, and START with this step whenever the task is multi-step. This is essential for maintaining visibility and proper execution of large tasks.\nWhen referring to a filename or symbol in the user's workspace, wrap it in backticks.\n\n</importantReminders>\n\n</reminderInstructions>\n<userRequest>\nmy standing variable is changing constatnly to true even if i am moving why?\n</userRequest>\n"
+            },
+            {
+              "type": 3,
+              "cacheType": "ephemeral"
+            }
+          ],
+          "renderedGlobalContext": [
+            {
+              "type": 1,
+              "text": "<environment_info>\nThe user's current OS is: Windows\n</environment_info>\n<workspace_info>\nI am working in a workspace with the following folders:\n- c:\\Users\\oskar\\BLL \nI am working in a workspace that has the following structure:\n```\nAssembly-CSharp-Editor.csproj\nAssembly-CSharp.csproj\nBLL.sln\nREADME.md\nAssets/\n\tAnimations.meta\n\tAssets.meta\n\tBiomeData.cs\n\tBiomeData.cs.meta\n\tBiomeDataTable.asset\n\tBiomeDataTable.asset.meta\n\tChunkLoader.cs\n\tChunkLoader.cs.meta\n\tComputeShaders.meta\n\tDefaultVolumeProfile.asset\n\tDefaultVolumeProfile.asset.meta\n\tEditor.meta\n\tMaterials.meta\n\tModelRotation.cs\n\tModelRotation.cs.meta\n\tMoveCamera.cs\n\tMoveCamera.cs.meta\n\tMovment.cs\n\tMovment.cs.meta\n\tNoFriction.physicMaterial\n\tNoFriction.physicMaterial.meta\n\tPlayerCam.cs\n\tPlayerCam.cs.meta\n\tProcedualGenerator.cs\n\tProcedualGenerator.cs.meta\n\tProcedualGenerator(BiomeBased).cs\n\tProcedualGenerator(BiomeBased).cs.meta\n\tScenes.meta\n\tSettings.meta\n\tShaders.meta\n\tStandartTerrain.prefab\n\tStandartTerrain.prefab.meta\n\tStandartTerrain(BiomeBased).prefab\n\tStandartTerrain(BiomeBased).prefab.meta\n\tTerrainTextures.meta\n\tTree.prefab\n\tTree.prefab.meta\n\tUniversalRenderPipelineGlobalSettings.asset\n\tUniversalRenderPipelineGlobalSettings.asset.meta\n\tAnimations/\n\tAssets/\n\tComputeShaders/\n\tEditor/\n\tMaterials/\n\tScenes/\n\tSettings/\n\tShaders/\n\tTerrainTextures/\nLibrary/\n\tAnnotationManager\n\tArtifactDB\n\tArtifactDB-lock\n\tBuildPlayer.prefs\n\tBuildSettings.asset\n\tEditorInstance.json\n\tEditorOnlyScriptingSettings.json\n\tEditorOnlyVirtualTextureState.json\n\tEditorSnapSettings.asset\n\tEditorUserBuildSettings.asset\n\texpandedItems\n\tilpp.pid\n\tInspectorExpandedItems.asset\n\tLastSceneManagerSetup.txt\n\tLibraryFormatVersion.txt\n\tMonoManager.asset\n\tSceneVisibilityState.asset\n\tScriptMapper\n\tSourceAssetDB\n\tSourceAssetDB-lock\n\tSpriteAtlasDatabase.asset\n\tStyle.catalog\n\tAPIUpdater/\n\tArtifacts/\n\tBee/\n\tBurstCache/\n\tPackageCache/\n\tPackageManager/\n\tPlayModeViewStates/\n\tScriptAssemblies/\n\tSearch/\n\tShaderCache/\n\tStateCache/\n\tTempArtifacts/\n\tUIElements/\nLogs/\nPackages/\n\tmanifest.json\n\tpackages-lock.json\nProjectSettings/\n\tAudioManager.asset\n\tBurstAotSettings_StandaloneWindows.json\n\tClusterInputManager.asset\n\tCommonBurstAotSettings.json\n\tDynamicsManager.asset\n\t...\nTemp/\n\t...\nUserSettings/\n```\nThis is the state of the context at this point in the conversation. The view of the workspace structure may be truncated. You can use tools to collect more context if needed.\n</workspace_info>\n"
+            },
+            {
+              "type": 3,
+              "cacheType": "ephemeral"
+            }
+          ],
+          "cacheKey": "file:///c%3A/Users/oskar/BLL",
+          "toolCallRounds": [
+            {
+              "response": "I'll first create a short todo plan, then open `Assets/Movment.cs` to inspect the standing logic.",
+              "toolCalls": [
+                {
+                  "id": "call_qRXXOB7zUWsZs89SCeWiKs30__vscode-1772472020147",
+                  "name": "manage_todo_list",
+                  "arguments": "{\"todoList\":[{\"id\":1,\"title\":\"Create investigation plan\",\"status\":\"in-progress\"},{\"id\":2,\"title\":\"Open Movment.cs and locate standing variable logic\",\"status\":\"not-started\"},{\"id\":3,\"title\":\"Identify condition causing standing to be true while moving\",\"status\":\"not-started\"},{\"id\":4,\"title\":\"Propose and apply fix\",\"status\":\"not-started\"},{\"id\":5,\"title\":\"Run basic static checks and report back\",\"status\":\"not-started\"}]}"
+                }
+              ],
+              "toolInputRetry": 0,
+              "id": "efab35ac-d188-431b-9267-8168615d3894",
+              "statefulMarker": "nE7fyo16vP6nZUhM4+MOPvuYSyANDGMRBbvupepGQvVAKGVkXnR407pLO92tNmZfVKPNPkgNNJnQtcSQbZKPmBBXlelpipJriJjRcFYMhjb67lpWSC9gBcZNn4t9IUsqNzQNCGnfdo6qm7g/hga7BXEdp+ZqvmA7KozURSorL4yHWsXyc5RAX5TmJ/ZxaTy/bT7f7sFgNESOj7zFtvoM650/CyHdhbffuNbRr3kgsAG1vsYG61pPmKZszFcPaTHKbr7LhxOsnHYVFVaPqxXICJLHKZIQSVVmcscxVHwzTw3R6aFbNQi8Uw/ghfWiUv3l6dHnuVFYWlMoL8j6bfMww1pRFbpfNK0oMcn0qLG/9w2XyHv3sh/AGgmJ3mZoDzz9SrBNmlZFAyduL1lPyoCFhnFcZ/As",
+              "thinking": {
+                "id": "qmdPwCkM/agDRzD/8xYaCB3PYBfXqsuD02JxpyALifeWyZC8Qb7FWt5ewTPellxb2H2YMPKMu5W9W4uQp/Maftkx7cy8eqzB6PN0TtCOsuCGi3Rk3Tj6PRtXzEBGcPHwNVEPS3xy0zVmFEhxP3IuQEbJ30j35hiQGfXSs3M68ENS6o0ZefqmsVooNOAtm1cI7uZ0oxyD2wtSlBpBBsVOuChQmfZ36r6/eZYhTlVBeZDoplBsIIY0V1r/9ta1xgcS0rc0znESGgfeMJIzIfJifVq8x3IY6CRKp9ymE6Y/atT+JHWJKwmRJEFLNju7+i1Xxy0rkz+kAJO8WXWnBolTLfXH2QxxaiE/Q5nCeMJk3aDr9Ej2RGE8rN+MopAqnTQLWxQETmaPJ5svm6yrhyxDqPEWaw==",
+                "text": [],
+                "encrypted": "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",
+                "tokens": 128
+              },
+              "timestamp": 1772473698061
+            },
+            {
+              "response": "",
+              "toolCalls": [
+                {
+                  "id": "call_poVitIxxUITnHTxmtHw9rHmZ__vscode-1772472020148",
+                  "name": "read_file",
+                  "arguments": "{\"filePath\":\"c:/Users/oskar/BLL/Assets/Movment.cs\",\"startLine\":1,\"endLine\":400}"
+                }
+              ],
+              "toolInputRetry": 0,
+              "id": "c9e07161-a2a8-484e-998e-7111360a5708",
+              "statefulMarker": "2hEA2VoR2Gkt5rmFo6SwwCsnsec9Tjdr9RN0RfHJIjfkekS5j2VlsufqdZIREtyZdcpNwu5u9b4T3XZ2r3ikulWxiCsuMkYHa2LDpfSrFJPSitgD6+TUn9FgnkuB6OxZ4p1SXC8YJDoRKKFt+2n9ke1PgLNmLotcO6cdqO4BfI8uFnCHlBbinzjv4x/n98NURDtJfUyTp4lVNk04h/Uy5I0Kx6ir+6UB+/6bbrKG8xFGqKeln3OG6GSU9gw2F/OHxFrl5OGm4P0xK17IS68meqhbd+8jOwhDH1ktT6027sH8wbdf85Ai8aAELo0bZdMqxrX+JzuLeKL36LsMDRT0GIQWtKSbHFaXwiglYrILVxReoc80F0weD1muJzG+XQjWPzLfdAnGKcaRG3hu7hdGh5pz+dBH",
+              "timestamp": 1772473700705
+            },
+            {
+              "response": "Now I'll update `Assets/Movment.cs` to compute `standing` using input and horizontal velocity (less frame-timing sensitive).",
+              "toolCalls": [
+                {
+                  "id": "call_AgLrwoeq8sI4r9SFWKdYH6aE__vscode-1772472020149",
+                  "name": "apply_patch",
+                  "arguments": "{\"input\":\"*** Begin Patch\\n*** Update File: c:/Users/oskar/BLL/Assets/Movment.cs\\n@@\\n-        if (rb.velocity.magnitude > 0.01f) { standing = false; } else { standing = true; }\\n+        // Use input and horizontal velocity to determine standing so the check\\n+        // isn't affected by Update/FixedUpdate timing differences.\\n+        Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);\\n+        if (Mathf.Abs(horizontalInput) > 0.01f || Mathf.Abs(verticalInput) > 0.01f || flatVel.magnitude > 0.1f)\\n+        {\\n+            standing = false;\\n+        }\\n+        else\\n+        {\\n+            standing = true;\\n+        }\\n*** End Patch\",\"explanation\":\"Make standing detection use input and horizontal velocity to avoid Update/FixedUpdate timing causing standing=true while moving.\"}"
+                }
+              ],
+              "toolInputRetry": 0,
+              "id": "10ad9957-f8db-4bbc-9771-c6d9f76ec976",
+              "statefulMarker": "AtjUV1xe0TdW8G4Gu5HiNfTPkeZCScqMtuGyt3gFl3443KZ/GSHCpAKbBk+KjhCn5a6pcQG8dMR9QvpreCH/qPm9Zqh2BEyfV0ebwrZLEebziWCYkiUd3xTNo4maWfTF8/ckB+ClU27PBhQP9cOZysyU531qZKQ66At+V2Ubu/KQkh8wNILfMU9XWbGoY07mgOut0417smRMRzxXwtQ0PaM0LnehoMzyDogXGrr76W9fWPYst1+c2+iu710AnNJS5vi01QBSrI8gCV/MTlxcMu4OFchaQGfDrS6RMhxHM8/2bCqTJ8Soe21b7wtfdx1/USqeYeV6fz2R/SWM//fWMTjGiahFZ70K5G7IMOwgzbFHnok3DPVROOI0Z9qBSL8YQ9fn44+W11wLy0oScX9BLpG3hEzj",
+              "thinking": {
+                "id": "D4zVK5vQqxpY/JaBmFb5omsSOQfQbmCESd2CEO+AVyn8DWat1YszqXfnItXgWdNZCWpkkLketBMWHqElWIEKNcL52hf5LRgWBCCj5pOaeW2OTtSFDVSmCqmKgsBhvFJMtsr0KRPePHx0C7fCgdRRhsfXHjadSln57ackb8aUHil786JBRKN5o7kc+oDSHat79Mgbv9msyLBtuG8vrI/SkZhi7c8uK++FuuhSfICcZAkybtK0uNFodHlbJ9erxAqBkQYrhzmC8CzTzKx/ECgmgku+0IWVNaMRv5q86Di34edMXqMQxKq2TV5VVyFLI2/GD6PNhKNH9v/rm9yPCtC5eugkLwOmQb9BvJ2+ZZgflvcRb+Bm3hxMIFiLlpNvqfuZtvM1QqBKTqFMBHa19IUWboZPhQ==",
+                "text": "**Proposing code changes**\n\nI should suggest moving the standing calculation to FixedUpdate or utilizing Time.fixedDeltaTime. The most straightforward solution would be to revise the Update logic so that after myInput() and speedControl(), the move hasn't applied yet. \n\nI can incorporate the standing check into FixedUpdate, implementing a new method called UpdateStanding that checks horizontal velocity. I wonder if the user wants a simple patch instead—changing the existing standing assignment based on horizontal and vertical input. Should I ask for clarification?**Updating the todo list**\n\nI need to update the todo list using manage_todo_list to mark my steps. I'll begin by marking step 2 as completed and step 3 as in progress. Next, I should prepare a preamble message before calling the tool. \n\nThen, I plan to apply a patch to Movement.cs, modifying the Update section for the standing calculation. I'll replace the current logic with a condition that considers both horizontal and vertical input, along with rb.velocity. Alternatively, I could also move the standing update to FixedUpdate for more accuracy.**Preparing to run the todo list**\n\nI need to run manage_todo_list to mark the steps as completed and finalize everything. To stay organized, I'll make sure to send short preambles before calling both apply_patch and manage_todo_list. \n\nGetting these preambles ready allows me to keep everything clear as I proceed. Once I’ve set that up, I'll be prepared to apply the patch and update the statuses in the todo list. Let's keep everything flowing smoothly!",
+                "encrypted": "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",
+                "tokens": 1088
+              },
+              "timestamp": 1772473724822
+            },
+            {
+              "response": "",
+              "toolCalls": [
+                {
+                  "id": "call_RxVsRPFyJj9h4xVzs52JR3XS__vscode-1772472020150",
+                  "name": "manage_todo_list",
+                  "arguments": "{\"todoList\":[{\"id\":1,\"title\":\"Create investigation plan\",\"status\":\"completed\"},{\"id\":2,\"title\":\"Open Movment.cs and locate standing variable logic\",\"status\":\"completed\"},{\"id\":3,\"title\":\"Identify condition causing standing to be true while moving\",\"status\":\"completed\"},{\"id\":4,\"title\":\"Propose and apply fix\",\"status\":\"completed\"},{\"id\":5,\"title\":\"Run basic static checks and report back\",\"status\":\"in-progress\"}]}"
+                }
+              ],
+              "toolInputRetry": 0,
+              "id": "2bb53ee2-4bf8-44d3-9748-e203ced9c40d",
+              "statefulMarker": "Uco5srsKEFtDIcptItScZpF2BXDRwQzbWOj3MEDDgKUPQBs+3lPYlspoyAW7AbFdSE3rjXGjkAREhxNxCX5h1ANKV9H5kWpKQgcRaPUS9Mzfv2uBic/nPY7K66DWbX9W9aZT+hoKFVfvr0nwk+Lv3AEwqokkP7Jm1JgDt4aCvVQV3cup44ufLGn7K/wr/R23YIXLlGvy7Q1jfnUMv1cDT7kXXq8Mc19aaw5fuycATifjce3owZF8NgeozKHA37gxX8BpF8dx5lTcCDCn453iLLnGGRMfkALUV4Dxtxe351lQnSiOx0vryO3Npbv8ZpBS02cHIUp00fTYuTkUNLGwQ6ZDJjvb2SEdhk3rcKEAL4z7EnWM6QXByTNJkABlgieYdjBxB1Ei8zUrdutvKAGWYg0NXsJ4",
+              "timestamp": 1772473728984
+            },
+            {
+              "response": "Progress: inspected `Movment.cs`, applied a fix so `standing` uses input + horizontal velocity (avoids Update/FixedUpdate timing). Next: run or test in Unity and let me know if the flicker continues.",
+              "toolCalls": [],
+              "toolInputRetry": 0,
+              "id": "6f9144d5-d851-4895-b5c4-82b25b4d0069",
+              "statefulMarker": "44rX5i2RurDbB8q72Naa+7SyiGTvVKw24uK7jScCOUDfwkLkhlQ5E/rbwVZbcMBNvP3hZ2MLZip8xULywACUzutS0pGBgtk6/HtjbejkxOVs/9kdAF4cBjImuftEMALvFju3RVqXQBA7NjP6ujp79Nkpe9bbgHjR3PwkqbZbp+YUZQ/m76Icdp6JXsrWtB+kEZTkuMik2SMbeDtDxPHBR9w/2VVbXSv/IYzy5IwYutJvAcviXKObavSxxuRyFng6WyM5iOym+bddG7FC2NNWECcuTjA6J31aHLZk9g5QZ823pvaDd25/iA4iLHYBBemjPKNDgRpDFUQC41J2it5Q7m6fOVAALUHzxm9ZN+tsDukTYC64LbPD4pXP0eg+C8a02AixKhEibyhxlg6Jqdb3YsS3OOjA",
+              "timestamp": 1772473732956
+            }
+          ],
+          "toolCallResults": {
+            "call_qRXXOB7zUWsZs89SCeWiKs30__vscode-1772472020147": {
+              "$mid": 20,
+              "content": [
+                {
+                  "$mid": 21,
+                  "value": "Successfully wrote todo list\n\nWarning: Did you mean to update so many todos at the same time? Consider working on them one by one."
+                }
+              ]
+            },
+            "call_poVitIxxUITnHTxmtHw9rHmZ__vscode-1772472020148": {
+              "$mid": 20,
+              "content": [
+                {
+                  "$mid": 23,
+                  "value": {
+                    "node": {
+                      "type": 1,
+                      "ctor": 2,
+                      "ctorName": "aEe",
+                      "children": [
+                        {
+                          "type": 1,
+                          "ctor": 2,
+                          "ctorName": "tn",
+                          "children": [
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 173,
+                                  "text": "```csharp\n",
+                                  "references": [
+                                    {
+                                      "anchor": {
+                                        "$mid": 1,
+                                        "fsPath": "c:\\Users\\oskar\\BLL\\Assets\\Movment.cs",
+                                        "_sep": 1,
+                                        "external": "file:///c%3A/Users/oskar/BLL/Assets/Movment.cs",
+                                        "path": "/c:/Users/oskar/BLL/Assets/Movment.cs",
+                                        "scheme": "file"
+                                      },
+                                      "options": {
+                                        "isFromTool": true
+                                      }
+                                    }
+                                  ],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 173
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 172,
+                                  "text": "using UnityEngine;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 172
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 171,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 171
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 170,
+                                  "text": "public class Movment : MonoBehaviour\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 170
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 169,
+                                  "text": "{\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 169
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 168,
+                                  "text": "    [Header(\"Movement\")]\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 168
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 167,
+                                  "text": "    public float moveSpeed;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 167
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 166,
+                                  "text": "    public float groundDrag;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 166
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 165,
+                                  "text": "    public float jumpForce;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 165
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 164,
+                                  "text": "    public float jumpCooldown;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 164
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 163,
+                                  "text": "    public float airMultiplier;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 163
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 162,
+                                  "text": "    bool readytoJump = true;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 162
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 161,
+                                  "text": "    bool sprinting = false;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 161
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 160,
+                                  "text": "    bool standing = true;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 160
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 159,
+                                  "text": "    bool ducking = false;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 159
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 158,
+                                  "text": "    bool falling = false;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 158
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 157,
+                                  "text": "    [Header(\"Key Binds\")]\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 157
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 156,
+                                  "text": "    public KeyCode jumpKey = KeyCode.Space;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 156
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 155,
+                                  "text": "    public KeyCode sprintKey = KeyCode.LeftShift;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 155
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 154,
+                                  "text": "    public KeyCode duckKey = KeyCode.C;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 154
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 153,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 153
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 152,
+                                  "text": "    [Header(\"Groundcheck\")]\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 152
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 151,
+                                  "text": "    public LayerMask whatisGround;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 151
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 150,
+                                  "text": "    bool grounded;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 150
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 149,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 149
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 148,
+                                  "text": "    [Header(\"Object Relations\")]\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 148
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 147,
+                                  "text": "    public Transform orientation;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 147
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 146,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 146
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 145,
+                                  "text": "    float horizontalInput;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 145
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 144,
+                                  "text": "    float verticalInput;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 144
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 143,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 143
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 142,
+                                  "text": "    Vector3 moveDirection;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 142
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 141,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 141
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 140,
+                                  "text": "    Rigidbody rb;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 140
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 139,
+                                  "text": "    CapsuleCollider cap;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 139
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 138,
+                                  "text": "    Animator animator;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 138
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 137,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 137
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 136,
+                                  "text": "    private void Start()\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 136
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 135,
+                                  "text": "    {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 135
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 134,
+                                  "text": "        rb = GetComponent<Rigidbody>();\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 134
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 133,
+                                  "text": "        cap = GetComponent<CapsuleCollider>();\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 133
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 132,
+                                  "text": "        animator = GetComponentInChildren<Animator>();\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 132
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 131,
+                                  "text": "        rb.freezeRotation = true;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 131
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 130,
+                                  "text": "    }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 130
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 129,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 129
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 128,
+                                  "text": "    private void Update()\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 128
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 127,
+                                  "text": "    {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 127
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 126,
+                                  "text": "        grounded = Physics.Raycast(new Vector3(transform.position.x, cap.transform.position.y, transform.position.z), Vector3.down, cap.height * 0.5f + 0.1f, whatisGround);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 126
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 125,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 125
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 124,
+                                  "text": "        myInput();\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 124
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 123,
+                                  "text": "        speedControl();\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 123
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 122,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 122
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 121,
+                                  "text": "        if (grounded) { rb.drag = groundDrag; } else { rb.drag = 0f; }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 121
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 120,
+                                  "text": "        if (rb.velocity.magnitude > 0.01f) { standing = false; } else { standing = true; }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 120
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 119,
+                                  "text": "        if (!grounded) { falling = true; standing = false;} else { falling = false; }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 119
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 118,
+                                  "text": "        if (standing && sprinting) { resetSprint(); }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 118
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 117,
+                                  "text": "        if (!Input.GetKey(duckKey) && ducking) { resetDuck(); }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 117
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 116,
+                                  "text": "        Debug.Log(\"Grounded: \" + grounded);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 116
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 115,
+                                  "text": "        Debug.Log(\"Standing: \" + standing);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 115
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 114,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 114
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 113,
+                                  "text": "        animator.SetBool(\"isWalking\", !standing && grounded);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 113
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 112,
+                                  "text": "        animator.SetBool(\"isRunning\", sprinting);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 112
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 111,
+                                  "text": "    }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 111
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 110,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 110
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 109,
+                                  "text": "    private void FixedUpdate()\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 109
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 108,
+                                  "text": "    {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 108
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 107,
+                                  "text": "        movePlayer();\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 107
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 106,
+                                  "text": "    }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 106
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 105,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 105
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 104,
+                                  "text": "    private void myInput()\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 104
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 103,
+                                  "text": "    {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 103
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 102,
+                                  "text": "        horizontalInput = Input.GetAxisRaw(\"Horizontal\");\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 102
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 101,
+                                  "text": "        verticalInput = Input.GetAxisRaw(\"Vertical\");\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 101
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 100,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 100
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 99,
+                                  "text": "        if (Input.GetKey(jumpKey) && readytoJump && grounded)\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 99
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 98,
+                                  "text": "        {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 98
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 97,
+                                  "text": "            readytoJump = false;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 97
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 96,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 96
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 95,
+                                  "text": "            jump();\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 95
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 94,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 94
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 93,
+                                  "text": "            Invoke(nameof(resetJump), jumpCooldown);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 93
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 92,
+                                  "text": "        }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 92
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 91,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 91
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 90,
+                                  "text": "        if (Input.GetKey(sprintKey) && !sprinting && !ducking)\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 90
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 89,
+                                  "text": "        {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 89
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 88,
+                                  "text": "            sprinting = true;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 88
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 87,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 87
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 86,
+                                  "text": "            sprint();\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 86
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 85,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 85
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 84,
+                                  "text": "        }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 84
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 83,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 83
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 82,
+                                  "text": "        if (Input.GetKey(duckKey) && !ducking)\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 82
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 81,
+                                  "text": "        {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 81
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 80,
+                                  "text": "            if (sprinting)\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 80
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 79,
+                                  "text": "            {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 79
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 78,
+                                  "text": "                ducking = true;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 78
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 77,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 77
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 76,
+                                  "text": "                duck();\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 76
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 75,
+                                  "text": "            }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 75
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 74,
+                                  "text": "            else\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 74
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 73,
+                                  "text": "            {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 73
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 72,
+                                  "text": "                ducking = true;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 72
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 71,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 71
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 70,
+                                  "text": "            duck();\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 70
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 69,
+                                  "text": "            }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 69
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 68,
+                                  "text": "        }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 68
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 67,
+                                  "text": "    }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 67
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 66,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 66
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 65,
+                                  "text": "    private void movePlayer()\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 65
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 64,
+                                  "text": "    {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 64
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 63,
+                                  "text": "        rb.drag = groundDrag;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 63
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 62,
+                                  "text": "        moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 62
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 61,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 61
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 60,
+                                  "text": "        if (grounded)\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 60
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 59,
+                                  "text": "        {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 59
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 58,
+                                  "text": "            rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 58
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 57,
+                                  "text": "        }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 57
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 56,
+                                  "text": "        else if (!grounded)\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 56
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 55,
+                                  "text": "        {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 55
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 54,
+                                  "text": "            rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 54
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 53,
+                                  "text": "        }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 53
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 52,
+                                  "text": "    }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 52
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 51,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 51
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 50,
+                                  "text": "    private void speedControl()\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 50
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 49,
+                                  "text": "    {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 49
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 48,
+                                  "text": "        Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 48
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 47,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 47
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 46,
+                                  "text": "        if (flatVel.magnitude > moveSpeed)\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 46
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 45,
+                                  "text": "        {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 45
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 44,
+                                  "text": "            Vector3 limitedVel = flatVel.normalized * moveSpeed;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 44
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 43,
+                                  "text": "            rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 43
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 42,
+                                  "text": "        }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 42
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 41,
+                                  "text": "    }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 41
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 40,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 40
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 39,
+                                  "text": "    private void jump()\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 39
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 38,
+                                  "text": "    {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 38
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 37,
+                                  "text": "        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 37
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 36,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 36
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 35,
+                                  "text": "        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 35
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 34,
+                                  "text": "    }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 34
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 33,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 33
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 32,
+                                  "text": "    private void resetJump()\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 32
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 31,
+                                  "text": "    {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 31
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 30,
+                                  "text": "        readytoJump = true;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 30
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 29,
+                                  "text": "    }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 29
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 28,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 28
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 27,
+                                  "text": "    private void sprint()\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 27
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 26,
+                                  "text": "    {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 26
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 25,
+                                  "text": "        moveSpeed *= 3f;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 25
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 24,
+                                  "text": "    }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 24
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 23,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 23
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 22,
+                                  "text": "    private void resetSprint()\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 22
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 21,
+                                  "text": "    {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 21
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 20,
+                                  "text": "        sprinting = false;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 20
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 19,
+                                  "text": "        moveSpeed /= 3f;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 19
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 18,
+                                  "text": "    }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 18
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 17,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 17
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 16,
+                                  "text": "    private void duck()\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 16
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 15,
+                                  "text": "    {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 15
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 14,
+                                  "text": "        cap.height *= 0.5f;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 14
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 13,
+                                  "text": "    }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 13
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 12,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 12
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 11,
+                                  "text": "    private void resetDuck()\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 11
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 10,
+                                  "text": "    {\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 10
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 9,
+                                  "text": "        ducking = false;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 9
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 8,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 8
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 7,
+                                  "text": "        cap.height *= 2f;\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 7
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 6,
+                                  "text": "    }\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 6
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 5,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 5
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 4,
+                                  "text": "}   \r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 4
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 3,
+                                  "text": "\r\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 3
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 2,
+                                  "text": "\n",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 2
+                              },
+                              "references": []
+                            },
+                            {
+                              "type": 1,
+                              "ctor": 2,
+                              "ctorName": "oBe",
+                              "children": [
+                                {
+                                  "type": 2,
+                                  "priority": 173,
+                                  "text": "```",
+                                  "references": [],
+                                  "lineBreakBefore": true
+                                }
+                              ],
+                              "props": {
+                                "priority": 173
+                              },
+                              "references": []
+                            }
+                          ],
+                          "props": {},
+                          "references": []
+                        }
+                      ],
+                      "props": {},
+                      "references": []
+                    }
+                  }
+                }
+              ]
+            },
+            "call_AgLrwoeq8sI4r9SFWKdYH6aE__vscode-1772472020149": {
+              "$mid": 20,
+              "content": [
+                {
+                  "$mid": 23,
+                  "value": {
+                    "node": {
+                      "type": 1,
+                      "ctor": 2,
+                      "ctorName": "sw",
+                      "children": [
+                        {
+                          "type": 2,
+                          "priority": 9007199254740991,
+                          "text": "The following files were successfully edited:",
+                          "lineBreakBefore": false
+                        },
+                        {
+                          "type": 2,
+                          "priority": 9007199254740991,
+                          "text": "\n",
+                          "lineBreakBefore": false
+                        },
+                        {
+                          "type": 2,
+                          "priority": 9007199254740991,
+                          "text": "c:\\Users\\oskar\\BLL\\Assets\\Movment.cs",
+                          "lineBreakBefore": false
+                        },
+                        {
+                          "type": 2,
+                          "priority": 9007199254740991,
+                          "text": "\n",
+                          "lineBreakBefore": false
+                        }
+                      ],
+                      "props": {},
+                      "references": []
+                    }
+                  }
+                }
+              ]
+            },
+            "call_RxVsRPFyJj9h4xVzs52JR3XS__vscode-1772472020150": {
+              "$mid": 20,
+              "content": [
+                {
+                  "$mid": 21,
+                  "value": "Successfully wrote todo list\n\nWarning: Did you mean to update so many todos at the same time? Consider working on them one by one."
+                }
+              ]
+            }
+          },
+          "modelMessageId": "af245eb5-c9b7-4446-9cf5-239b6b413ae6",
+          "responseId": "eceee6f9-11b4-44a9-919b-c2a8504dbbc1",
+          "sessionId": "6b567352-a53e-4371-8338-5b01f6e77587",
+          "agentId": "github.copilot.editsAgent"
+        },
+        "details": "GPT-5 mini • 1x",
+        "usage": {
+          "completionTokens": 50,
+          "promptTokens": 17997,
+          "promptTokenDetails": [
+            {
+              "category": "System",
+              "label": "System Instructions",
+              "percentageOfPrompt": 27
+            },
+            {
+              "category": "System",
+              "label": "Tool Definitions",
+              "percentageOfPrompt": 57
+            },
+            {
+              "category": "User Context",
+              "label": "Messages",
+              "percentageOfPrompt": 9
+            },
+            {
+              "category": "User Context",
+              "label": "Tool Results",
+              "percentageOfPrompt": 6
+            }
+          ]
+        }
+      },
+      "responseMarkdownInfo": [],
+      "followups": [],
+      "modelState": {
+        "value": 1,
+        "completedAt": 1772473732967
+      },
+      "contentReferences": [],
+      "codeCitations": [],
+      "timeSpentWaiting": 1772473690635
+    }
+  ]
+}
