@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JSON Viewer</title>
+<style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+    h2 { margin-top: 20px; }
+    pre { background: #fff; padding: 10px; border: 1px solid #ccc; overflow-x: auto; }
+    .section { margin-bottom: 20px; }
+    .todo { margin-left: 20px; }
+    .completed { color: green; }
+    .in-progress { color: orange; }
+    .not-started { color: red; }
+</style>
+</head>
+<body>
+
+<h1>JSON Human-Readable Viewer</h1>
+<input type="file" id="jsonFile" accept=".json"/>
+<div id="output"></div>
+
+<script>
+document.getElementById('jsonFile').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const json = JSON.parse(e.target.result);
+        displayJSON(json);
+    };
+    reader.readAsText(file);
+});
+
+function displayJSON(json) {
+    const output = document.getElementById('output');
+    output.innerHTML = '';
+
+    // Responder
+    if (json.responderUsername) {
+        const h2 = document.createElement('h2');
+        h2.textContent = `Responder: ${json.responderUsername}`;
+        output.appendChild(h2);
+    }
+
+    // Requests
+    if (json.requests && json.requests.length) {
+        json.requests.forEach((req, index) => {
+            const reqDiv = document.createElement('div');
+            reqDiv.classList.add('section');
+
+            const title = document.createElement('h2');
+            title.textContent = `Request ${index + 1} (ID: ${req.requestId})`;
+            reqDiv.appendChild(title);
+
+            // Message
+            if (req.message) {
+                const msg = document.createElement('pre');
+                msg.textContent = req.message.text;
+                reqDiv.appendChild(msg);
+            }
+
+            // Variables
+            if (req.variableData && req.variableData.variables) {
+                req.variableData.variables.forEach(variable => {
+                    const varDiv = document.createElement('div');
+                    varDiv.classList.add('section');
+                    const varTitle = document.createElement('strong');
+                    varTitle.textContent = `Variable: ${variable.name}`;
+                    varDiv.appendChild(varTitle);
+
+                    const varContent = document.createElement('pre');
+                    varContent.textContent = variable.value;
+                    varDiv.appendChild(varContent);
+
+                    reqDiv.appendChild(varDiv);
+                });
+            }
+
+            // Responses / TODOs
+            if (req.response && req.response.length) {
+                req.response.forEach(resp => {
+                    if (resp.toolSpecificData && resp.toolSpecificData.todoList) {
+                        const todoTitle = document.createElement('h3');
+                        todoTitle.textContent = 'TODO List:';
+                        reqDiv.appendChild(todoTitle);
+
+                        resp.toolSpecificData.todoList.forEach(todo => {
+                            const todoDiv = document.createElement('div');
+                            todoDiv.classList.add('todo', todo.status.replace(' ', '-'));
+                            todoDiv.textContent = `- ${todo.title} [${todo.status}]`;
+                            reqDiv.appendChild(todoDiv);
+                        });
+                    }
+
+                    if (resp.value && typeof resp.value === 'string' && resp.value.trim()) {
+                        const respDiv = document.createElement('pre');
+                        respDiv.textContent = resp.value;
+                        reqDiv.appendChild(respDiv);
+                    }
+                });
+            }
+
+            output.appendChild(reqDiv);
+        });
+    }
+}
+</script>
+
+</body>
+</html>
